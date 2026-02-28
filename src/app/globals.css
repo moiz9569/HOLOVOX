@@ -1,26 +1,259 @@
 @import "tailwindcss";
 
+@theme {
+  /* HoloVox Brand Colors */
+  --color-background: #0a0c1a;
+  --color-foreground: #eaeaf5;
+  --color-card: #12142a;
+  --color-card-foreground: #eaeaf5;
+  --color-popover: #12142a;
+  --color-popover-foreground: #eaeaf5;
+  
+  /* Coral Pink - Brand Primary */
+  --color-primary: #e63e6b;
+  --color-primary-foreground: #ffffff;
+  
+  /* Deep Navy */
+  --color-secondary: #0a0c1a;
+  --color-secondary-foreground: #eaeaf5;
+  
+  --color-muted: #262b4a;
+  --color-muted-foreground: #8f94b0;
+  
+  /* Royal Blue Accent */
+  --color-accent: #1e1f5a;
+  --color-accent-foreground: #eaeaf5;
+  
+  --color-destructive: #dc2626;
+  --color-destructive-foreground: #ffffff;
+  
+  --color-border: #2f3563;
+  --color-input: #2f3563;
+  --color-ring: #e63e6b;
+  
+  --radius: 0.5rem;
+  
+  /* Custom HoloVox tokens */
+  --color-coral: #e63e6b;
+  --color-coral-glow: #ff5e8b;
+  --color-navy: #0a0c1a;
+  --color-navy-light: #1f2342;
+  --color-royal: #1e1f5a;
+  --color-cream: #eaeaf5;
+  --color-warm-glow: #e68f4c;
+  
+  /* Gradients */
+  --gradient-hero: linear-gradient(135deg, #070813 0%, #1a1333 50%, #2f1f3f 100%);
+  --gradient-coral: linear-gradient(135deg, #e63e6b 0%, #b34b8a 100%);
+  --gradient-glow: radial-gradient(ellipse at center, rgba(230, 62, 107, 0.3) 0%, transparent 70%);
+  
+  /* Shadows */
+  --shadow-glow: 0 0 40px rgba(230, 62, 107, 0.4);
+  --shadow-card: 0 8px 32px rgba(7, 8, 19, 0.6);
+  
+  /* Fonts */
+  --font-sans: var(--font-geist-sans), system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+  --font-mono: var(--font-geist-mono), 'SF Mono', Monaco, monospace;
+}
+
 :root {
-  --background: #ffffff;
-  --foreground: #171717;
+  color-scheme: dark;
 }
 
-@theme inline {
-  --color-background: var(--background);
-  --color-foreground: var(--foreground);
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
+/* Font face declarations */
+@font-face {
+  font-family: 'Creata';
+  src: url('/fonts/Creata-Thin.otf') format('opentype');
+  font-weight: 100;
+  font-style: normal;
+  font-display: swap;
 }
 
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
-  }
+@font-face {
+  font-family: 'Creata';
+  src: url('/fonts/Creata-Regular.otf') format('opentype');
+  font-weight: 400;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: 'Creata';
+  src: url('/fonts/Creata-Medium.otf') format('opentype');
+  font-weight: 500;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: 'Creata';
+  src: url('/fonts/Creata-SemiBold.otf') format('opentype');
+  font-weight: 600;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: 'Creata';
+  src: url('/fonts/Creata-Bold.otf') format('opentype');
+  font-weight: 700;
+  font-style: normal;
+  font-display: swap;
+}
+
+/* Base styles */
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+html {
+  scroll-behavior: smooth;
 }
 
 body {
-  background: var(--background);
-  color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+  background-color: var(--color-background, #0a0c1a);
+  color: var(--color-foreground, #eaeaf5);
+  font-family: var(--font-sans);
+  overflow-x: hidden;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+h1, h2, h3, h4, h5, h6 {
+  font-family: 'Creata', var(--font-sans);
+  font-weight: 600;
+}
+
+/* Custom animations */
+@keyframes orbitPulse {
+  0%, 100% { border-color: rgba(255, 255, 255, 0.1); }
+  50% { border-color: rgba(255, 255, 255, 0.3); }
+}
+
+@keyframes logo-spin {
+  from { transform: rotate(0deg); }
+  to { transform: rotate(360deg); }
+}
+
+@keyframes float {
+  0%, 100% { transform: translateY(0) scale(1); opacity: 0; }
+  10% { opacity: 1; }
+  90% { opacity: 1; }
+  100% { transform: translateY(-100px) scale(0); opacity: 0; }
+}
+
+@keyframes glow {
+  0%, 100% { filter: drop-shadow(0 0 20px rgba(230, 62, 107, 0.3)); }
+  50% { filter: drop-shadow(0 0 40px rgba(230, 62, 107, 0.5)); }
+}
+
+/* Custom utility classes */
+.text-gradient {
+  background-image: var(--gradient-coral);
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+}
+
+.glow-coral {
+  box-shadow: var(--shadow-glow);
+}
+
+.glass-card {
+  background-color: rgba(18, 20, 42, 0.6);
+  backdrop-filter: blur(12px);
+  border: 1px solid rgba(47, 53, 99, 0.5);
+  box-shadow: var(--shadow-card);
+}
+
+.particle-bg {
+  position: relative;
+  overflow: hidden;
+}
+
+.particle-bg::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background-image: var(--gradient-glow);
+  pointer-events: none;
+}
+
+/* Animation utility classes */
+.animate-spin-slow {
+  animation: spin 8s linear infinite;
+}
+
+.animate-float {
+  animation: float 4s ease-in-out infinite;
+}
+
+.animate-glow {
+  animation: glow 3s ease-in-out infinite;
+}
+
+.animate-orbit-pulse {
+  animation: orbitPulse 3s ease-in-out infinite;
+}
+
+/* Logo styles */
+.logo {
+  height: 6em;
+  padding: 1.5em;
+  will-change: filter;
+  transition: filter 300ms;
+}
+
+.logo:hover {
+  filter: drop-shadow(0 0 2em #e63e6b);
+}
+
+.logo.react:hover {
+  filter: drop-shadow(0 0 2em #61dafb);
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  a:nth-of-type(2) .logo {
+    animation: logo-spin infinite 20s linear;
+  }
+}
+
+/* Card styles */
+.card {
+  padding: 2em;
+  background: var(--color-card);
+  border-radius: var(--radius);
+  border: 1px solid var(--color-border);
+}
+
+.read-the-docs {
+  color: #8f94b0;
+}
+
+/* Responsive container */
+#root {
+  max-width: 1280px;
+  margin: 0 auto;
+  padding: 2rem;
+}
+
+/* Custom scrollbar */
+::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+
+::-webkit-scrollbar-track {
+  background: rgba(18, 20, 42, 0.5);
+}
+
+::-webkit-scrollbar-thumb {
+  background: rgba(230, 62, 107, 0.3);
+  border-radius: 4px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: rgba(230, 62, 107, 0.5);
 }
