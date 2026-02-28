@@ -33,7 +33,7 @@ import { motion } from "framer-motion";
    return (
      <section className="py-12 md:py-16 relative overflow-hidden">
        {/* Background elements */}
-       <div className="absolute top-0 right-0 w-1/2 h-full bg-gradient-to-l from-coral/5 to-transparent pointer-events-none" />
+       <div className="absolute top-0 right-0 w-1/2 h-full bg-linear-to-l from-coral/5 to-transparent pointer-events-none" />
        
        <div className="container px-4">
          <motion.div
@@ -62,10 +62,10 @@ import { motion } from "framer-motion";
                transition={{ duration: 0.6, delay: index * 0.1 }}
                className="relative group"
              >
-               <div className={`absolute inset-0 bg-gradient-to-br ${useCase.gradient} rounded-2xl blur-xl opacity-0 group-hover:opacity-100 transition-opacity duration-500`} />
+               <div className={`absolute inset-0 bg-linear-to-br ${useCase.gradient} rounded-2xl blur-xl opacity-0 group-hover:opacity-100 transition-opacity duration-500`} />
                <div className="relative glass-card rounded-2xl p-8 h-full hover:border-coral/30 transition-all duration-500">
                  <div className="flex items-start gap-5">
-                   <div className="w-12 h-12 rounded-xl bg-coral/10 flex items-center justify-center flex-shrink-0">
+                   <div className="w-12 h-12 rounded-xl bg-coral/10 flex items-center justify-center shrink-0">
                      <useCase.icon className="w-6 h-6 text-coral" />
                    </div>
                    <div>

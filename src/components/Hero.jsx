@@ -30,8 +30,8 @@ export const Hero = () => {
     <section className="relative min-h-screen flex flex-col">
       <div className="absolute inset-0">
         <img src="/hero-family.png" alt="Immersive family connection" className="w-full h-full object-cover object-center" />
-        <div className="absolute inset-0 bg-gradient-to-b from-background/80 via-transparent to-background/90" />
-        <div className="absolute inset-0 bg-gradient-to-r from-background/40 via-transparent to-background/40" />
+        <div className="absolute inset-0 bg-linear-to-b from-background/80 via-transparent to-background/90" />
+        <div className="absolute inset-0 bg-linear-to-r from-background/40 via-transparent to-background/40" />
       </div>
       
       <FloatingParticles />

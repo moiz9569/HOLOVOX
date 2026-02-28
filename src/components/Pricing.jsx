@@ -71,7 +71,7 @@
    return (
      <section className="py-12 md:py-16 relative" id="pricing">
        {/* Background */}
-       <div className="absolute inset-0 bg-gradient-to-b from-transparent via-navy-light/30 to-transparent pointer-events-none" />
+       <div className="absolute inset-0 bg-linear-to-b from-transparent via-navy-light/30 to-transparent pointer-events-none" />
        
        <div className="container px-4 relative">
          <motion.div
@@ -124,7 +124,7 @@
                  <ul className="space-y-3 mb-8 flex-1">
                    {tier.features.map((feature, fIndex) => (
                      <li key={fIndex} className="flex items-start gap-3 text-sm">
-                       <Check className="w-4 h-4 text-coral flex-shrink-0 mt-0.5" />
+                       <Check className="w-4 h-4 text-coral shrink-0 mt-0.5" />
                        <span className="text-foreground/80">{feature}</span>
                      </li>
                    ))}

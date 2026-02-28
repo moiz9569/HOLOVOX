@@ -31,7 +31,7 @@ import { ShoppingCart, Package, Zap } from "lucide-react";
    return (
      <section className="py-12 md:py-16 relative overflow-hidden">
        {/* Background accent */}
-       <div className="absolute bottom-0 left-0 w-full h-1/2 bg-gradient-to-t from-navy-light/50 to-transparent pointer-events-none" />
+       <div className="absolute bottom-0 left-0 w-full h-1/2 bg-linear-to-t from-navy-light/50 to-transparent pointer-events-none" />
        
        <div className="container px-4 relative">
          <motion.div

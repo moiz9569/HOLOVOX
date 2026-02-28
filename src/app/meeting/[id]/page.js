@@ -517,7 +517,7 @@ function MeetingContent() {
   };
 
   return (
-    <div className="h-screen w-screen bg-gradient-to-br from-slate-900 via-purple-900 to-slate-900 text-white flex overflow-hidden">
+    <div className="h-screen w-screen bg-linear-to-br from-slate-900 via-purple-900 to-slate-900 text-white flex overflow-hidden">
       
       <Script
         src="https://aframe.io/releases/1.5.0/aframe.min.js"
@@ -553,7 +553,7 @@ function MeetingContent() {
           className="absolute top-0 left-0 right-0 z-20 px-6 py-4 flex items-center justify-between bg-black/40 backdrop-blur-xl border-b border-white/10"
         >
           <div className="flex items-center gap-4">
-            <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-cyan-500 to-purple-600 flex items-center justify-center">
+            <div className="w-10 h-10 rounded-xl bg-linear-to-br from-cyan-500 to-purple-600 flex items-center justify-center">
               <span className="text-lg font-bold">H</span>
             </div>
             <div>
@@ -659,7 +659,7 @@ function MeetingContent() {
                 whileHover={{ scale: 1.05 }}
                 whileTap={{ scale: 0.95 }}
                 onClick={() => setActiveStreamId("local")}
-                className={`relative min-w-[160px] h-24 rounded-xl overflow-hidden border-2 transition-all cursor-pointer group ${
+                className={`relative min-w-40 h-24 rounded-xl overflow-hidden border-2 transition-all cursor-pointer group ${
                   activeStreamId === "local"
                     ? "border-cyan-500 shadow-lg shadow-cyan-500/20"
                     : "border-white/10 hover:border-white/30"
@@ -672,7 +672,7 @@ function MeetingContent() {
                   playsInline
                   className="w-full h-full object-cover"
                 />
-                <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent"></div>
+                <div className="absolute inset-0 bg-linear-to-t from-black/60 via-transparent to-transparent"></div>
                 <div className="absolute bottom-1 left-1 right-1 flex items-center justify-between">
                   <div className="flex items-center gap-1 text-[10px] bg-black/60 px-2 py-1 rounded-full">
                     <UserIcon size={10} />
@@ -698,7 +698,7 @@ function MeetingContent() {
                   onHoverStart={() => setHoveredParticipant(peer.id)}
                   onHoverEnd={() => setHoveredParticipant(null)}
                   onClick={() => setActiveStreamId(peer.id)}
-                  className={`relative min-w-[160px] h-24 rounded-xl overflow-hidden border-2 transition-all cursor-pointer group ${
+                  className={`relative min-w-40 h-24 rounded-xl overflow-hidden border-2 transition-all cursor-pointer group ${
                     activeStreamId === peer.id
                       ? "border-cyan-500 shadow-lg shadow-cyan-500/20"
                       : "border-white/10 hover:border-white/30"
@@ -710,7 +710,7 @@ function MeetingContent() {
                     ref={el => { if (el) { el.srcObject = peer.stream; videoRefs.current[peer.id] = el; } }}
                     className="w-full h-full object-cover"
                   />
-                  <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent"></div>
+                  <div className="absolute inset-0 bg-linear-to-t from-black/60 via-transparent to-transparent"></div>
                   <div className="absolute bottom-1 left-1 right-1 flex items-center justify-between">
                     <div className="flex items-center gap-1 text-[10px] bg-black/60 px-2 py-1 rounded-full">
                       {peer.isHost ? <Crown size={10} className="text-amber-400" /> : <UserIcon size={10} />}
@@ -886,7 +886,7 @@ function MeetingContent() {
                   {/* You */}
                   <div className="flex items-center justify-between p-3 bg-white/5 rounded-lg">
                     <div className="flex items-center gap-3">
-                      <div className="w-8 h-8 rounded-full bg-gradient-to-br from-cyan-500 to-purple-600 flex items-center justify-center">
+                      <div className="w-8 h-8 rounded-full bg-linear-to-br from-cyan-500 to-purple-600 flex items-center justify-center">
                         <span className="text-xs font-bold">Y</span>
                       </div>
                       <div>
@@ -920,7 +920,7 @@ function MeetingContent() {
                     >
                       <div className="flex items-center gap-3">
                         <div className={`w-8 h-8 rounded-full flex items-center justify-center ${
-                          peer.isHost ? 'bg-gradient-to-br from-amber-500 to-orange-600' : 'bg-white/10'
+                          peer.isHost ? 'bg-linear-to-br from-amber-500 to-orange-600' : 'bg-white/10'
                         }`}>
                           {peer.isHost ? <Crown size={14} /> : <UserIcon size={14} />}
                         </div>
@@ -996,7 +996,7 @@ function MeetingContent() {
                 whileHover={{ scale: 1.02 }}
                 whileTap={{ scale: 0.98 }}
                 onClick={copyLink}
-                className="w-full bg-gradient-to-r from-cyan-600 to-purple-600 hover:from-cyan-700 hover:to-purple-700 py-3 rounded-xl text-sm font-semibold transition flex items-center justify-center gap-2"
+                className="w-full bg-linear-to-r from-cyan-600 to-purple-600 hover:from-cyan-700 hover:to-purple-700 py-3 rounded-xl text-sm font-semibold transition flex items-center justify-center gap-2"
               >
                 <Copy size={16} />
                 Copy Invite Link
@@ -1011,7 +1011,7 @@ function MeetingContent() {
 
 export default function MeetingPage() {
   return <Suspense fallback={
-    <div className="h-screen w-screen bg-gradient-to-br from-slate-900 via-purple-900 to-slate-900 flex items-center justify-center">
+    <div className="h-screen w-screen bg-linear-to-br from-slate-900 via-purple-900 to-slate-900 flex items-center justify-center">
       <div className="text-center">
         <div className="w-20 h-20 border-4 border-cyan-500 border-t-transparent rounded-full animate-spin mx-auto mb-4"></div>
         <p className="text-lg font-semibold text-white/70">Loading meeting...</p>
