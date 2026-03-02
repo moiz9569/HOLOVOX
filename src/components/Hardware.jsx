@@ -41,14 +41,14 @@ import { ShoppingCart, Package, Zap } from "lucide-react";
            viewport={{ once: true }}
            transition={{ duration: 0.8 }}
          >
-           <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-coral/10 text-coral text-sm font-medium mb-6">
+           <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-[#E9164B]/10 text-[#E9164B] text-sm font-medium mb-6">
              <Package className="w-4 h-4" />
              Hardware Shop
            </div>
-           <h2 className="font-creata text-3xl md:text-5xl font-medium text-foreground mb-6">
-             Get the <span className="text-gradient">Full Experience</span>
+           <h2 className="font-creata text-3xl md:text-5xl font-bold text-foreground mb-6">
+             Get the <span className="text-[#E9164B]">Full Experience</span>
            </h2>
-           <p className="text-lg text-muted-foreground">
+           <p className="text-lg text-muted-foreground text-[#8783AB]">
              While HoloVox works with your phone, dedicated hardware unlocks the ultimate immersive experience.
            </p>
          </motion.div>
@@ -61,33 +61,33 @@ import { ShoppingCart, Package, Zap } from "lucide-react";
                whileInView={{ opacity: 1, y: 0 }}
                viewport={{ once: true }}
                transition={{ duration: 0.6, delay: index * 0.1 }}
-               className="glass-card rounded-2xl p-8 flex flex-col hover:border-coral/30 transition-all duration-500 group"
+               className="bg-[#0C0C2A] rounded-2xl p-8 flex flex-col hover:border-[#E9164B]/30 transition-all duration-500 group"
              >
                {product.badge && (
-                 <span className="inline-flex self-start px-3 py-1 rounded-full bg-coral/20 text-coral text-xs font-medium mb-4">
+                 <span className="inline-flex self-start px-3 py-1 rounded-full bg-[#E9164B]/20 text-[#E9164B] text-xs font-bold mb-4">
                    {product.badge}
                  </span>
                )}
-               <h3 className="font-creata text-xl font-medium text-foreground mb-2">
+               <h3 className="font-creata text-xl font-bold text-foreground mb-2">
                  {product.name}
                </h3>
-               <p className="text-3xl font-creata font-medium text-foreground mb-3">
+               <p className="text-3xl font-creata font-bold text-foreground mb-3">
                  {product.price}
                </p>
-               <p className="text-muted-foreground text-sm mb-6">
+               <p className="text-muted-foreground text-[#8783AB] text-sm mb-6">
                  {product.description}
                </p>
                
                <ul className="space-y-2 mb-8 flex-1">
                  {product.items.map((item, iIndex) => (
                    <li key={iIndex} className="flex items-center gap-2 text-sm text-foreground/80">
-                     <Zap className="w-3 h-3 text-coral" />
+                     <Zap className="w-3 h-3 text-[#E9164B]" />
                      {item}
                    </li>
                  ))}
                </ul>
                
-               <Button className="w-full bg-card hover:bg-muted border border-border group-hover:border-coral/50 transition-all">
+               <Button className="w-full bg-card hover:bg-muted border border-border group-hover:border-[#E9164B]/50 transition-all">
                  <ShoppingCart className="w-4 h-4 mr-2" />
                  View Details
                </Button>

@@ -81,10 +81,10 @@
            viewport={{ once: true }}
            transition={{ duration: 0.8 }}
          >
-           <h2 className="font-creata text-3xl md:text-5xl font-medium text-foreground mb-6">
-             Simple, <span className="text-gradient">Transparent</span> Pricing
+           <h2 className="font-creata text-3xl md:text-5xl font-bold text-foreground mb-6">
+             Simple, <span className="text-[#E62064]">Transparent</span> Pricing
            </h2>
-           <p className="text-lg text-muted-foreground">
+           <p className="text-lg text-[#8783AB]">
              Start free with 2D calls. Upgrade when you're ready for holograms.
            </p>
          </motion.div>
@@ -100,31 +100,31 @@
                className={`relative ${tier.featured ? 'lg:-mt-4 lg:mb-4' : ''}`}
              >
                {tier.featured && (
-                 <div className="absolute -top-4 left-1/2 -translate-x-1/2 px-4 py-1 bg-coral rounded-full text-sm font-medium text-primary-foreground flex items-center gap-1">
+                 <div className="absolute -top-4 left-1/2 -translate-x-1/2 px-4 py-1 bg-[#E9164B] rounded-full text-sm font-medium text-primary-foreground flex items-center gap-1">
                    <Sparkles className="w-3 h-3" />
                    Most Popular
                  </div>
                )}
-               <div className={`glass-card rounded-2xl p-8 h-full flex flex-col ${
-                 tier.featured ? 'border-coral/50 bg-coral/5' : ''
+               <div className={`bg-[#0C0C2A] rounded-2xl p-8 h-full flex flex-col ${
+                 tier.featured ? 'border-[#E9164B]/50 bg-[#0C0C2A]' : ''
                }`}>
-                 <h3 className="font-creata text-xl font-medium text-foreground mb-2">
+                 <h3 className="font-creata text-xl font-bold text-foreground mb-2">
                    {tier.name}
                  </h3>
                  <div className="flex items-baseline gap-1 mb-2">
-                   <span className="font-creata text-4xl font-medium text-foreground">
+                   <span className="font-creata text-4xl font-bold text-foreground">
                      {tier.price}
                    </span>
-                   <span className="text-muted-foreground text-sm">{tier.period}</span>
+                   <span className="text-muted-foreground text-[#716F96] text-sm">{tier.period}</span>
                  </div>
-                 <p className="text-muted-foreground text-sm mb-6">
+                 <p className="text-muted-foreground text-[#716F96] text-sm mb-6">
                    {tier.description}
                  </p>
                  
                  <ul className="space-y-3 mb-8 flex-1">
                    {tier.features.map((feature, fIndex) => (
                      <li key={fIndex} className="flex items-start gap-3 text-sm">
-                       <Check className="w-4 h-4 text-coral shrink-0 mt-0.5" />
+                       <Check className="w-4 h-4 text-[#E9164B] shrink-0 mt-0.5" />
                        <span className="text-foreground/80">{feature}</span>
                      </li>
                    ))}
@@ -133,7 +133,7 @@
                  <Button 
                    className={`w-full ${
                      tier.featured 
-                       ? 'bg-coral hover:bg-coral-glow text-primary-foreground glow-coral' 
+                       ? 'bg-[#E9164B] hover:bg-[#E9164B]-glow text-primary-foreground glow-[#E9164B]' 
                        : 'bg-card hover:bg-muted border border-border'
                    }`}
                  >

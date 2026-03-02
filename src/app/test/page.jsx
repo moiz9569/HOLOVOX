@@ -1,151 +1,127 @@
 "use client";
-import { useState, useEffect } from "react";
-import { motion, AnimatePresence } from "framer-motion";
-import { Button } from "./ui/button";
-import { Menu, X } from "lucide-react";
-import { useRouter } from "next/navigation";
+import { useState } from 'react';
+import { motion, AnimatePresence } from 'framer-motion';
+import { X, Mail, Lock, User, Github, Chrome } from 'lucide-react';
 
-const navLinks = [
-  { label: "Features", href: "#features" },
-  { label: "Pricing", href: "#pricing" },
-  { label: "Hardware", href: "#hardware" },
-  { label: "Enterprise", href: "#enterprise" },
-];
-
-export const Navbar = () => {
-  const router = useRouter();
+export default function Home() {
   const [showAuth, setShowAuth] = useState(false);
-  const [isScrolled, setIsScrolled] = useState(false);
-  const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
-
-  useEffect(() => {
-    const handleScroll = () => {
-      setIsScrolled(window.scrollY > 50);
-    };
-    window.addEventListener("scroll", handleScroll);
-    return () => window.removeEventListener("scroll", handleScroll);
-  }, []);
 
   return (
-    <>
-      <motion.nav
-        className={`fixed top-0 left-0 right-0 z-50 transition-all duration-300 ${
-          isScrolled
-            ? "bg-background/80 backdrop-blur-xl border-b border-border/50"
-            : "bg-transparent"
-        }`}
-        initial={{ y: -100 }}
-        animate={{ y: 0 }}
-        transition={{ duration: 0.5 }}
-      >
-        <div className="container px-4">
-          <div className="flex items-center justify-between h-16 md:h-20">
-            {/* Logo */}
-            <a href="/" className="flex items-center gap-2">
-              <img
-                src="/holovox-icon.png"
-                alt="HoloVox"
-                className="h-8 md:h-10"
-              />
-              <span className="font-creata text-xl font-medium text-foreground hidden sm:block">
-                HOLOVOX
-              </span>
-            </a>
+    <div className="min-h-screen bg-gradient-to-br from-indigo-900 via-purple-900 to-pink-900 overflow-hidden relative">
+      {/* 360° Animated Background */}
+      <div className="absolute inset-0 overflow-hidden">
+        {/* Floating gradient spheres */}
+        <div className="absolute w-[60vmax] h-[60vmax] rounded-full bg-gradient-to-r from-blue-500/20 to-purple-500/20 top-[-20vmax] right-[-20vmax] animate-spin-slow"></div>
+        <div className="absolute w-[50vmax] h-[50vmax] rounded-full bg-gradient-to-r from-pink-500/20 to-orange-500/20 bottom-[-20vmax] left-[-20vmax] animate-spin-reverse"></div>
+        
+        {/* 3D Grid */}
+        <div className="absolute inset-0">
+          <div className="absolute w-[200%] h-[200%] top-[-50%] left-[-50%] bg-grid animate-grid-move"></div>
+        </div>
 
-            {/* Desktop Nav */}
-            <div className="hidden md:flex items-center gap-8">
-              {navLinks.map((link) => (
-                <a
-                  key={link.label}
-                  href={link.href}
-                  className="text-sm text-muted-foreground hover:text-foreground transition-colors"
-                >
-                  {link.label}
-                </a>
-              ))}
-            </div>
-
-            {/* CTA */}
-            <div className="hidden md:flex items-center gap-4">
-              {/* <Button
-                variant="ghost"
-                className="text-muted-foreground hover:text-foreground"
-              >
-                Sign In
-              </Button> */}
-              <Button
-                // onClick={() => setShowAuth(true)}
-                  onClick={() => router.push("/connect")}
-                className="bg-[#E9164B] cursor-pointer hover:bg-red-500 text-primary-foreground"
-              >
-                Meeting
-              </Button>
-            </div>
-
-            {/* Mobile Menu Button */}
-            <button
-              className="md:hidden p-2 text-foreground"
-              onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
-            >
-              {isMobileMenuOpen ? <X /> : <Menu />}
-            </button>
+        {/* Camera Lens Effect */}
+        <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2">
+          <div className="relative w-[30vmin] h-[30vmin]">
+            <div className="absolute inset-0 rounded-full border-2 border-white/20 animate-pulse"></div>
+            <div className="absolute inset-[10%] rounded-full bg-gradient-to-br from-white/40 to-white/10 animate-spin-slow"></div>
           </div>
         </div>
-      </motion.nav>
 
-      {/* Mobile Menu */}
-      <AnimatePresence>
-        {isMobileMenuOpen && (
-          <motion.div
-            className="fixed inset-0 z-40 bg-background/95 backdrop-blur-xl md:hidden pt-20"
+        {/* Orbiting Rings */}
+        <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2">
+          <div className="relative w-[80vmin] h-[80vmin] animate-spin-slow">
+            {[...Array(8)].map((_, i) => (
+              <div
+                key={i}
+                className="absolute inset-0 rounded-full border border-white/10"
+                style={{
+                  transform: `rotate(${i * 45}deg)`,
+                  animation: `orbitPulse 3s ease-in-out ${i * 0.5}s infinite`
+                }}
+              >
+                <div className="absolute w-2 h-2 bg-white rounded-full top-[-4px] left-1/2 -translate-x-1/2 shadow-[0_0_20px_rgba(255,255,255,0.8)]"></div>
+              </div>
+            ))}
+          </div>
+        </div>
+
+        {/* Floating Particles */}
+        <div className="absolute inset-0">
+          {[...Array(50)].map((_, i) => (
+            <div
+              key={i}
+              className="absolute w-1 h-1 bg-white rounded-full animate-float"
+              style={{
+                left: `${Math.random() * 100}%`,
+                top: `${Math.random() * 100}%`,
+                animationDelay: `${Math.random() * 5}s`,
+                animationDuration: `${3 + Math.random() * 4}s`
+              }}
+            ></div>
+          ))}
+        </div>
+      </div>
+
+      {/* Main Content */}
+      <div className="relative z-10 flex items-center justify-center min-h-screen px-4">
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 1 }}
+          className="text-center max-w-4xl"
+        >
+          <motion.h1
+            initial={{ scale: 0.9 }}
+            animate={{ scale: 1 }}
+            transition={{ duration: 0.5, delay: 0.3 }}
+            className="text-6xl md:text-8xl font-bold mb-6 bg-gradient-to-r from-white via-blue-200 to-purple-200 bg-clip-text text-transparent animate-glow"
+          >
+            HoloVax
+          </motion.h1>
+          
+          <motion.p
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
-            exit={{ opacity: 0 }}
+            transition={{ duration: 0.8, delay: 0.6 }}
+            className="text-xl md:text-2xl text-white/90 mb-12 leading-relaxed backdrop-blur-lg bg-white/10 p-8 rounded-2xl border border-white/20 shadow-2xl"
           >
-            <div className="container px-4 py-8">
-              <div className="flex flex-col gap-6">
-                {navLinks.map((link) => (
-                  <a
-                    key={link.label}
-                    href={link.href}
-                    className="text-2xl font-creata text-foreground"
-                    onClick={() => setIsMobileMenuOpen(false)}
-                  >
-                    {link.label}
-                  </a>
-                ))}
-                <div className="pt-6 border-t border-border/50 flex flex-col gap-4">
-                  <Button variant="ghost" className="justify-start text-lg">
-                    Sign In
-                  </Button>
-                  <Button className="bg-coral cursor-pointer hover:bg-coral-glow text-primary-foreground text-lg">
-                    Get Started
-                  </Button>
-                </div>
-              </div>
-            </div>
-          </motion.div>
+            "The next generation of immersive video collaboration. Connect your 360° hardware 
+            and step into the same room, from anywhere in the world."
+          </motion.p>
+
+          <motion.button
+            initial={{ opacity: 0, scale: 0.8 }}
+            animate={{ opacity: 1, scale: 1 }}
+            transition={{ duration: 0.5, delay: 0.9 }}
+            whileHover={{ scale: 1.05 }}
+            whileTap={{ scale: 0.95 }}
+            onClick={() => setShowAuth(true)}
+            className="relative px-12 py-4 text-xl font-semibold text-white bg-gradient-to-r from-pink-500 via-purple-500 to-indigo-500 rounded-full shadow-2xl hover:shadow-pink-500/25 overflow-hidden group animate-gradient"
+          >
+            <span className="relative z-10">Get Started</span>
+            <div className="absolute inset-0 -translate-x-full group-hover:translate-x-full transition-transform duration-700 bg-gradient-to-r from-transparent via-white/30 to-transparent"></div>
+          </motion.button>
+        </motion.div>
+      </div>
+
+      {/* Authentication Modal */}
+      <AnimatePresence>
+        {showAuth && (
+          <AuthModal onClose={() => setShowAuth(false)} />
         )}
-        <AnimatePresence>
-          {showAuth && <AuthModal onClose={() => setShowAuth(false)} />}
-        </AnimatePresence>
-
-        <style jsx>{`
-          @keyframes orbitPulse {
-            0%,
-            100% {
-              border-color: rgba(255, 255, 255, 0.1);
-            }
-            50% {
-              border-color: rgba(255, 255, 255, 0.3);
-            }
-          }
-        `}</style>
       </AnimatePresence>
-    </>
-  );
-};
 
+      <style jsx>{`
+        @keyframes orbitPulse {
+          0%, 100% { border-color: rgba(255,255,255,0.1); }
+          50% { border-color: rgba(255,255,255,0.3); }
+        }
+      `}</style>
+    </div>
+  );
+}
+
+// Authentication Modal Component
 function AuthModal({ onClose }) {
   const [isLogin, setIsLogin] = useState(true);
 
@@ -176,9 +152,9 @@ function AuthModal({ onClose }) {
             <button
               onClick={() => setIsLogin(true)}
               className={`flex-1 py-3 px-6 rounded-full font-semibold transition-all ${
-                isLogin
-                  ? "bg-gradient-to-r from-pink-500 to-purple-500 text-white shadow-lg"
-                  : "text-white/70 hover:text-white"
+                isLogin 
+                  ? 'bg-gradient-to-r from-pink-500 to-purple-500 text-white shadow-lg' 
+                  : 'text-white/70 hover:text-white'
               }`}
             >
               Login
@@ -186,9 +162,9 @@ function AuthModal({ onClose }) {
             <button
               onClick={() => setIsLogin(false)}
               className={`flex-1 py-3 px-6 rounded-full font-semibold transition-all ${
-                !isLogin
-                  ? "bg-gradient-to-r from-pink-500 to-purple-500 text-white shadow-lg"
-                  : "text-white/70 hover:text-white"
+                !isLogin 
+                  ? 'bg-gradient-to-r from-pink-500 to-purple-500 text-white shadow-lg' 
+                  : 'text-white/70 hover:text-white'
               }`}
             >
               Sign Up
@@ -202,6 +178,7 @@ function AuthModal({ onClose }) {
   );
 }
 
+// Login Form Component
 function LoginForm() {
   return (
     <motion.form
@@ -212,21 +189,14 @@ function LoginForm() {
     >
       <div className="text-center mb-8">
         <h2 className="text-3xl font-bold text-white mb-2">Welcome Back</h2>
-        <p className="text-white/60">
-          Login to continue your immersive experience
-        </p>
+        <p className="text-white/60">Login to continue your immersive experience</p>
       </div>
 
       <div className="space-y-4">
         <div>
-          <label className="block text-sm font-medium text-white/80 mb-2">
-            Email
-          </label>
+          <label className="block text-sm font-medium text-white/80 mb-2">Email</label>
           <div className="relative">
-            <Mail
-              className="absolute left-3 top-1/2 -translate-y-1/2 text-white/40"
-              size={20}
-            />
+            <Mail className="absolute left-3 top-1/2 -translate-y-1/2 text-white/40" size={20} />
             <input
               type="email"
               placeholder="Enter your email"
@@ -236,14 +206,9 @@ function LoginForm() {
         </div>
 
         <div>
-          <label className="block text-sm font-medium text-white/80 mb-2">
-            Password
-          </label>
+          <label className="block text-sm font-medium text-white/80 mb-2">Password</label>
           <div className="relative">
-            <Lock
-              className="absolute left-3 top-1/2 -translate-y-1/2 text-white/40"
-              size={20}
-            />
+            <Lock className="absolute left-3 top-1/2 -translate-y-1/2 text-white/40" size={20} />
             <input
               type="password"
               placeholder="Enter your password"
@@ -255,10 +220,7 @@ function LoginForm() {
 
       <div className="flex items-center justify-between text-sm">
         <label className="flex items-center gap-2 text-white/60">
-          <input
-            type="checkbox"
-            className="rounded bg-white/10 border-white/20"
-          />
+          <input type="checkbox" className="rounded bg-white/10 border-white/20" />
           Remember me
         </label>
         <button className="text-pink-400 hover:text-pink-300 transition-colors">
@@ -279,9 +241,7 @@ function LoginForm() {
           <div className="w-full border-t border-white/20"></div>
         </div>
         <div className="relative flex justify-center text-sm">
-          <span className="px-4 bg-transparent text-white/40">
-            Or continue with
-          </span>
+          <span className="px-4 bg-transparent text-white/40">Or continue with</span>
         </div>
       </div>
 
@@ -299,6 +259,7 @@ function LoginForm() {
   );
 }
 
+// Sign Up Form Component
 function SignUpForm() {
   return (
     <motion.form
@@ -314,14 +275,9 @@ function SignUpForm() {
 
       <div className="space-y-4">
         <div>
-          <label className="block text-sm font-medium text-white/80 mb-2">
-            Full Name
-          </label>
+          <label className="block text-sm font-medium text-white/80 mb-2">Full Name</label>
           <div className="relative">
-            <User
-              className="absolute left-3 top-1/2 -translate-y-1/2 text-white/40"
-              size={20}
-            />
+            <User className="absolute left-3 top-1/2 -translate-y-1/2 text-white/40" size={20} />
             <input
               type="text"
               placeholder="Enter your full name"
@@ -331,14 +287,9 @@ function SignUpForm() {
         </div>
 
         <div>
-          <label className="block text-sm font-medium text-white/80 mb-2">
-            Email
-          </label>
+          <label className="block text-sm font-medium text-white/80 mb-2">Email</label>
           <div className="relative">
-            <Mail
-              className="absolute left-3 top-1/2 -translate-y-1/2 text-white/40"
-              size={20}
-            />
+            <Mail className="absolute left-3 top-1/2 -translate-y-1/2 text-white/40" size={20} />
             <input
               type="email"
               placeholder="Enter your email"
@@ -348,14 +299,9 @@ function SignUpForm() {
         </div>
 
         <div>
-          <label className="block text-sm font-medium text-white/80 mb-2">
-            Password
-          </label>
+          <label className="block text-sm font-medium text-white/80 mb-2">Password</label>
           <div className="relative">
-            <Lock
-              className="absolute left-3 top-1/2 -translate-y-1/2 text-white/40"
-              size={20}
-            />
+            <Lock className="absolute left-3 top-1/2 -translate-y-1/2 text-white/40" size={20} />
             <input
               type="password"
               placeholder="Create a password"
@@ -365,14 +311,9 @@ function SignUpForm() {
         </div>
 
         <div>
-          <label className="block text-sm font-medium text-white/80 mb-2">
-            Confirm Password
-          </label>
+          <label className="block text-sm font-medium text-white/80 mb-2">Confirm Password</label>
           <div className="relative">
-            <Lock
-              className="absolute left-3 top-1/2 -translate-y-1/2 text-white/40"
-              size={20}
-            />
+            <Lock className="absolute left-3 top-1/2 -translate-y-1/2 text-white/40" size={20} />
             <input
               type="password"
               placeholder="Confirm your password"
@@ -383,10 +324,7 @@ function SignUpForm() {
       </div>
 
       <label className="flex items-start gap-2 text-sm text-white/60">
-        <input
-          type="checkbox"
-          className="mt-1 rounded bg-white/10 border-white/20"
-        />
+        <input type="checkbox" className="mt-1 rounded bg-white/10 border-white/20" />
         <span>I agree to the Terms of Service and Privacy Policy</span>
       </label>
 

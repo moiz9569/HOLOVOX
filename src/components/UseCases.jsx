@@ -43,10 +43,10 @@ import { motion } from "framer-motion";
            viewport={{ once: true }}
            transition={{ duration: 0.8 }}
          >
-           <h2 className="font-creata text-3xl md:text-5xl font-medium text-foreground mb-6">
-             Built for <span className="text-gradient">Every Connection</span>
+           <h2 className="font-creata text-3xl md:text-5xl font-bold text-foreground mb-6">
+             Built for <span className="text-[#E62064]">Every Connection</span>
            </h2>
-           <p className="text-lg text-muted-foreground">
+           <p className="text-lg text-[#8783AB]">
              From intimate family moments to enterprise-scale deployments, 
              HoloVox adapts to how you want to connect.
            </p>
@@ -63,16 +63,16 @@ import { motion } from "framer-motion";
                className="relative group"
              >
                <div className={`absolute inset-0 bg-linear-to-br ${useCase.gradient} rounded-2xl blur-xl opacity-0 group-hover:opacity-100 transition-opacity duration-500`} />
-               <div className="relative glass-card rounded-2xl p-8 h-full hover:border-coral/30 transition-all duration-500">
+               <div className="relative bg-[#0C0C2A] rounded-2xl p-8 h-full hover:border-coral/30 transition-all duration-500">
                  <div className="flex items-start gap-5">
-                   <div className="w-12 h-12 rounded-xl bg-coral/10 flex items-center justify-center shrink-0">
-                     <useCase.icon className="w-6 h-6 text-coral" />
+                   <div className="w-12 h-12 rounded-xl bg-[#E9164B]/10 flex items-center justify-center shrink-0">
+                     <useCase.icon className="w-6 h-6 text-[#E9164B]" />
                    </div>
                    <div>
-                     <h3 className="font-creata text-xl font-medium text-foreground mb-2">
+                     <h3 className="font-creata text-xl font-bold text-foreground mb-2">
                        {useCase.title}
                      </h3>
-                     <p className="text-muted-foreground leading-relaxed">
+                     <p className="text-muted-foreground text-[#7B7BA2] leading-relaxed">
                        {useCase.description}
                      </p>
                    </div>
@@ -90,7 +90,7 @@ import { motion } from "framer-motion";
            viewport={{ once: true }}
            transition={{ duration: 1, delay: 0.3 }}
          >
-           <p className="font-creata text-2xl md:text-3xl font-thin text-foreground/80 italic leading-relaxed">
+           <p className="font-creata text-2xl md:text-3xl font-extralight text-foreground/80 italic leading-relaxed">
              "In 360° VR, the world has no frames. It breathes around you, 
              responds to your presence, and turns looking into feeling."
            </p>

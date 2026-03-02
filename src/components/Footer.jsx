@@ -20,7 +20,7 @@
  
  export const Footer = () => {
    return (
-     <footer className="py-16 md:py-24 border-t border-border/50">
+     <footer className="py-16 bg-[#0C0C2A] md:py-24 border-t border-border/50">
        <div className="container px-4">
          {/* CTA Section */}
          <motion.div
@@ -30,10 +30,10 @@
            viewport={{ once: true }}
            transition={{ duration: 0.8 }}
          >
-           <h2 className="font-creata text-3xl md:text-5xl font-medium text-foreground mb-6">
-             Ready to <span className="text-gradient">Holo</span>?
+           <h2 className="font-creata text-3xl md:text-5xl font-bold text-foreground mb-6">
+             Ready to <span className="text-[#E9164B]">Holo</span>?
            </h2>
-           <p className="text-lg text-muted-foreground mb-8 max-w-xl mx-auto">
+           <p className="text-lg text-muted-foreground text-[#8783AB] mb-8 max-w-xl mx-auto">
              Join thousands already on the waitlist. Be the first to experience 
              the future of immersive communication.
            </p>
@@ -45,7 +45,7 @@
              />
              <Button 
                type="submit"
-               className="h-12 px-8 bg-coral hover:bg-coral-glow text-primary-foreground glow-coral"
+               className="h-12 px-8 bg-[#E9164B] hover:bg-red-500 text-primary-foreground glow-coral"
              >
                Join Waitlist
                <ArrowRight className="w-4 h-4 ml-2" />
@@ -57,7 +57,7 @@
          <div className="grid grid-cols-2 md:grid-cols-5 gap-8 mb-16">
            <div className="col-span-2 md:col-span-1">
              <img src="/holovox-logo.png" alt="HoloVox" className="h-12 mb-4" />
-             <p className="text-sm text-muted-foreground mb-4">
+             <p className="text-sm text-muted-foreground text-[#8783AB] mb-4">
                See me. Feel me. Holo me.
              </p>
              <div className="flex gap-3">
@@ -65,7 +65,7 @@
                  <a
                    key={index}
                    href={social.href}
-                   className="w-10 h-10 rounded-lg bg-card flex items-center justify-center text-muted-foreground hover:text-coral hover:bg-coral/10 transition-all"
+                   className="w-10 h-10 rounded-lg bg-card flex items-center justify-center text-muted-foreground hover:text-[#E9164B] hover:bg-[#E9164B]/10 transition-all"
                  >
                    <social.icon className="w-5 h-5" />
                  </a>
@@ -75,11 +75,11 @@
            
            {Object.entries(footerLinks).map(([category, links]) => (
              <div key={category}>
-               <h4 className="font-medium text-foreground mb-4">{category}</h4>
+               <h4 className="font-bold text-foreground mb-4">{category}</h4>
                <ul className="space-y-3">
                  {links.map((link) => (
                    <li key={link}>
-                     <a href="#" className="text-sm text-muted-foreground hover:text-coral transition-colors">
+                     <a href="#" className="text-sm text-muted-foreground text-[#8783AB] hover:text-[#E9164B] transition-colors">
                        {link}
                      </a>
                    </li>
@@ -90,7 +90,7 @@
          </div>
          
          {/* Bottom */}
-         <div className="flex flex-col md:flex-row items-center justify-between gap-4 pt-8 border-t border-border/50">
+         <div className="flex text-[#8783AB] flex-col md:flex-row items-center justify-between gap-4 pt-8 border-t border-border/50">
            <p className="text-sm text-muted-foreground">
              © 2026 HoloVox. All rights reserved.
            </p>
