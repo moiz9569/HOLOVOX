@@ -2,8 +2,8 @@
 import { useState, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { Button } from "./ui/button";
-import { Menu, X } from "lucide-react";
 import { useRouter } from "next/navigation";
+import { Menu, X, Mail, Lock, User } from "lucide-react";
 
 const navLinks = [
   { label: "Features", href: "#features" },
@@ -74,11 +74,11 @@ export const Navbar = () => {
                 Sign In
               </Button> */}
               <Button
-                // onClick={() => setShowAuth(true)}
-                  onClick={() => router.push("/connect")}
+                onClick={() => setShowAuth(true)}
+                  // onClick={() => router.push("/connect")}
                 className="bg-[#E9164B] cursor-pointer hover:bg-red-500 text-primary-foreground"
               >
-                Meeting
+                Get Started
               </Button>
             </div>
 
@@ -93,61 +93,49 @@ export const Navbar = () => {
         </div>
       </motion.nav>
 
-      {/* Mobile Menu */}
-      <AnimatePresence>
-        {isMobileMenuOpen && (
-          <motion.div
-            className="fixed inset-0 z-40 bg-background/95 backdrop-blur-xl md:hidden pt-20"
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            exit={{ opacity: 0 }}
-          >
-            <div className="container px-4 py-8">
-              <div className="flex flex-col gap-6">
-                {navLinks.map((link) => (
-                  <a
-                    key={link.label}
-                    href={link.href}
-                    className="text-2xl font-creata text-foreground"
-                    onClick={() => setIsMobileMenuOpen(false)}
-                  >
-                    {link.label}
-                  </a>
-                ))}
-                <div className="pt-6 border-t border-border/50 flex flex-col gap-4">
-                  <Button variant="ghost" className="justify-start text-lg">
-                    Sign In
-                  </Button>
-                  <Button className="bg-coral cursor-pointer hover:bg-coral-glow text-primary-foreground text-lg">
-                    Get Started
-                  </Button>
-                </div>
-              </div>
-            </div>
-          </motion.div>
-        )}
-        <AnimatePresence>
-          {showAuth && <AuthModal onClose={() => setShowAuth(false)} />}
-        </AnimatePresence>
+    <AnimatePresence>
+  {isMobileMenuOpen && (
+    <motion.div
+      key="mobile-menu"
+      className="fixed inset-0 z-40 bg-background/95 backdrop-blur-xl md:hidden pt-20"
+      initial={{ opacity: 0 }}
+      animate={{ opacity: 1 }}
+      exit={{ opacity: 0 }}
+    >
+      <div className="container px-4 py-8">
+        <div className="flex flex-col gap-6">
+          {navLinks.map((link) => (
+            <a
+              key={link.label}
+              href={link.href}
+              className="text-2xl font-creata text-foreground"
+              onClick={() => setIsMobileMenuOpen(false)}
+            >
+              {link.label}
+            </a>
+          ))}
+        </div>
+      </div>
+    </motion.div>
+  )}
 
-        <style jsx>{`
-          @keyframes orbitPulse {
-            0%,
-            100% {
-              border-color: rgba(255, 255, 255, 0.1);
-            }
-            50% {
-              border-color: rgba(255, 255, 255, 0.3);
-            }
-          }
-        `}</style>
-      </AnimatePresence>
+  {showAuth && (
+    <AuthModal key="auth-modal" onClose={() => setShowAuth(false)} />
+  )}
+</AnimatePresence>
     </>
   );
 };
 
 function AuthModal({ onClose }) {
   const [isLogin, setIsLogin] = useState(true);
+  useEffect(() => {
+  const handleEsc = (e) => {
+    if (e.key === "Escape") onClose();
+  };
+  window.addEventListener("keydown", handleEsc);
+  return () => window.removeEventListener("keydown", handleEsc);
+}, []);
 
   return (
     <motion.div
@@ -155,18 +143,18 @@ function AuthModal({ onClose }) {
       animate={{ opacity: 1 }}
       exit={{ opacity: 0 }}
       onClick={onClose}
-      className="fixed inset-0 bg-black/70 backdrop-blur-lg flex items-center justify-center z-50 p-4"
+      className="fixed inset-0 backdrop-blur-lg flex items-center justify-center z-50 p-4"
     >
       <motion.div
         initial={{ scale: 0.8, y: 50 }}
         animate={{ scale: 1, y: 0 }}
         exit={{ scale: 0.8, y: 50 }}
         onClick={(e) => e.stopPropagation()}
-        className="bg-white/10 backdrop-blur-xl rounded-3xl p-8 w-full max-w-md border border-white/20 shadow-2xl"
+        className="bg-[#0C0C2A] backdrop-blur-xl h-screen overflow-y-auto rounded-3xl p-8 w-full max-w-md border border-white/20 shadow-2xl"
       >
         <button
           onClick={onClose}
-          className="absolute top-4 right-4 text-white/70 hover:text-white transition-colors"
+          className="absolute cursor-pointer top-4 right-4 text-white/70 hover:text-white transition-colors"
         >
           <X size={24} />
         </button>
@@ -177,8 +165,8 @@ function AuthModal({ onClose }) {
               onClick={() => setIsLogin(true)}
               className={`flex-1 py-3 px-6 rounded-full font-semibold transition-all ${
                 isLogin
-                  ? "bg-gradient-to-r from-pink-500 to-purple-500 text-white shadow-lg"
-                  : "text-white/70 hover:text-white"
+                  ? "bg-linear-to-r from-[#E9164B] to-[#E9164B] text-white shadow-lg"
+                  : "text-white/70 hover:text-white cursor-pointer"
               }`}
             >
               Login
@@ -187,8 +175,8 @@ function AuthModal({ onClose }) {
               onClick={() => setIsLogin(false)}
               className={`flex-1 py-3 px-6 rounded-full font-semibold transition-all ${
                 !isLogin
-                  ? "bg-gradient-to-r from-pink-500 to-purple-500 text-white shadow-lg"
-                  : "text-white/70 hover:text-white"
+                  ? "bg-linear-to-r from-[#E9164B] to-[#E9164B] text-white shadow-lg"
+                  : "text-white/70 hover:text-white cursor-pointer"
               }`}
             >
               Sign Up
@@ -203,6 +191,10 @@ function AuthModal({ onClose }) {
 }
 
 function LoginForm() {
+  const router = useRouter();
+  function handleLogin() {
+    router.push("/connect");
+  }
   return (
     <motion.form
       initial={{ opacity: 0, x: -20 }}
@@ -230,7 +222,7 @@ function LoginForm() {
             <input
               type="email"
               placeholder="Enter your email"
-              className="w-full pl-10 pr-4 py-3 bg-white/10 border border-white/20 rounded-xl text-white placeholder-white/40 focus:outline-none focus:border-pink-500 transition-colors"
+              className="w-full pl-10 pr-4 py-3 bg-white/10 border border-white/20 rounded-xl text-white placeholder-white/40 focus:outline-none focus:border-[#E9164B] transition-colors"
             />
           </div>
         </div>
@@ -247,7 +239,7 @@ function LoginForm() {
             <input
               type="password"
               placeholder="Enter your password"
-              className="w-full pl-10 pr-4 py-3 bg-white/10 border border-white/20 rounded-xl text-white placeholder-white/40 focus:outline-none focus:border-pink-500 transition-colors"
+              className="w-full pl-10 pr-4 py-3 bg-white/10 border border-white/20 rounded-xl text-white placeholder-white/40 focus:outline-none focus:border-[#E9164B] transition-colors"
             />
           </div>
         </div>
@@ -261,20 +253,21 @@ function LoginForm() {
           />
           Remember me
         </label>
-        <button className="text-pink-400 hover:text-pink-300 transition-colors">
+        <button className="text-[#E9164B] cursor-pointer hover:text-[#E9164B]/90 transition-colors">
           Forgot password?
         </button>
       </div>
 
       <button
         type="submit"
-        className="w-full py-4 bg-gradient-to-r from-pink-500 to-purple-500 text-white font-semibold rounded-xl hover:shadow-lg hover:shadow-pink-500/25 transition-all duration-300 relative overflow-hidden group"
+        onClick={handleLogin}
+        className="w-full cursor-pointer py-4 bg-linear-to-r from-[#E9164B] to-[#E9164B] text-white font-semibold rounded-xl hover:shadow-lg hover:shadow-pink-500/25 transition-all duration-300 relative overflow-hidden group"
       >
         <span className="relative z-10">Login</span>
-        <div className="absolute inset-0 -translate-x-full group-hover:translate-x-full transition-transform duration-700 bg-gradient-to-r from-transparent via-white/30 to-transparent"></div>
+        <div className="absolute inset-0 -translate-x-full group-hover:translate-x-full transition-transform duration-700 bg-linear-to-r from-transparent via-white/30 to-transparent"></div>
       </button>
 
-      <div className="relative my-8">
+      {/* <div className="relative my-8">
         <div className="absolute inset-0 flex items-center">
           <div className="w-full border-t border-white/20"></div>
         </div>
@@ -283,18 +276,16 @@ function LoginForm() {
             Or continue with
           </span>
         </div>
-      </div>
+      </div> */}
 
-      <div className="grid grid-cols-2 gap-4">
-        <button className="flex items-center justify-center gap-2 py-3 bg-white/10 border border-white/20 rounded-xl text-white hover:bg-white/20 transition-colors">
-          <Chrome size={20} />
+      {/* <div className="grid grid-cols-2 gap-4">
+        <button className="flex cursor-pointer items-center justify-center gap-2 py-3 bg-white/10 border border-white/20 rounded-xl text-white hover:bg-white/20 transition-colors">
           Google
         </button>
-        <button className="flex items-center justify-center gap-2 py-3 bg-white/10 border border-white/20 rounded-xl text-white hover:bg-white/20 transition-colors">
-          <Github size={20} />
+        <button className="flex cursor-pointer items-center justify-center gap-2 py-3 bg-white/10 border border-white/20 rounded-xl text-white hover:bg-white/20 transition-colors">
           GitHub
         </button>
-      </div>
+      </div> */}
     </motion.form>
   );
 }
@@ -325,7 +316,7 @@ function SignUpForm() {
             <input
               type="text"
               placeholder="Enter your full name"
-              className="w-full pl-10 pr-4 py-3 bg-white/10 border border-white/20 rounded-xl text-white placeholder-white/40 focus:outline-none focus:border-pink-500 transition-colors"
+              className="w-full pl-10 pr-4 py-3 bg-white/10 border border-white/20 rounded-xl text-white placeholder-white/40 focus:outline-none focus:border-[#E9164B] transition-colors"
             />
           </div>
         </div>
@@ -342,7 +333,7 @@ function SignUpForm() {
             <input
               type="email"
               placeholder="Enter your email"
-              className="w-full pl-10 pr-4 py-3 bg-white/10 border border-white/20 rounded-xl text-white placeholder-white/40 focus:outline-none focus:border-pink-500 transition-colors"
+              className="w-full pl-10 pr-4 py-3 bg-white/10 border border-white/20 rounded-xl text-white placeholder-white/40 focus:outline-none focus:border-[#E9164B] transition-colors"
             />
           </div>
         </div>
@@ -359,7 +350,7 @@ function SignUpForm() {
             <input
               type="password"
               placeholder="Create a password"
-              className="w-full pl-10 pr-4 py-3 bg-white/10 border border-white/20 rounded-xl text-white placeholder-white/40 focus:outline-none focus:border-pink-500 transition-colors"
+              className="w-full pl-10 pr-4 py-3 bg-white/10 border border-white/20 rounded-xl text-white placeholder-white/40 focus:outline-none focus:border-[#E9164B] transition-colors"
             />
           </div>
         </div>
@@ -376,7 +367,7 @@ function SignUpForm() {
             <input
               type="password"
               placeholder="Confirm your password"
-              className="w-full pl-10 pr-4 py-3 bg-white/10 border border-white/20 rounded-xl text-white placeholder-white/40 focus:outline-none focus:border-pink-500 transition-colors"
+              className="w-full pl-10 pr-4 py-3 bg-white/10 border border-white/20 rounded-xl text-white placeholder-white/40 focus:outline-none focus:border-[#E9164B] transition-colors"
             />
           </div>
         </div>
@@ -392,10 +383,10 @@ function SignUpForm() {
 
       <button
         type="submit"
-        className="w-full py-4 bg-gradient-to-r from-pink-500 to-purple-500 text-white font-semibold rounded-xl hover:shadow-lg hover:shadow-pink-500/25 transition-all duration-300 relative overflow-hidden group"
+        className="w-full cursor-pointer py-4 bg-linear-to-r from-[#E9164B] to-[#E9164B] text-white font-semibold rounded-xl hover:shadow-lg hover:shadow-pink-500/25 transition-all duration-300 relative overflow-hidden group"
       >
         <span className="relative z-10">Sign Up</span>
-        <div className="absolute inset-0 -translate-x-full group-hover:translate-x-full transition-transform duration-700 bg-gradient-to-r from-transparent via-white/30 to-transparent"></div>
+        <div className="absolute inset-0 -translate-x-full group-hover:translate-x-full transition-transform duration-700 bg-linear-to-r from-transparent via-white/30 to-transparent"></div>
       </button>
     </motion.form>
   );
