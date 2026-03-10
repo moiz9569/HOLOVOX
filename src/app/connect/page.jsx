@@ -470,7 +470,7 @@ export default function DashboardPage() {
   return (
     <div className="min-h-screen bg-[#0C0C2A] text-white">
       {/* Background Gradient Effect */}
-      <div className="fixed inset-0 bg-gradient-to-br from-[#E9164B]/5 via-transparent to-[#4E54E9]/5 pointer-events-none" />
+      <div className="fixed inset-0 bg-linear-to-br from-[#E9164B]/5 via-transparent to-[#4E54E9]/5 pointer-events-none" />
 
       {/* Animated Particles (simplified) */}
       <div className="fixed inset-0 overflow-hidden pointer-events-none">
@@ -500,11 +500,11 @@ export default function DashboardPage() {
             {/* Logo */}
             <div className="p-6 border-b border-white/10">
               <div className="flex items-center gap-3">
-                <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-[#E9164B] to-[#B30E3A] flex items-center justify-center">
+                <div className="w-10 h-10 rounded-xl bg-linear-to-br from-[#E9164B] to-[#B30E3A] flex items-center justify-center">
                   <Camera className="w-5 h-5" />
                 </div>
                 <div>
-                  <h1 className="text-xl font-bold bg-gradient-to-r from-white to-white/80 bg-clip-text text-transparent">
+                  <h1 className="text-xl font-bold bg-linear-to-r from-white to-white/80 bg-clip-text text-transparent">
                     HoloVox
                   </h1>
                   <p className="text-xs text-white/40">Premium Plan</p>
@@ -513,7 +513,7 @@ export default function DashboardPage() {
             </div>
 
             {/* User Credits */}
-            <div className="p-4 mx-4 mt-4 bg-gradient-to-r from-[#E9164B]/20 to-[#4E54E9]/20 rounded-xl border border-white/10">
+            <div className="p-4 mx-4 mt-4 bg-linear-to-r from-[#E9164B]/20 to-[#4E54E9]/20 rounded-xl border border-white/10">
               <div className="flex items-center justify-between mb-2">
                 <span className="text-sm text-white/60">Available Credits</span>
                 <Zap className="w-4 h-4 text-[#E9164B]" />
@@ -523,7 +523,7 @@ export default function DashboardPage() {
                 <span className="text-xs text-white/40">≈ 24 hours</span>
               </div>
               <div className="w-full h-1 bg-white/10 rounded-full mt-3">
-                <div className="w-3/4 h-full bg-gradient-to-r from-[#E9164B] to-[#4E54E9] rounded-full" />
+                <div className="w-3/4 h-full bg-linear-to-r from-[#E9164B] to-[#4E54E9] rounded-full" />
               </div>
             </div>
 
@@ -960,7 +960,7 @@ export default function DashboardPage() {
                         className="flex-1 flex flex-col items-center gap-2"
                       >
                         <div
-                          className="w-full bg-gradient-to-t from-[#E9164B] to-[#4E54E9] rounded-t-lg transition-all duration-300 hover:opacity-80"
+                          className="w-full bg-linear-to-t from-[#E9164B] to-[#4E54E9] rounded-t-lg transition-all duration-300 hover:opacity-80"
                           style={{ height: `${(item.calls / 8) * 100}%` }}
                         />
                         <span className="text-xs text-white/40">
@@ -972,7 +972,7 @@ export default function DashboardPage() {
                 </div>
 
                 {/* Profile Summary */}
-                <div className="bg-gradient-to-br from-[#E9164B]/20 to-[#4E54E9]/20 border border-white/10 rounded-xl p-6">
+                <div className="bg-linear-to-br from-[#E9164B]/20 to-[#4E54E9]/20 border border-white/10 rounded-xl p-6">
                   <div className="flex items-center gap-4 mb-4">
                     <img
                       src={userData.avatar}
