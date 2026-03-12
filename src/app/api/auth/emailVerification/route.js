@@ -2,6 +2,7 @@
 import UserModel from "@/app/models/User.model";
 import { NextResponse } from "next/server";
 import nodemailer from "nodemailer";
+import connectDB from "../../../../../lib/db";
 
 // Create transporter (use real credentials in production)
 const transporter = nodemailer.createTransport({
@@ -76,7 +77,8 @@ console.log("Stored OTP Data:", otpData);
 
     // Return OTP for testing — in production, don't send OTP back to frontend
     return NextResponse.json(
-      { message: "OTP sent successfully", otp: OTP },
+      // { message: "OTP sent successfully", otp: OTP },
+      { message: "OTP sent successfully" },
       { status: 200 }
     );
   } catch (error) {

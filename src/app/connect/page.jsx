@@ -71,7 +71,7 @@
 // }
 
 "use client";
-import { useState } from "react";
+import { useState,useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import {
   Video,
@@ -406,6 +406,23 @@ export default function DashboardPage() {
   const [showUserMenu, setShowUserMenu] = useState(false);
   const [modal, setmodal] = useState(false);
    const router = useRouter();
+
+   useEffect(() => {
+  async function fetchMeeting() {
+    try {
+      const response = await fetch("/api/user/meeting");
+      if (!response.ok) {
+        throw new Error(`HTTP error! status: ${response.status}`);
+      }
+      const jsonData = await response.json(); // <- await here
+      console.log("Fetched meeting data:", jsonData);
+    } catch (error) {
+      console.error("Error fetching meeting data:", error);
+    }
+  }
+
+  fetchMeeting();
+}, []);
 
    const createMeeting = () => {
     const roomId = uuidv4().slice(0, 6);

@@ -4,6 +4,7 @@ import { NextResponse } from "next/server";
 import bcrypt from "bcryptjs";
 import jwt from "jsonwebtoken";
 import UserModel from "@/app/models/User.model";
+import connectDB from "../../../../../lib/db";
 
 export async function POST(request) {
   try {
