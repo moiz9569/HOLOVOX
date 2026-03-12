@@ -1,37 +1,55 @@
 import mongoose from "mongoose";
 
+const ParticipantSchema = new mongoose.Schema({
+  userId: {
+    type: mongoose.Schema.Types.ObjectId,
+    ref: "HolovoxUser",
+  },
+  name: {
+    type: String,
+    required: true,
+    trim: true,
+  },
+  email: {
+    type: String,
+    required: true,
+    lowercase: true,
+    trim: true,
+  },
+  role: {
+    type: String,
+    enum: ["host", "participant"],
+    default: "participant",
+  },
+  joinedAt: {
+    type: Date,
+    default: Date.now,
+  },
+});
+
 const MeetingSchema = new mongoose.Schema(
   {
-    userId: {
-      type: mongoose.Schema.Types.ObjectId,
-      ref: "HolovoxUser",
-    },
-    email: {
-      type: String,
-      required: [true, "Email is required"],
-      unique: true,
-      lowercase: true,
-      trim: true,
-    },
-    name: {
-      type: String,
-      required: [true, "Name is required"],
-      minlength: 2,
-      maxlength: 100,
-    },
     meetingId: {
       type: String,
-        required: [true, "Meeting ID is required"],
-        trim: true,
+      required: true,
+      unique: true,
+      trim: true,
     },
+
+    hostId: {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: "HolovoxUser",
+      required: true,
+    },
+
+    participants: [ParticipantSchema], // host + clients
   },
   {
-    timestamps: true, // Adds createdAt and updatedAt
+    timestamps: true,
   }
 );
 
-// Prevent model overwrite during hot reloads (for Next.js)
-const UserModel =
-  mongoose.models.HolovoxUser || mongoose.model("HolovoxUser", UserSchema);
+const MeetingModel =
+  mongoose.models.Meeting || mongoose.model("Meeting", MeetingSchema);
 
-export default UserModel;
+export default MeetingModel;
