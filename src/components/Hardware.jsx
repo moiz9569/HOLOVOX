@@ -68,10 +68,10 @@ import { ShoppingCart, Package, Zap } from "lucide-react";
                    {product.badge}
                  </span>
                )}
-               <h3 className="font-creata text-xl font-bold text-foreground mb-2">
+               <h3 className="font-creata text-xl font-bold text-white mb-2">
                  {product.name}
                </h3>
-               <p className="text-3xl font-creata font-bold text-foreground mb-3">
+               <p className="text-3xl font-creata font-bold text-white mb-3">
                  {product.price}
                </p>
                <p className="text-muted-foreground text-[#8783AB] text-sm mb-6">
@@ -80,14 +80,14 @@ import { ShoppingCart, Package, Zap } from "lucide-react";
                
                <ul className="space-y-2 mb-8 flex-1">
                  {product.items.map((item, iIndex) => (
-                   <li key={iIndex} className="flex items-center gap-2 text-sm text-foreground/80">
+                   <li key={iIndex} className="flex items-center gap-2 text-sm text-white">
                      <Zap className="w-3 h-3 text-[#E9164B]" />
                      {item}
                    </li>
                  ))}
                </ul>
                
-               <Button className="w-full bg-card hover:bg-muted border border-border group-hover:border-[#E9164B]/50 transition-all">
+               <Button className="w-full bg-[#E9164B] text-white hover:bg-muted group-hover:border-[#E9164B]/50 transition-all">
                  <ShoppingCart className="w-4 h-4 mr-2" />
                  View Details
                </Button>

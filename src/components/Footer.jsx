@@ -30,7 +30,7 @@
            viewport={{ once: true }}
            transition={{ duration: 0.8 }}
          >
-           <h2 className="font-creata text-3xl md:text-5xl font-bold text-foreground mb-6">
+           <h2 className="font-creata text-3xl md:text-5xl font-bold text-white mb-6">
              Ready to <span className="text-[#E9164B]">Holo</span>?
            </h2>
            <p className="text-lg text-muted-foreground text-[#8783AB] mb-8 max-w-xl mx-auto">
@@ -45,7 +45,7 @@
              />
              <Button 
                type="submit"
-               className="h-12 px-8 bg-[#E9164B] hover:bg-red-500 text-primary-foreground glow-coral"
+               className="h-12 px-8 bg-[#E9164B] hover:bg-red-500 text-white glow-coral"
              >
                Join Waitlist
                <ArrowRight className="w-4 h-4 ml-2" />
@@ -75,7 +75,7 @@
            
            {Object.entries(footerLinks).map(([category, links]) => (
              <div key={category}>
-               <h4 className="font-bold text-foreground mb-4">{category}</h4>
+               <h4 className="font-bold text-white mb-4">{category}</h4>
                <ul className="space-y-3">
                  {links.map((link) => (
                    <li key={link}>

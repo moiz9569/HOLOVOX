@@ -56,8 +56,8 @@ export const Hero = () => {
 
     {/* Glass Card - Below the hero image with breathing room */}
     <div className="relative z-20 px-4 flex justify-center -mt-20 md:-mt-24">
-      <div className="items-center justify-center text-center max-w-4xl bg-[#0C0C2A] rounded-3xl p-8 md:p-12 flex flex-col gap-6">
-        <motion.h1 className="font-creata text-4xl md:text-6xl lg:text-7xl font-medium tracking-tight text-foreground" initial={{
+      <div className="items-center shadow-[0_10px_25px_rgba(233,22,75,0.3)] justify-center text-center w-5xl bg-white rounded-3xl p-8 md:p-12 flex flex-col gap-6">
+        <motion.h1 className="font-creata text-4xl md:text-6xl lg:text-8xl font-medium tracking-tight text-foreground" initial={{
         opacity: 0,
         y: 20
       }} animate={{
@@ -71,7 +71,7 @@ export const Hero = () => {
           <span className="block text-[#E4246E]">Reality</span>
         </motion.h1>
         
-        <motion.p className="text-lg md:text-xl max-w-2xl drop-shadow-lg text-[#8585ad]" initial={{
+        <motion.p className="text-lg md:text-xl max-w-3xl drop-shadow-lg text-[#8585ad]" initial={{
         opacity: 0,
         y: 20
       }} animate={{
@@ -101,7 +101,7 @@ export const Hero = () => {
           </p>
           <form className="flex flex-col sm:flex-row gap-3">
             <Input type="email" placeholder="Enter your email" className="flex-1 h-12 bg-card/60 backdrop-blur-sm border-border/50 text-foreground placeholder:text-muted-foreground" />
-            <Button type="submit" className="h-12 px-8 bg-[#E9164B] hover:bg-red-500 text-primary-foreground font-medium glow-coral transition-all">
+            <Button type="submit" className="h-12 px-8 bg-[#E9164B] hover:bg-red-500 text-white font-medium glow-coral transition-all">
               Notify Me
               <ArrowRight className="w-4 h-4 ml-2" />
             </Button>

@@ -127,7 +127,7 @@ export const Features = () => {
               <div className="w-14 h-14 rounded-xl bg-[#E9164B]/10 flex items-center justify-center mb-6 group-hover:bg-coral/20 transition-colors">
                 <feature.icon className="w-7 h-7 text-[#E9164B]" />
               </div>
-              <h3 className="font-creata font-bold text-xl text-foreground mb-3">
+              <h3 className="font-creata font-bold text-xl text-white mb-3">
                 {feature.title}
               </h3>
               <p className="text-[#78779F] leading-relaxed">

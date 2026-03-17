@@ -33,7 +33,7 @@ export const Navbar = () => {
       <motion.nav
         className={`fixed top-0 left-0 right-0 z-50 transition-all duration-300 ${
           isScrolled
-            ? "bg-background/80 backdrop-blur-xl border-b border-border/50"
+            ? "bg-background/80 backdrop-blur-xl"
             : "bg-transparent"
         }`}
         initial={{ y: -100 }}
@@ -78,7 +78,7 @@ export const Navbar = () => {
               <Button
                 onClick={() => setShowAuth(true)}
                   // onClick={() => router.push("/connect")}
-                className="bg-[#E9164B] cursor-pointer hover:bg-red-500 text-primary-foreground"
+                className="bg-[#E9164B] cursor-pointer hover:bg-red-500 text-white"
               >
                 Get Started
               </Button>

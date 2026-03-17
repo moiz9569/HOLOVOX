@@ -100,12 +100,12 @@
                className={`relative ${tier.featured ? 'lg:-mt-4 lg:mb-4' : ''}`}
              >
                {tier.featured && (
-                 <div className="absolute -top-4 left-1/2 -translate-x-1/2 px-4 py-1 bg-[#E9164B] rounded-full text-sm font-medium text-primary-foreground flex items-center gap-1">
+                 <div className="absolute -top-4 left-1/2 -translate-x-1/2 px-4 py-1 bg-[#E9164B] rounded-full text-sm font-medium text-white flex items-center gap-1">
                    <Sparkles className="w-3 h-3" />
                    Most Popular
                  </div>
                )}
-               <div className={`bg-[#0C0C2A] rounded-2xl p-8 h-full flex flex-col ${
+               <div className={`bg-white shadow-[0_10px_25px_rgba(233,22,75,0.3)] rounded-2xl p-8 h-full flex flex-col ${
                  tier.featured ? 'border-[#E9164B]/50 bg-[#0C0C2A]' : ''
                }`}>
                  <h3 className="font-creata text-xl font-bold text-foreground mb-2">
@@ -133,7 +133,7 @@
                  <Button 
                    className={`w-full ${
                      tier.featured 
-                       ? 'bg-[#E9164B] hover:bg-[#E9164B]-glow text-primary-foreground glow-[#E9164B]' 
+                       ? 'bg-[#E9164B] hover:bg-[#E9164B]-glow text-white glow-[#E9164B]' 
                        : 'bg-card hover:bg-muted border border-border'
                    }`}
                  >

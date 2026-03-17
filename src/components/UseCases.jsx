@@ -69,7 +69,7 @@ import { motion } from "framer-motion";
                      <useCase.icon className="w-6 h-6 text-[#E9164B]" />
                    </div>
                    <div>
-                     <h3 className="font-creata text-xl font-bold text-foreground mb-2">
+                     <h3 className="font-creata text-xl font-bold text-white mb-2">
                        {useCase.title}
                      </h3>
                      <p className="text-muted-foreground text-[#7B7BA2] leading-relaxed">
