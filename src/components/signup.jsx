@@ -5,7 +5,7 @@ import { useRouter } from "next/navigation";
 import { useState } from "react";
 import OtpModal from "./otpmodal";
 
-function SignUpForm() {
+function SignUpForm({ openOtpModal,onClose }) {
   const router = useRouter();
 
   const [formData, setFormData] = useState({
@@ -14,7 +14,7 @@ function SignUpForm() {
     password: "",
     confirmPassword: "",
   });
-  const [showOtpModal, setShowOtpModal] = useState(false);
+  // const [showOtpModal, setShowOtpModal] = useState(false);
 
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
@@ -26,40 +26,46 @@ function SignUpForm() {
     });
   };
 
-  const handleSubmit = async (e) => {
-    e.preventDefault();
+ const handleSubmit = async (e) => {
+  e.preventDefault();
 
-    if (formData.password !== formData.confirmPassword) {
-      return setError("Passwords do not match");
+  if (formData.password !== formData.confirmPassword) {
+    return setError("Passwords do not match");
+  }
+
+  try {
+    setLoading(true);
+
+    const res = await fetch("/api/auth/emailVerification", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({
+        email: formData.email,
+      }),
+    });
+
+    const data = await res.json();
+
+    if (!res.ok) {
+      throw new Error(data.error);
     }
 
-    try {
-      setLoading(true);
+    // close signup modal
+   // open OTP modal + close signup modal
+openOtpModal({
+  email: formData.email,
+  name: formData.name,
+  password: formData.password,
+});
 
-      const res = await fetch("/api/auth/emailVerification", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({
-          email: formData.email,
-        }),
-      });
-
-      const data = await res.json();
-
-      if (!res.ok) {
-        throw new Error(data.error);
-      }
-
-      // open OTP modal
-      setShowOtpModal(true);
-    } catch (err) {
-      setError(err.message);
-    } finally {
-      setLoading(false);
-    }
-  };
+  } catch (err) {
+    setError(err.message);
+  } finally {
+    setLoading(false);
+  }
+};
 
   return (
     <motion.form
@@ -172,14 +178,14 @@ function SignUpForm() {
       >
         {loading ? "Creating Account..." : "Sign Up"}
       </button>
-      {showOtpModal && (
+      {/* {showOtpModal && (
         <OtpModal
           email={formData.email}
           name={formData.name}
           password={formData.password}
           onClose={() => setShowOtpModal(false)}
         />
-      )}
+      )} */}
     </motion.form>
   );
 }

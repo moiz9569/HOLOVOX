@@ -6,6 +6,7 @@ import { useRouter } from "next/navigation";
 import { Menu, X, Mail, Lock, User } from "lucide-react";
 import SignUpForm from "./signup";
 import LoginForm from "./login";
+import OtpModal from "./otpmodal";
 
 const navLinks = [
   { label: "Features", href: "#features" },
@@ -19,6 +20,8 @@ export const Navbar = () => {
   const [showAuth, setShowAuth] = useState(false);
   const [isScrolled, setIsScrolled] = useState(false);
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
+  const [showOtpModal, setShowOtpModal] = useState(false);
+  const [signupData, setSignupData] = useState(null);
 
   useEffect(() => {
     const handleScroll = () => {
@@ -33,7 +36,7 @@ export const Navbar = () => {
       <motion.nav
         className={`fixed top-0 left-0 right-0 z-50 transition-all duration-300 ${
           isScrolled
-            ? "bg-background/80 backdrop-blur-xl"
+            ? "bg-background/80 backdrop-blur-xl border-b border-border/50"
             : "bg-transparent"
         }`}
         initial={{ y: -100 }}
@@ -77,8 +80,8 @@ export const Navbar = () => {
               </Button> */}
               <Button
                 onClick={() => setShowAuth(true)}
-                  // onClick={() => router.push("/connect")}
-                className="bg-[#E9164B] cursor-pointer hover:bg-red-500 text-white"
+                // onClick={() => router.push("/connect")}
+                className="bg-[#E9164B] cursor-pointer hover:bg-red-500 text-primary-foreground"
               >
                 Get Started
               </Button>
@@ -95,49 +98,66 @@ export const Navbar = () => {
         </div>
       </motion.nav>
 
-    <AnimatePresence>
-  {isMobileMenuOpen && (
-    <motion.div
-      key="mobile-menu"
-      className="fixed inset-0 z-40 bg-background/95 backdrop-blur-xl md:hidden pt-20"
-      initial={{ opacity: 0 }}
-      animate={{ opacity: 1 }}
-      exit={{ opacity: 0 }}
-    >
-      <div className="container px-4 py-8">
-        <div className="flex flex-col gap-6">
-          {navLinks.map((link) => (
-            <a
-              key={link.label}
-              href={link.href}
-              className="text-2xl font-creata text-foreground"
-              onClick={() => setIsMobileMenuOpen(false)}
-            >
-              {link.label}
-            </a>
-          ))}
-        </div>
-      </div>
-    </motion.div>
-  )}
+      <AnimatePresence>
+        {isMobileMenuOpen && (
+          <motion.div
+            key="mobile-menu"
+            className="fixed inset-0 z-40 bg-background/95 backdrop-blur-xl md:hidden pt-20"
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+          >
+            <div className="container px-4 py-8">
+              <div className="flex flex-col gap-6">
+                {navLinks.map((link) => (
+                  <a
+                    key={link.label}
+                    href={link.href}
+                    className="text-2xl font-creata text-foreground"
+                    onClick={() => setIsMobileMenuOpen(false)}
+                  >
+                    {link.label}
+                  </a>
+                ))}
+              </div>
+            </div>
+          </motion.div>
+        )}
 
-  {showAuth && (
-    <AuthModal key="auth-modal" onClose={() => setShowAuth(false)} />
-  )}
-</AnimatePresence>
+        {showAuth && (
+          // <AuthModal key="auth-modal" onClose={() => setShowAuth(false)} />
+          <AuthModal
+            key="auth-modal"
+            onClose={() => setShowAuth(false)}
+            openOtpModal={(data) => {
+              setSignupData(data);
+              setShowAuth(false);
+              setShowOtpModal(true);
+            }}
+          />
+        )}
+      </AnimatePresence>
+      {showOtpModal && signupData && (
+        <OtpModal
+          email={signupData.email}
+          name={signupData.name}
+          password={signupData.password}
+          onClose={() => setShowOtpModal(false)}
+        />
+      )}
     </>
   );
 };
 
-function AuthModal({ onClose }) {
+function AuthModal({ onClose, openOtpModal }) {
   const [isLogin, setIsLogin] = useState(true);
   useEffect(() => {
-  const handleEsc = (e) => {
-    if (e.key === "Escape") onClose();
-  };
-  window.addEventListener("keydown", handleEsc);
-  return () => window.removeEventListener("keydown", handleEsc);
-}, []);
+    const handleEsc = (e) => {
+      if (e.key === "Escape") onClose();
+    };
+    window.addEventListener("keydown", handleEsc);
+    return () => window.removeEventListener("keydown", handleEsc);
+  }, []);
 
   return (
     <motion.div
@@ -186,7 +206,11 @@ function AuthModal({ onClose }) {
           </div>
         </div>
 
-        {isLogin ? <LoginForm /> : <SignUpForm />}
+       {isLogin ? (
+  <LoginForm />
+) : (
+  <SignUpForm openOtpModal={openOtpModal} onClose={onClose} />
+)}
       </motion.div>
     </motion.div>
   );

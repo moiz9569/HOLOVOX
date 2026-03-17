@@ -54,7 +54,7 @@ function LoginForm() {
       localStorage.setItem("token", data.token);
 
       // Redirect
-      router.push("/connect");
+      router.push("/home");
       alert("Logged in successfully!");
 
     } catch (err) {
