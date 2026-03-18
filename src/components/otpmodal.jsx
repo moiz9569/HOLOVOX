@@ -200,7 +200,7 @@ function OtpModal({ email, name, password, onClose }) {
           transition={{ type: "spring", damping: 25, stiffness: 250 }}
           className="relative w-full max-w-md mx-auto"
         >
-          <div className="relative bg-gray-200 rounded-3xl border border-white/10 shadow-2xl overflow-hidden">
+          <div className="relative bg-[#0C0C2A] rounded-3xl border border-white/10 shadow-2xl overflow-hidden">
             {/* header */}
             <div className="relative p-6 pb-4">
               <motion.button
@@ -219,11 +219,11 @@ function OtpModal({ email, name, password, onClose }) {
                     : "Verify Your Email"}
                 </h2>
 
-                <p className="text-gray-700 text-sm">
+                <p className="text-gray-400 text-sm">
                   Enter the 4-digit code sent to
                 </p>
 
-                <p className="text-blue-500 font-semibold">{email}</p>
+                <p className="text-[#E9164B] font-semibold">{email}</p>
               </div>
             </div>
 
@@ -243,14 +243,14 @@ function OtpModal({ email, name, password, onClose }) {
                       }
                       onKeyDown={(e) => handleKeyDown(index, e)}
                       onPaste={handlePaste}
-                      className="w-14 h-14 text-center text-xl font-bold bg-white border border-gray-300 rounded-xl"
+                      className="w-14 h-14 text-center text-xl font-bold bg-[#0C0C2A] border border-gray-300 rounded-xl"
                     />
                   ))}
                 </div>
 
                 {/* timer */}
                 <div className="text-center mb-4">
-                  <p className="text-sm text-gray-600">
+                  <p className="text-sm text-gray-400">
                     {timeLeft > 0
                       ? `Code expires in ${formatTime(timeLeft)}`
                       : "OTP expired"}
@@ -259,7 +259,7 @@ function OtpModal({ email, name, password, onClose }) {
                   <button
                     onClick={resendOTP}
                     disabled={timeLeft > 0}
-                    className="text-blue-500 text-sm mt-2 flex items-center justify-center mx-auto"
+                    className="text-[#E9164B] text-sm mt-2 flex items-center justify-center mx-auto"
                   >
                     <FiRotateCw className="mr-2" />
                     Resend OTP
@@ -283,13 +283,13 @@ function OtpModal({ email, name, password, onClose }) {
                 <motion.button
                   onClick={verifyOTP}
                   disabled={loading || enteredOtp.length !== 4}
-                  className="w-full py-3 rounded-xl bg-blue-500 text-white font-semibold"
+                  className="w-full py-3 rounded-xl bg-[#E9164B] text-white font-semibold"
                 >
                   {loading ? "Verifying..." : "Verify OTP"}
                 </motion.button>
 
-                <div className="flex items-center justify-center mt-4 text-xs text-gray-700">
-                  <FiShield className="mr-2 text-blue-400" />
+                <div className="flex items-center justify-center mt-4 text-xs text-gray-400">
+                  <FiShield className="mr-2 text-[#E9164B]" />
                   Secure OTP Verification
                 </div>
               </div>
@@ -302,3 +302,26 @@ function OtpModal({ email, name, password, onClose }) {
 }
 
 export default OtpModal;
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
