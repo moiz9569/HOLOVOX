@@ -15,6 +15,9 @@ import { motion } from "framer-motion";
 import { useRouter, usePathname } from "next/navigation";
 import { getTokenData } from "@/app/content/data";
 import {useState, useEffect} from "react";
+import { SiGoogledocs } from "react-icons/si";
+import { GrDocumentNotes } from "react-icons/gr";
+import { IoMdContacts } from "react-icons/io";
 
 const Sidebar = () => {
   const router = useRouter();
@@ -45,11 +48,11 @@ const Sidebar = () => {
     { label: "Home", icon: Home, path: "/home" },
     { label: "AI Companion", icon: Calendar, path: "/ai" },
     { label: "Meetings", icon: Users, path: "/home/meetings" },
-    { label: "Recordings", icon: MessageSquare, path: "/recordings" },
-    { label: "Summaries", icon: Activity, path: "/summaries" },
-    { label: "Notes", icon: Settings, path: "/notes" },
-    { label: "Docs", icon: Settings, path: "/docs" },
-    { label: "Contact US", icon: Settings, path: "/contactus" },
+    { label: "Recordings", icon: MessageSquare, path: "/home/recording" },
+    { label: "Summaries", icon: Activity, path: "/home/summaries" },
+    { label: "Notes", icon: GrDocumentNotes, path: "/home/notes" },
+    { label: "Docs", icon: SiGoogledocs, path: "/home/docs" },
+    { label: "Contact US", icon: IoMdContacts, path: "/home/contactus" },
   ];
 
   const userData = {
