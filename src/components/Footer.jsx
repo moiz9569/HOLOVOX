@@ -41,7 +41,7 @@
              <Input
                type="email"
                placeholder="Enter your email"
-               className="flex-1 h-12 bg-card/60 backdrop-blur-sm border-border/50"
+               className="flex-1 h-12 bg-white backdrop-blur-sm border-border/50"
              />
              <Button 
                type="submit"

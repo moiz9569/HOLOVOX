@@ -49,7 +49,7 @@ export const Navbar = () => {
                 alt="HoloVox"
                 className="h-8 md:h-10"
               />
-              <span className="font-creata text-xl font-medium text-foreground hidden sm:block">
+              <span className="font-creata text-xl font-semibold text-foreground hidden sm:block">
                 HOLOVOX
               </span>
             </a>
@@ -60,7 +60,7 @@ export const Navbar = () => {
                 <a
                   key={link.label}
                   href={link.href}
-                  className="text-sm text-muted-foreground hover:text-foreground transition-colors"
+                  className="text-sm text-muted-foreground font-semibold hover:text-foreground transition-colors"
                 >
                   {link.label}
                 </a>

@@ -61,17 +61,17 @@ import { ShoppingCart, Package, Zap } from "lucide-react";
                whileInView={{ opacity: 1, y: 0 }}
                viewport={{ once: true }}
                transition={{ duration: 0.6, delay: index * 0.1 }}
-               className="bg-[#0C0C2A] rounded-2xl p-8 flex flex-col hover:border-[#E9164B]/30 transition-all duration-500 group"
+               className="bg-white shadow-[0_10px_25px_rgba(233,22,75,0.3)] rounded-2xl p-8 flex flex-col hover:border-[#E9164B]/30 transition-all duration-500 group"
              >
                {product.badge && (
                  <span className="inline-flex self-start px-3 py-1 rounded-full bg-[#E9164B]/20 text-[#E9164B] text-xs font-bold mb-4">
                    {product.badge}
                  </span>
                )}
-               <h3 className="font-creata text-xl font-bold text-white mb-2">
+               <h3 className="font-creata text-xl font-bold text-black mb-2">
                  {product.name}
                </h3>
-               <p className="text-3xl font-creata font-bold text-white mb-3">
+               <p className="text-3xl font-creata font-bold text-black mb-3">
                  {product.price}
                </p>
                <p className="text-muted-foreground text-[#8783AB] text-sm mb-6">
@@ -80,7 +80,7 @@ import { ShoppingCart, Package, Zap } from "lucide-react";
                
                <ul className="space-y-2 mb-8 flex-1">
                  {product.items.map((item, iIndex) => (
-                   <li key={iIndex} className="flex items-center gap-2 text-sm text-white">
+                   <li key={iIndex} className="flex items-center gap-2 text-sm text-black">
                      <Zap className="w-3 h-3 text-[#E9164B]" />
                      {item}
                    </li>

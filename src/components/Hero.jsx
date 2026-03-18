@@ -30,8 +30,10 @@ export const Hero = () => {
     <section className="relative min-h-screen flex flex-col">
       <div className="absolute inset-0">
         <img src="/hero-family.png" alt="Immersive family connection" className="w-full h-full object-cover object-center" />
-        <div className="absolute inset-0 bg-linear-to-b from-background/80 via-transparent to-background/90" />
-        <div className="absolute inset-0 bg-linear-to-r from-background/40 via-transparent to-background/40" />
+        <div className="absolute inset-0 bg-linear-to-b from-background/20 via-transparent to-background/20" />
+        <div className="absolute inset-0 bg-linear-to-r from-background/0 via-transparent to-background/0" />
+        {/* <div className="absolute inset-0 bg-linear-to-b from-background/80 via-transparent to-background/90" />
+        <div className="absolute inset-0 bg-linear-to-r from-background/40 via-transparent to-background/40" /> */}
       </div>
       
       <FloatingParticles />
@@ -58,7 +60,7 @@ export const Hero = () => {
     <div className="relative z-20 px-4 flex justify-center -mt-20 md:-mt-24">
       <div className="items-center shadow-[0_10px_25px_rgba(233,22,75,0.3)] justify-center text-center w-5xl bg-white rounded-3xl p-8 md:p-12 flex flex-col gap-6">
         <motion.h1 className="font-creata text-4xl md:text-6xl lg:text-8xl font-medium tracking-tight text-foreground" initial={{
-        opacity: 0,
+        opacity: 0.5,
         y: 20
       }} animate={{
         opacity: 1,

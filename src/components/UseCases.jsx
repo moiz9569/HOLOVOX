@@ -63,13 +63,13 @@ import { motion } from "framer-motion";
                className="relative group"
              >
                <div className={`absolute inset-0 bg-linear-to-br ${useCase.gradient} rounded-2xl blur-xl opacity-0 group-hover:opacity-100 transition-opacity duration-500`} />
-               <div className="relative bg-[#0C0C2A] rounded-2xl p-8 h-full hover:border-coral/30 transition-all duration-500">
+               <div className="relative bg-white shadow-[0_10px_25px_rgba(233,22,75,0.3)] rounded-2xl p-8 h-full hover:border-coral/30 transition-all duration-500">
                  <div className="flex items-start gap-5">
                    <div className="w-12 h-12 rounded-xl bg-[#E9164B]/10 flex items-center justify-center shrink-0">
                      <useCase.icon className="w-6 h-6 text-[#E9164B]" />
                    </div>
                    <div>
-                     <h3 className="font-creata text-xl font-bold text-white mb-2">
+                     <h3 className="font-creata text-xl font-bold text-black mb-2">
                        {useCase.title}
                      </h3>
                      <p className="text-muted-foreground text-[#7B7BA2] leading-relaxed">

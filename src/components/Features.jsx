@@ -122,12 +122,12 @@ export const Features = () => {
             <motion.div
               key={index}
               variants={itemVariants}
-              className="bg-[#0C0C2A] rounded-2xl p-8 group hover:border-coral/30 transition-all duration-500"
+              className="bg-white shadow-[0_10px_25px_rgba(233,22,75,0.3)] rounded-2xl p-8 group hover:border-coral/30 transition-all duration-500"
             >
               <div className="w-14 h-14 rounded-xl bg-[#E9164B]/10 flex items-center justify-center mb-6 group-hover:bg-coral/20 transition-colors">
                 <feature.icon className="w-7 h-7 text-[#E9164B]" />
               </div>
-              <h3 className="font-creata font-bold text-xl text-white mb-3">
+              <h3 className="font-creata font-bold text-xl text-black mb-3">
                 {feature.title}
               </h3>
               <p className="text-[#78779F] leading-relaxed">
