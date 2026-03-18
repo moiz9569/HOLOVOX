@@ -29,7 +29,7 @@ import { ShoppingCart, Package, Zap } from "lucide-react";
  
  export const Hardware = () => {
    return (
-     <section className="py-12 md:py-16 relative overflow-hidden">
+     <section className="py-12 flex justify-center md:py-16 relative overflow-hidden">
        {/* Background accent */}
        <div className="absolute bottom-0 left-0 w-full h-1/2 bg-linear-to-t from-navy-light/50 to-transparent pointer-events-none" />
        
@@ -45,7 +45,7 @@ import { ShoppingCart, Package, Zap } from "lucide-react";
              <Package className="w-4 h-4" />
              Hardware Shop
            </div>
-           <h2 className="font-creata text-3xl md:text-5xl font-bold text-foreground mb-6">
+           <h2 className="font-creata text-3xl md:text-5xl font-bold text-gray-600 mb-6">
              Get the <span className="text-[#E9164B]">Full Experience</span>
            </h2>
            <p className="text-lg text-muted-foreground text-[#8783AB]">

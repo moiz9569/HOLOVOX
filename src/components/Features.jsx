@@ -100,7 +100,7 @@ export const Features = () => {
           }}
         >
           <h2 className="font-creata text-3xl md:text-5xl font-medium mb-4"></h2>
-          <p className="text-lg text-muted-foreground">
+          <p className="text-lg text-gray-600">
             HoloVox transforms any device into a portal to someone else's world.
             See their silhouette in your reality, walk around their space, and
             feel truly connected.

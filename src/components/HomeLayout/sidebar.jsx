@@ -75,10 +75,11 @@ const Sidebar = () => {
           {/* <div className="flex items-center gap-3"> */}
             <div className="w-full flex items-center justify-center">
               <img
-                src="/holovox-logo.png"
+                src="/holovox-icon.png"
                 alt="HoloVox Logo"
-                className="w-full h-full object-cover"
+                className="w-[30%] h-[30%] object-cover"
               />
+              <span className="text-2xl font-bold text-white ml-2">HoloVox</span>
             </div>
         </div>
 

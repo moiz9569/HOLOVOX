@@ -69,7 +69,7 @@
  
  export const Pricing = () => {
    return (
-     <section className="py-12 md:py-16 relative" id="pricing">
+     <section className="py-12 flex justify-center md:py-16 relative" id="pricing">
        {/* Background */}
        <div className="absolute inset-0 bg-linear-to-b from-transparent via-navy-light/30 to-transparent pointer-events-none" />
        
@@ -81,7 +81,7 @@
            viewport={{ once: true }}
            transition={{ duration: 0.8 }}
          >
-           <h2 className="font-creata text-3xl md:text-5xl font-bold text-foreground mb-6">
+           <h2 className="font-creata text-3xl md:text-5xl font-bold text-gray-600 mb-6">
              Simple, <span className="text-[#E62064]">Transparent</span> Pricing
            </h2>
            <p className="text-lg text-[#8783AB]">
@@ -108,11 +108,11 @@
                <div className={`bg-white shadow-[0_10px_25px_rgba(233,22,75,0.3)] rounded-2xl p-8 h-full flex flex-col ${
                  tier.featured ? 'border-[#E9164B]/50 bg-[#0C0C2A]' : ''
                }`}>
-                 <h3 className="font-creata text-xl font-bold text-foreground mb-2">
+                 <h3 className="font-creata text-xl font-bold text-gray-600 mb-2">
                    {tier.name}
                  </h3>
                  <div className="flex items-baseline gap-1 mb-2">
-                   <span className="font-creata text-4xl font-bold text-foreground">
+                   <span className="font-creata text-4xl font-bold text-gray-600">
                      {tier.price}
                    </span>
                    <span className="text-muted-foreground text-[#716F96] text-sm">{tier.period}</span>
@@ -125,7 +125,7 @@
                    {tier.features.map((feature, fIndex) => (
                      <li key={fIndex} className="flex items-start gap-3 text-sm">
                        <Check className="w-4 h-4 text-[#E9164B] shrink-0 mt-0.5" />
-                       <span className="text-foreground/80">{feature}</span>
+                       <span className="text-gray-600">{feature}</span>
                      </li>
                    ))}
                  </ul>
@@ -134,7 +134,7 @@
                    className={`w-full ${
                      tier.featured 
                        ? 'bg-[#E9164B] hover:bg-[#E9164B]-glow text-white glow-[#E9164B]' 
-                       : 'bg-card hover:bg-muted border border-border'
+                       : 'bg-[#E9164B] hover:bg-[#E9164B]-glow text-white glow-[#E9164B]'
                    }`}
                  >
                    {tier.cta}

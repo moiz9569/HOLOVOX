@@ -20,7 +20,7 @@
  
  export const Footer = () => {
    return (
-     <footer className="py-16 bg-[#0C0C2A] md:py-24 border-t border-border/50">
+     <footer className="py-16 flex justify-center bg-[#0C0C2A] md:py-24 border-t border-border/50">
        <div className="container px-4">
          {/* CTA Section */}
          <motion.div
@@ -41,7 +41,7 @@
              <Input
                type="email"
                placeholder="Enter your email"
-               className="flex-1 h-12 bg-white backdrop-blur-sm border-border/50"
+               className="flex-1 h-12 bg-gray-800 backdrop-blur-sm border-border/50"
              />
              <Button 
                type="submit"
@@ -56,7 +56,16 @@
          {/* Links Grid */}
          <div className="grid grid-cols-2 md:grid-cols-5 gap-8 mb-16">
            <div className="col-span-2 md:col-span-1">
-             <img src="/holovox-logo.png" alt="HoloVox" className="h-12 mb-4" />
+             <a href="/" className="flex items-center gap-2 mb-4">
+              <img
+                src="/holovox-icon.png"
+                alt="HoloVox"
+                className="h-8 md:h-10"
+              />
+              <span className="font-creata text-xl font-semibold text-foreground hidden sm:block">
+                HOLOVOX
+              </span>
+            </a>
              <p className="text-sm text-muted-foreground text-[#8783AB] mb-4">
                See me. Feel me. Holo me.
              </p>

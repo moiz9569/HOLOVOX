@@ -31,7 +31,7 @@ import { motion } from "framer-motion";
  
  export const UseCases = () => {
    return (
-     <section className="py-12 md:py-16 relative overflow-hidden">
+     <section className="py-12 flex justify-center md:py-16 relative overflow-hidden">
        {/* Background elements */}
        <div className="absolute top-0 right-0 w-1/2 h-full bg-linear-to-l from-coral/5 to-transparent pointer-events-none" />
        
@@ -43,7 +43,7 @@ import { motion } from "framer-motion";
            viewport={{ once: true }}
            transition={{ duration: 0.8 }}
          >
-           <h2 className="font-creata text-3xl md:text-5xl font-bold text-foreground mb-6">
+           <h2 className="font-creata text-3xl md:text-5xl font-bold text-gray-600 mb-6">
              Built for <span className="text-[#E62064]">Every Connection</span>
            </h2>
            <p className="text-lg text-[#8783AB]">
@@ -90,7 +90,7 @@ import { motion } from "framer-motion";
            viewport={{ once: true }}
            transition={{ duration: 1, delay: 0.3 }}
          >
-           <p className="font-creata text-2xl md:text-3xl font-extralight text-foreground/80 italic leading-relaxed">
+           <p className="font-creata text-2xl md:text-3xl font-extralight text-gray-600/80 italic leading-relaxed">
              "In 360° VR, the world has no frames. It breathes around you, 
              responds to your presence, and turns looking into feeling."
            </p>
