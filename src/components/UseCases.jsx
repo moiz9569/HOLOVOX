@@ -12,7 +12,8 @@ import { motion } from "framer-motion";
    {
      icon: Star,
      title: "Creators & Influencers",
-     description: "Offer premium holographic sessions to fans. Monetize with our 80/20 split—you keep 80%.",
+    //  description: "Offer premium holographic sessions to fans. Monetize with our 80/20 split—you keep 80%.",
+    description: "Host paid holographic sessions and monetize your audience with our 80/20 split—you keep 80%.",
      gradient: "from-amber-500/20 to-orange-600/20",
    },
    {

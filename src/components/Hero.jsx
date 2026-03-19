@@ -83,9 +83,12 @@ export const Hero = () => {
         duration: 0.8,
         delay: 0.4
       }}>
-          Immersive 360° streaming that brings you closer. 
+          {/* Immersive 360° streaming that brings you closer. 
           Use any device—phone, smart glasses, or VR—to experience 
-          the world through someone else's eyes.
+          the world through someone else's eyes. */}
+          Experience immersive, AI-powered video that feels like you're really there. 
+Enjoy a wide-angle 360° view using just your phone—no expensive hardware required. 
+Step beyond flat calls and into real presence.
         </motion.p>
         
         <motion.div className="w-full max-w-md" initial={{

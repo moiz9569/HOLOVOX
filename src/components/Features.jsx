@@ -9,44 +9,83 @@ import {
   Shield,
 } from "lucide-react";
 
+// const features = [
+//   {
+//     icon: Smartphone,
+//     title: "Phone 360 Mode",
+//     description:
+//       "Turn your smartphone into an immersive 360° camera. No special hardware needed—just your phone.",
+//   },
+//   {
+//     icon: Glasses,
+//     title: "Smart Glasses Ready",
+//     description:
+//       "Seamlessly works with Meta, Xreal, and all major AR glasses for the ultimate immersive experience.",
+//   },
+//   {
+//     icon: Headset,
+//     title: "VR Compatible",
+//     description:
+//       "Full VR headset support for the most immersive 360° streaming with walk-around capabilities.",
+//   },
+//   {
+//     icon: Users,
+//     title: "Group Holographic Calls",
+//     description:
+//       "Connect with up to 20 people in seamless 8K quality with advanced presence detection.",
+//   },
+//   {
+//     icon: Globe,
+//     title: "Global Low Latency",
+//     description:
+//       "Priority servers ensure crystal-clear streaming with under 200ms latency worldwide.",
+//   },
+//   {
+//     icon: Shield,
+//     title: "Enterprise Security",
+//     description:
+//       "SOC-2 compliant with white-label options, API access, and dedicated support.",
+//   },
+// ];
 const features = [
   {
     icon: Smartphone,
-    title: "Phone 360 Mode",
+    title: "AI-Powered 360° Mode",
     description:
-      "Turn your smartphone into an immersive 360° camera. No special hardware needed—just your phone.",
+      "Use dual cameras with AI gap-fill to create a wide-angle ~360° immersive view—no special hardware needed.",
   },
   {
     icon: Glasses,
     title: "Smart Glasses Ready",
     description:
-      "Seamlessly works with Meta, Xreal, and all major AR glasses for the ultimate immersive experience.",
+      "Works seamlessly with Meta, Xreal, and other AR glasses for a next-level immersive experience.",
   },
   {
     icon: Headset,
     title: "VR Compatible",
     description:
-      "Full VR headset support for the most immersive 360° streaming with walk-around capabilities.",
+      "Step into full VR with walk-around capabilities and true spatial presence.",
   },
   {
     icon: Users,
-    title: "Group Holographic Calls",
+    title: "Holographic Group Calls",
     description:
-      "Connect with up to 20 people in seamless 8K quality with advanced presence detection.",
+      "Connect with up to 20 people in ultra-real presence with advanced occlusion and movement.",
   },
   {
     icon: Globe,
     title: "Global Low Latency",
     description:
-      "Priority servers ensure crystal-clear streaming with under 200ms latency worldwide.",
+      "Optimized servers ensure smooth, real-time interaction worldwide.",
   },
   {
     icon: Shield,
-    title: "Enterprise Security",
+    title: "Enterprise Ready",
     description:
-      "SOC-2 compliant with white-label options, API access, and dedicated support.",
+      "Secure, scalable, and customizable with API access and dedicated support.",
   },
 ];
+
 const containerVariants = {
   hidden: {
     opacity: 0,
@@ -99,12 +138,17 @@ export const Features = () => {
             duration: 0.8,
           }}
         >
-          <h2 className="font-creata text-3xl md:text-5xl font-medium mb-4"></h2>
-          <p className="text-lg text-gray-600">
-            HoloVox transforms any device into a portal to someone else's world.
+        
+
+           <h2 className="font-creata text-3xl md:text-5xl font-bold text-gray-600 mb-6">
+              Why <span className="text-[#E9164B]">HoloVox?</span>
+           </h2>
+           <p className="text-lg text-[#8783AB]">
+             {/* HoloVox transforms any device into a portal to someone else's world.
             See their silhouette in your reality, walk around their space, and
-            feel truly connected.
-          </p>
+            feel truly connected. */}
+             HoloVox turns any device into an immersive communication portal—combining AI-powered 360° video with real-time presence to make every call feel real.
+           </p>
         </motion.div>
 
         {/* Features Grid */}
