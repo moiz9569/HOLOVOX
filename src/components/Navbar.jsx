@@ -36,8 +36,10 @@ export const Navbar = () => {
       <motion.nav
         className={`fixed top-0 left-0 right-0 z-50 transition-all duration-300 ${
           isScrolled
-            ? "bg-background/80 backdrop-blur-xl border-b border-border/50"
-            : "bg-transparent"
+            // ? "bg-background/80 backdrop-blur-xl border-b border-border/50"
+            // : "bg-transparent"
+            ? "bg-[#0f0f0f]/80 backdrop-blur-xl border-b border-white/10"
+: "bg-transparent"
         }`}
         initial={{ y: -100 }}
         animate={{ y: 0 }}
@@ -52,7 +54,7 @@ export const Navbar = () => {
                 alt="HoloVox"
                 className="h-8 md:h-10"
               />
-              <span className="font-creata text-xl font-semibold text-foreground hidden sm:block">
+              <span className="font-creata text-xl font-semibold text-white hidden sm:block">
                 HOLOVOX
               </span>
             </a>
@@ -63,7 +65,7 @@ export const Navbar = () => {
                 <a
                   key={link.label}
                   href={link.href}
-                  className="text-sm text-muted-foreground font-semibold hover:text-foreground transition-colors"
+                  className="text-sm text-white font-semibold hover:text-foreground transition-colors"
                 >
                   {link.label}
                 </a>
@@ -81,7 +83,7 @@ export const Navbar = () => {
               <Button
                 onClick={() => setShowAuth(true)}
                 // onClick={() => router.push("/connect")}
-                className="bg-[#E9164B] cursor-pointer hover:bg-red-500 text-primary-foreground"
+                className="bg-[#E9164B] cursor-pointer hover:bg-red-500 text-white"
               >
                 Get Started
               </Button>
