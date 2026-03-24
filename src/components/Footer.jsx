@@ -41,7 +41,7 @@
              <Input
                type="email"
                placeholder="Enter your email"
-               className="flex-1 h-12 bg-white backdrop-blur-sm border-border/50"
+               className="flex-1 h-12 bg-white text-black backdrop-blur-sm border-border/50"
              />
              <Button 
                type="submit"
@@ -74,7 +74,7 @@
                  <a
                    key={index}
                    href={social.href}
-                   className="w-10 h-10 rounded-lg bg-white flex items-center justify-center text-muted-foreground hover:text-[#E9164B] hover:bg-[#E9164B]/10 transition-all"
+                   className="w-10 h-10 rounded-lg bg-white flex items-center justify-center text-black hover:text-[#E9164B] transition-all"
                  >
                    <social.icon className="w-5 h-5" />
                  </a>
