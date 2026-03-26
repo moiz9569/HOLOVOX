@@ -268,7 +268,7 @@ export default function LoginForm({ isOpen, onClose, openSignup }) {
               repeat: Infinity,
               ease: "linear"
             }}
-            className="w-20 h-20 border-4 border-blue-400 border-t-transparent rounded-full mb-6"
+            className="w-20 h-20 border-4 border-[#E9164B] border-t-transparent rounded-full mb-6"
           />
           <p className="text-white text-2xl font-bold mb-2">Login Successful!</p>
           <p className="text-gray-300 text-lg">Redirecting to dashboard...</p>
@@ -276,7 +276,7 @@ export default function LoginForm({ isOpen, onClose, openSignup }) {
             initial={{ width: 0 }}
             animate={{ width: "200px" }}
             transition={{ duration: 2, ease: "easeInOut" }}
-            className="h-1 bg-linear-to-r from-blue-500 to-cyan-400 rounded-full mt-4"
+            className="h-1 bg-[#E9164B] rounded-full mt-4"
           />
         </motion.div>
       )}
@@ -319,7 +319,7 @@ export default function LoginForm({ isOpen, onClose, openSignup }) {
           className="relative w-full max-w-md mx-auto my-8"
         >
           <div
-            className="relative bg-linear-to-r bg-white rounded-3xl border border-white/10 shadow-2xl overflow-hidden"
+            className="relative bg-linear-to-r bg-gray-300 rounded-3xl border border-white/10 shadow-2xl overflow-hidden"
             style={{
               boxShadow: `
                 0 0 40px rgba(255, 215, 0, 0.08),
@@ -489,16 +489,16 @@ export default function LoginForm({ isOpen, onClose, openSignup }) {
                       repeat: Infinity,
                       ease: "linear"
                     }}
-                    className="w-16 h-16 border-4 border-blue-400 border-t-transparent rounded-full mx-auto mb-6"
+                    className="w-16 h-16 border-4 border-[#E9164B] border-t-transparent rounded-full mx-auto mb-6"
                   />
-                  <h3 className="text-xl font-bold text-blue-500 mb-2">Login Successful!</h3>
+                  <h3 className="text-xl font-bold text-[#E9164B] mb-2">Login Successful!</h3>
                   <p className="text-gray-700 mb-4">You are being redirected to your dashboard</p>
                   <div className="w-full h-1 bg-gray-300 rounded-full overflow-hidden">
                     <motion.div
                       initial={{ width: "0%" }}
                       animate={{ width: "100%" }}
                       transition={{ duration: 1.5, ease: "easeInOut" }}
-                      className="h-full bg-linear-to-r from-blue-500 to-cyan-400"
+                      className="h-full bg-[#E9164B]"
                     />
                   </div>
                 </div>

@@ -46,9 +46,9 @@ const AdminSidebar = () => {
   // ✅ Dynamic Sidebar Config
   const navItems = [
     { label: "Home", icon: Home, path: "/home" },
-    { label: "AI Companion", icon: Calendar, path: "/ai" },
+    { label: "Users", icon: Calendar, path: "/ai" },
     { label: "Meetings", icon: Users, path: "/home/meetings" },
-    { label: "Recordings", icon: MessageSquare, path: "/home/recording" },
+    { label: "Plans", icon: MessageSquare, path: "/home/recording" },
     { label: "Summaries", icon: Activity, path: "/home/summaries" },
     { label: "Notes", icon: GrDocumentNotes, path: "/home/notes" },
     { label: "Docs", icon: SiGoogledocs, path: "/home/docs" },

@@ -535,7 +535,7 @@ export default function OtpModal({
                 repeat: Infinity,
                 ease: "linear"
               }}
-              className="w-16 h-16 border-4 border-blue-400 border-t-transparent rounded-full mb-4"
+              className="w-16 h-16 border-4 border-[#E62064] border-t-transparent rounded-full mb-4"
             />
             <p className="text-white text-lg font-semibold">Account created successfully!</p>
             <p className="text-gray-300 mt-2">Redirecting to dashboard...</p>
@@ -559,7 +559,7 @@ export default function OtpModal({
         >
           <div className="relative bg-linear-to-r bg-gray-200 rounded-3xl border border-white/10 shadow-2xl overflow-hidden">
 
-            <div className="relative p-6 pb-4">
+            <div className="relative p-6 pb-4 bg-gray-300">
               <motion.button
                 whileHover={{ scale: 1.1, rotate: 90 }}
                 whileTap={{ scale: 0.9 }}
@@ -587,12 +587,12 @@ export default function OtpModal({
                     initial={{ scale: 0.8, opacity: 0 }}
                     animate={{ scale: 1, opacity: 1 }}
                     transition={{ delay: 0.2 }}
-                    src="/hashfor-pic.png"
+                    src="/holovox-icon.png"
                     className="w-28 h-28 animate-spin-slow hover:scale-110 transition-transform duration-500 object-contain"
                   />
                   )}
                 </div>
-                <h2 className="text-2xl font-bold bg-linear-to-r from-blue-500 to-cyan-400 bg-clip-text text-transparent mb-2">
+                <h2 className="text-2xl font-bold bg-[#E62064] bg-clip-text text-transparent mb-2">
                   {isVerifyingAndRedirecting ? "Processing..." : "Verify Your Email"}
                 </h2>
                 <p className="text-gray-700 text-sm mb-1">
@@ -600,14 +600,14 @@ export default function OtpModal({
                     ? "Your account is being created..." 
                     : "Enter the 4-digit code sent to"}
                 </p>
-                <p className="text-blue-400 font-semibold text-sm mb-4">
+                <p className="text-[#E62064] font-semibold text-sm mb-4">
                   {email}
                 </p>
               </div>
             </div>
 
             {!isVerifyingAndRedirecting && (
-              <div className="px-6 pb-6">
+              <div className="px-6 pb-6 bg-gray-300">
                 <div className="flex justify-center space-x-3 mb-6">
                   {otp.map((digit, index) => (
                     <motion.input
@@ -621,7 +621,7 @@ export default function OtpModal({
                       onKeyDown={(e) => handleKeyDown(index, e)}
                       onPaste={handlePaste}
                       disabled={loading}
-                      className="w-16 h-16 text-center text-2xl font-bold bg-white/40 border border-gray-300 rounded-2xl text-black focus:outline-none focus:border-blue-600 transition disabled:opacity-50 disabled:cursor-not-allowed"
+                      className="w-16 h-16 text-center text-2xl font-bold bg-white/40 border border-gray-300 rounded-2xl text-black focus:outline-none focus:border-[#E62064] transition disabled:opacity-50 disabled:cursor-not-allowed"
                     />
                   ))}
                 </div>
@@ -635,7 +635,7 @@ export default function OtpModal({
                     type="button"
                     onClick={resendOTP}
                     disabled={timeLeft > 540 || loading}
-                    className="cursor-pointer text-blue-400 hover:text-blue-300 disabled:text-gray-500 disabled:cursor-not-allowed text-sm font-semibold transition flex items-center justify-center mx-auto"
+                    className="cursor-pointer text-[#E62064] hover:text-[#E62064]/80 disabled:text-gray-500 disabled:cursor-not-allowed text-sm font-semibold transition flex items-center justify-center mx-auto"
                   >
                     <FiRotateCw className="mr-2" />
                     Resend OTP
@@ -656,7 +656,7 @@ export default function OtpModal({
                   disabled={loading || enteredOtp.length !== 4}
                   whileHover={{ scale: loading ? 1 : 1.02 }}
                   whileTap={{ scale: loading ? 1 : 0.98 }}
-                  className="w-full cursor-pointer py-3 rounded-2xl bg-linear-to-r from-blue-500 to-cyan-400 text-white font-semibold text-lg shadow-md hover:shadow-lg transition-all disabled:opacity-50 disabled:cursor-not-allowed relative"
+                  className="w-full cursor-pointer py-3 rounded-2xl bg-[#E62064] text-white font-semibold text-lg shadow-md hover:shadow-lg transition-all disabled:opacity-50 disabled:cursor-not-allowed relative"
                 >
                   {loading ? (
                     <span className="flex items-center justify-center">
@@ -677,7 +677,7 @@ export default function OtpModal({
                 </motion.button>
 
                 <div className="flex items-center justify-center mt-4 text-xs text-gray-700">
-                  <FiShield className="mr-2 text-blue-400" />
+                  <FiShield className="mr-2 text-[#E62064]" />
                   Secure OTP Verification
                 </div>
               </div>

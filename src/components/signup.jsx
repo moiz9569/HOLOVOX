@@ -326,7 +326,7 @@ export default function SignUpForm({ isOpen, onClose, openLogin, openOTP }) {
             className="relative w-full max-w-md mx-auto my-8"
           >
             <div
-              className="relative bg-linear-to-r bg-gray-200 rounded-3xl border border-white/10 shadow-2xl overflow-hidden"
+              className="relative bg-linear-to-r bg-gray-300 rounded-3xl border border-white/10 shadow-2xl overflow-hidden"
               style={{
                 boxShadow: `
                   0 0 40px rgba(255, 215, 0, 0.08),
