@@ -278,7 +278,7 @@ const MeetingModal = ({ onClose }) => {
   };
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/60">
+    <div className="fixed inset-0 mt-80 z-50 flex items-center justify-center bg-black/60">
       <motion.div
         initial={{ scale: 0.8, opacity: 0 }}
         animate={{ scale: 1, opacity: 1 }}
@@ -286,7 +286,7 @@ const MeetingModal = ({ onClose }) => {
       >
         <button
           onClick={onClose}
-          className="absolute top-4 right-4 text-white hover:text-red-400"
+          className="absolute cursor-pointer top-4 right-4 text-white hover:text-red-400"
         >
           ✕
         </button>
@@ -311,7 +311,7 @@ const MeetingModal = ({ onClose }) => {
 
         <button
           onClick={joinMeeting}
-          className="w-full py-3 bg-[#E9164B] rounded-xl text-white font-semibold hover:bg-[#B30E3A]"
+          className="w-full cursor-pointer py-3 bg-[#E9164B] rounded-xl text-white font-semibold hover:bg-[#B30E3A]"
         >
           Join Meeting
         </button>

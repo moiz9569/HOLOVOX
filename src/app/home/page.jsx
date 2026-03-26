@@ -31,7 +31,7 @@ useEffect(() => {
   const user = {
     name:  decodedUser?.name,
     email: decodedUser?.email,
-    avatar: "https://randomuser.me/api/portraits/men/75.jpg",
+    avatar: decodedUser?.image,
     meetingId: "123-456-789",
   };
 
