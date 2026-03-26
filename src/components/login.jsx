@@ -319,7 +319,7 @@ export default function LoginForm({ isOpen, onClose, openSignup }) {
           className="relative w-full max-w-md mx-auto my-8"
         >
           <div
-            className="relative bg-linear-to-r bg-gray-200 rounded-3xl border border-white/10 shadow-2xl overflow-hidden"
+            className="relative bg-linear-to-r bg-white rounded-3xl border border-white/10 shadow-2xl overflow-hidden"
             style={{
               boxShadow: `
                 0 0 40px rgba(255, 215, 0, 0.08),
@@ -334,7 +334,7 @@ export default function LoginForm({ isOpen, onClose, openSignup }) {
                 whileTap={{ scale: 0.9 }}
                 onClick={onClose}
                 disabled={isLoading || isRedirecting}
-                className="absolute cursor-pointer top-5 right-5 w-8 h-8 flex items-center justify-center rounded-full bg-black/20 hover:bg-black/60 text-gray-300 hover:text-white transition disabled:opacity-50 disabled:cursor-not-allowed"
+                className="absolute cursor-pointer top-5 right-5 w-8 h-8 flex items-center justify-center rounded-full bg-black/20 hover:bg-black/60 text-gray-700 hover:text-white transition disabled:opacity-50 disabled:cursor-not-allowed"
               >
                 <FiX className="text-lg" />
               </motion.button>
@@ -372,7 +372,7 @@ export default function LoginForm({ isOpen, onClose, openSignup }) {
                     initial={{ scale: 0.8, opacity: 0 }}
                     animate={{ scale: 1, opacity: 1 }}
                     transition={{ delay: 0.2 }}
-                    src="/hashfor-Brand-logo.png"
+                    src="/holovox-icon.png"
                     className="w-28 h-28 animate-spin-slow hover:scale-110 transition-transform duration-500 object-contain"
                   />
                 )}
@@ -384,11 +384,11 @@ export default function LoginForm({ isOpen, onClose, openSignup }) {
                 transition={{ delay: 0.3 }}
                 className="text-center"
               >
-                <h2 className="text-2xl font-exo-2 font-bold bg-linear-to-r from-blue-500 to-cyan-400 bg-clip-text text-transparent mb-1">
+                <h2 className="text-2xl font-exo-2 font-bold bg-[#E62064] bg-clip-text text-transparent mb-1">
                   {isRedirecting ? "Welcome Back!" : "Welcome Back"}
                 </h2>
                 <p className="text-gray-700 font-inter text-sm">
-                  {isRedirecting ? "Redirecting to your dashboard..." : "Access your Hashfor portfolio securely"}
+                  {isRedirecting ? "Redirecting to your dashboard..." : "Access your Holovox portfolio securely"}
                 </p>
               </motion.div>
             </div>
@@ -399,33 +399,33 @@ export default function LoginForm({ isOpen, onClose, openSignup }) {
                 <form className="space-y-4 font-exo-2" onSubmit={(e) => e.preventDefault()}>
                   {/* Email */}
                   <div className="relative">
-                    <FiMail className="absolute left-4 top-1/2 -translate-y-1/2 text-blue-400" />
+                    <FiMail className="absolute left-4 top-1/2 -translate-y-1/2 text-[#E62064]" />
                     <input
                       type="email"
                       value={email}
                       onChange={(e) => setEmail(e.target.value)}
                       placeholder="Enter your email"
                       disabled={isLoading}
-                      className="w-full pl-12 pr-4 py-3 rounded-2xl bg-white/40 border border-blue-400 text-black placeholder-gray-700 font-exo-2 focus:outline-none focus:border-blue-400 focus:ring-1 focus:ring-blue-400 disabled:opacity-50 disabled:cursor-not-allowed"
+                      className="w-full pl-12 pr-4 py-3 rounded-2xl bg-white/40 border border-[#E62064] text-black placeholder-gray-700 font-exo-2 focus:outline-none focus:border-[#E62064] focus:ring-1 focus:ring-[#E62064] disabled:opacity-50 disabled:cursor-not-allowed"
                     />
                   </div>
 
                   {/* Password */}
                   <div className="relative">
-                    <FiLock className="absolute left-4 top-1/2 -translate-y-1/2 text-blue-400" />
+                    <FiLock className="absolute left-4 top-1/2 -translate-y-1/2 text-[#E62064]" />
                     <input
                       type={showPassword ? "text" : "password"}
                       value={password}
                       onChange={(e) => setPassword(e.target.value)}
                       placeholder="Enter your password"
                       disabled={isLoading}
-                      className="w-full pl-12 pr-4 py-3 rounded-2xl bg-white/40 border border-blue-400 text-black placeholder-gray-700 font-exo-2 focus:outline-none focus:border-blue-400 focus:ring-1 focus:ring-blue-400 disabled:opacity-50 disabled:cursor-not-allowed"
+                      className="w-full pl-12 pr-4 py-3 rounded-2xl bg-white/40 border border-[#E62064] text-black placeholder-gray-700 font-exo-2 focus:outline-none focus:border-[#E62064] focus:ring-1 focus:ring-[#E62064] disabled:opacity-50 disabled:cursor-not-allowed"
                     />
                     <button
                       type="button"
                       onClick={() => setShowPassword(!showPassword)}
                       disabled={isLoading}
-                      className="absolute cursor-pointer right-4 top-1/2 -translate-y-1/2 text-blue-400 hover:text-blue-600 transition disabled:opacity-50 disabled:cursor-not-allowed"
+                      className="absolute cursor-pointer right-4 top-1/2 -translate-y-1/2 text-[#E62064] hover:text-[#E62064]/80 transition disabled:opacity-50 disabled:cursor-not-allowed"
                     >
                       {showPassword ? <FiEyeOff /> : <FiEye />}
                     </button>
@@ -438,7 +438,7 @@ export default function LoginForm({ isOpen, onClose, openSignup }) {
                     disabled={isLoading || !email || !password}
                     whileHover={!isLoading && email && password ? { scale: 1.02 } : {}}
                     whileTap={!isLoading && email && password ? { scale: 0.98 } : {}}
-                    className="w-full cursor-pointer mt-3 py-3 rounded-2xl bg-linear-to-r from-blue-500 to-cyan-400 text-white font-semibold text-lg shadow-md hover:shadow-lg transition-all disabled:opacity-50 disabled:cursor-not-allowed relative overflow-hidden"
+                    className="w-full cursor-pointer mt-3 py-3 rounded-2xl bg-[#E62064] text-white font-semibold text-lg shadow-md hover:shadow-lg transition-all disabled:opacity-50 disabled:cursor-not-allowed relative overflow-hidden"
                   >
                     {isLoading ? (
                       <div className="flex justify-center items-center">
@@ -462,14 +462,14 @@ export default function LoginForm({ isOpen, onClose, openSignup }) {
                 {/* Signup */}
                 <div className="text-center font-exo-2 mt-5 pt-5 border-t border-white/10">
                   <p className="text-gray-700">
-                    New to Hashfor?{" "}
+                    New to Holovox?{" "}
                     <button
                       onClick={() => {
                         onClose();
                         openSignup();
                       }}
                       disabled={isLoading}
-                      className="cursor-pointer bg-linear-to-r from-blue-500 to-cyan-400 text-transparent bg-clip-text font-semibold hover:text-blue-400 transition disabled:opacity-50 disabled:cursor-not-allowed"
+                      className="cursor-pointer bg-[#E62064] text-transparent bg-clip-text font-semibold hover:text-[#E62064]/80 transition disabled:opacity-50 disabled:cursor-not-allowed"
                     >
                       Create Account
                     </button>
