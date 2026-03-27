@@ -60,8 +60,8 @@ const MeetingsPage = () => {
       
       {/* Header */}
       <div className="mb-6">
-        <h1 className="text-2xl font-bold">Meetings</h1>
-        <p className="text-white/60 text-sm">
+        <h1 className="text-2xl font-bold text-black">Meetings</h1>
+        <p className="text-[#E9164B] text-sm">
           Manage and schedule your meetings
         </p>
       </div>
@@ -70,7 +70,7 @@ const MeetingsPage = () => {
       <div className="grid md:grid-cols-3 gap-6 mb-8">
         
         {/* Schedule */}
-        <div className="p-6 bg-white/5 rounded-2xl border border-white/10">
+        <div className="p-6 bg-gray-300 rounded-2xl border border-white/10">
           <Calendar className="mb-3 text-[#E9164B]" />
           <h3 className="font-semibold">Schedule Meeting</h3>
           <p className="text-sm text-white/60 mb-4">
@@ -94,7 +94,7 @@ const MeetingsPage = () => {
         </div>
 
         {/* Personal Room */}
-        <div className="p-6 bg-white/5 rounded-2xl border border-white/10">
+        <div className="p-6 bg-gray-300 rounded-2xl border border-white/10">
           <Users className="mb-3 text-[#E9164B]" />
           <h3 className="font-semibold">Personal Room</h3>
           <p className="text-sm text-white/60 mb-3">

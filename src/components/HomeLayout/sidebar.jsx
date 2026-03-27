@@ -66,7 +66,7 @@ const Sidebar = () => {
     <motion.div
       initial={{ x: -300 }}
       animate={{ x: 0 }}
-      className="fixed lg:static inset-y-0 left-0 z-20 w-72 bg-[#111133]/90 backdrop-blur-xl border-r border-white/10"
+      className="fixed lg:static inset-y-0 left-0 z-20 w-72 bg-gray-300 backdrop-blur-xl border-r border-white/10"
     >
       <div className="flex flex-col h-full">
         
@@ -79,7 +79,7 @@ const Sidebar = () => {
                 alt="HoloVox Logo"
                 className="w-[30%] h-[30%] object-cover"
               />
-              <span className="text-2xl font-bold text-white ml-2">HoloVox</span>
+              <span className="text-2xl font-bold text-[#E62064] ml-2">HoloVox</span>
             </div>
         </div>
 
@@ -128,7 +128,7 @@ const Sidebar = () => {
             </div>
 
             <button className="p-2 hover:bg-white/10 rounded-lg transition">
-              <LogOut className="w-4 h-4 text-white/60" />
+              <LogOut className="w-4 h-4 text-[#E62064]" />
             </button>
           </div>
         </div>
@@ -145,7 +145,7 @@ function NavItem({ icon: Icon, label, active, onClick }) {
       className={`w-full flex items-center gap-3 px-4 py-3 rounded-lg transition ${
         active
           ? "bg-[#E9164B] text-white"
-          : "text-white/60 hover:bg-white/5 hover:text-white"
+          : "text-black hover:bg-[#E9164B]/50 hover:text-white"
       }`}
     >
       <Icon className="w-5 h-5" />

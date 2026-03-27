@@ -340,7 +340,7 @@ const Header = () => {
   };
 
   return (
-    <header className="sticky top-0 z-40 bg-[#0C0C2A]/80 backdrop-blur-xl border-b border-white/10">
+    <header className="sticky top-0 z-40 bg-gray-300 backdrop-blur-xl border-b border-white/10">
       <div className="flex items-center justify-between px-6 py-4">
         
         {/* Left */}
@@ -356,7 +356,7 @@ const Header = () => {
               placeholder="Search..."
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
-              className="w-80 pl-10 pr-4 py-2 bg-white/5 border border-white/10 rounded-lg text-sm text-white"
+              className="w-80 pl-10 pr-4 py-2 placeholder-[#E62064] bg-white text-black border border-[#E62064] focus:outline-none focus:border-[#E62064] focus:ring-1 focus:ring-[#E62064] rounded-lg text-sm"
             />
           </div>
         </div>
@@ -367,7 +367,7 @@ const Header = () => {
           {/* Create */}
           <button
             onClick={createMeeting}
-            className="hidden cursor-pointer md:flex items-center gap-2 px-4 py-2 border border-white rounded-lg text-sm hover:bg-[#E9164B] hover:border-none transition"
+            className="hidden cursor-pointer md:flex items-center gap-2 px-4 py-2 border border-[#E62064] text-black rounded-lg text-sm hover:bg-[#E9164B] hover:text-white hover:border-none transition"
           >
             <Video className="w-4 h-4" />
             Create
@@ -388,7 +388,7 @@ const Header = () => {
               onClick={() => setShowNotifications(!showNotifications)}
               className="p-2 hover:bg-white/10 rounded-lg"
             >
-              <Bell className="w-5 h-5" />
+              <Bell className="w-5 h-5 text-[#E9164B]" />
             </button>
 
             <AnimatePresence>
@@ -417,7 +417,7 @@ const Header = () => {
                 src={userData.avatar}
                 className="w-8 h-8 rounded-lg"
               />
-              <ChevronDown className="w-4 h-4" />
+              <ChevronDown className="w-4 h-4 text-black" />
             </button>
 
             <AnimatePresence>
