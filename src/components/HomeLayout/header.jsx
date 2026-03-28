@@ -236,19 +236,8 @@
 
 // export default Header;
 
-
-
-
-
-
-
-
-
-
-
-
 "use client";
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import {
   Menu,
   Search,
@@ -265,6 +254,7 @@ import {
 import { AnimatePresence, motion } from "framer-motion";
 import { v4 as uuidv4 } from "uuid";
 import { useRouter } from "next/navigation";
+import { getTokenData } from "@/app/content/data";
 
 // ✅ Separate Modal Component
 const MeetingModal = ({ onClose }) => {
@@ -293,9 +283,7 @@ const MeetingModal = ({ onClose }) => {
 
         <div className="text-center mb-6">
           <h2 className="text-2xl font-bold text-white">Join Meeting</h2>
-          <p className="text-white/60 text-sm">
-            Enter Meeting ID to continue
-          </p>
+          <p className="text-white/60 text-sm">Enter Meeting ID to continue</p>
         </div>
 
         <div className="relative mb-4">
@@ -328,10 +316,29 @@ const Header = () => {
   const [showNotifications, setShowNotifications] = useState(false);
   const [showModal, setShowModal] = useState(false);
 
+  const [decodedUser, setDecodedUser] = useState([]);
+
+  useEffect(() => {
+    const fetchUser = async () => {
+      try {
+        setLoading(true);
+        const user = await getTokenData();
+        // console.log("Decoded User:", user);
+        setDecodedUser(user || {});
+      } catch (error) {
+        console.error("Error fetching user data:", error);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchUser();
+  }, []);
+
   // ✅ Dummy user data (later replace with backend)
   const userData = {
     name: "Talha Ahmed",
-    avatar: "https://randomuser.me/api/portraits/men/75.jpg",
+    avatar: decodedUser?.image,
   };
 
   const createMeeting = () => {
@@ -340,16 +347,15 @@ const Header = () => {
   };
 
   return (
-    <header className="sticky top-0 z-40 bg-gray-300 backdrop-blur-xl border-b border-white/10">
+    <header className="sticky top-0 z-40 bg-gray-100 backdrop-blur-xl border-b border-[#E62064]">
       <div className="flex items-center justify-between px-6 py-4">
-        
         {/* Left */}
         <div className="flex items-center gap-4">
           <button className="lg:hidden p-2 hover:bg-white/10 rounded-lg">
             <Menu className="w-5 h-5" />
           </button>
 
-          <div className="relative hidden md:block">
+          {/* <div className="relative hidden md:block">
             <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-white/40" />
             <input
               type="text"
@@ -358,16 +364,28 @@ const Header = () => {
               onChange={(e) => setSearchQuery(e.target.value)}
               className="w-80 pl-10 pr-4 py-2 placeholder-[#E62064] bg-white text-black border border-[#E62064] focus:outline-none focus:border-[#E62064] focus:ring-1 focus:ring-[#E62064] rounded-lg text-sm"
             />
+          </div> */}
+          <div className="border-b border-white/10">
+            {/* <div className="flex items-center gap-3"> */}
+            <div className="w-full flex items-center justify-start">
+              <img
+                src="/holovox-icon.png"
+                alt="HoloVox Logo"
+                className="w-[8%] h-[8%] object-cover"
+              />
+              <span className="text-3xl font-bold text-[#E62064] ml-2">
+                HoloVox
+              </span>
+            </div>
           </div>
         </div>
 
         {/* Right */}
         <div className="flex items-center gap-3">
-          
           {/* Create */}
           <button
             onClick={createMeeting}
-            className="hidden cursor-pointer md:flex items-center gap-2 px-4 py-2 border border-[#E62064] text-black rounded-lg text-sm hover:bg-[#E9164B] hover:text-white hover:border-none transition"
+            className="hidden cursor-pointer md:flex items-center gap-2 px-4 py-2 border border-[#E62064] text-[#E62064] rounded-lg text-sm hover:bg-[#E9164B] hover:text-white hover:border-none transition"
           >
             <Video className="w-4 h-4" />
             Create
@@ -399,9 +417,7 @@ const Header = () => {
                   exit={{ opacity: 0, y: 10 }}
                   className="absolute right-0 mt-2 w-72 bg-[#111133] rounded-xl p-4"
                 >
-                  <p className="text-sm text-white/60">
-                    No new notifications
-                  </p>
+                  <p className="text-sm text-white/60">No new notifications</p>
                 </motion.div>
               )}
             </AnimatePresence>
@@ -413,10 +429,7 @@ const Header = () => {
               onClick={() => setShowUserMenu(!showUserMenu)}
               className="flex items-center gap-2"
             >
-              <img
-                src={userData.avatar}
-                className="w-8 h-8 rounded-lg"
-              />
+              <img src={userData.avatar} className="w-8 h-8 rounded-lg" />
               <ChevronDown className="w-4 h-4 text-black" />
             </button>
 
