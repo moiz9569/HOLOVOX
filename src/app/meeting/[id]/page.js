@@ -833,30 +833,6 @@
 //   );
 // }
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 "use client";
 import { useEffect, useState, Suspense, useRef } from "react";
 import { useParams, useSearchParams, useRouter } from "next/navigation";
@@ -919,6 +895,67 @@ function MeetingContent() {
   const router = useRouter();
   const isHost = searchParams.get("role") === "host";
 
+  const [isRecording, setIsRecording] = useState(false);
+  const mediaRecorderRef = useRef(null);
+  const recordedChunksRef = useRef([]);
+  const recordingStreamRef = useRef(null);
+
+  const startRecording = async () => {
+    try {
+      const stream = await navigator.mediaDevices.getDisplayMedia({
+        video: true,
+        audio: true,
+      });
+
+      recordingStreamRef.current = stream;
+
+      const mediaRecorder = new MediaRecorder(stream);
+
+      mediaRecorderRef.current = mediaRecorder;
+      recordedChunksRef.current = [];
+
+      mediaRecorder.ondataavailable = (event) => {
+        if (event.data.size > 0) {
+          recordedChunksRef.current.push(event.data);
+        }
+      };
+
+      mediaRecorder.start();
+      setIsRecording(true);
+    } catch (error) {
+      console.error("Recording error:", error);
+    }
+  };
+
+  const stopRecording = () => {
+    const mediaRecorder = mediaRecorderRef.current;
+
+    if (!mediaRecorder) return;
+
+    mediaRecorder.stop();
+
+    mediaRecorder.onstop = () => {
+      const blob = new Blob(recordedChunksRef.current, {
+        type: "video/webm",
+      });
+
+      const url = URL.createObjectURL(blob);
+
+      const a = document.createElement("a");
+      a.href = url;
+      a.download = `holovox-meeting-${Date.now()}.webm`;
+      a.click();
+
+      recordedChunksRef.current = [];
+
+      if (recordingStreamRef.current) {
+        recordingStreamRef.current.getTracks().forEach((track) => track.stop());
+      }
+    };
+
+    setIsRecording(false);
+  };
+
   const [remotePeers, setRemotePeers] = useState([]);
   const [activeStreamId, setActiveStreamId] = useState("local");
   const [isAframeLoaded, setIsAframeLoaded] = useState(false);
@@ -934,7 +971,7 @@ function MeetingContent() {
   const [showControls, setShowControls] = useState(true);
   const [notification, setNotification] = useState(null);
   const [hoveredParticipant, setHoveredParticipant] = useState(null);
-  
+
   // New state variables
   const [showReactions, setShowReactions] = useState(false);
   const [reactions, setReactions] = useState([]);
@@ -955,7 +992,7 @@ function MeetingContent() {
   });
   const [participantNames, setParticipantNames] = useState({});
   const [showMoreMenu, setShowMoreMenu] = useState(null);
-  
+
   const canvasRef = useRef(null);
   const ctxRef = useRef(null);
   const isDrawingRef = useRef(false);
@@ -970,7 +1007,9 @@ function MeetingContent() {
         setRemotePeers((prev) => {
           if (prev.find((p) => p.id === peerId)) return prev;
           if (!isHost && peerIsHost) setActiveStreamId(peerId);
-          showNotification(`${peerIsHost ? "Host" : "Guest"} joined the meeting`);
+          showNotification(
+            `${peerIsHost ? "Host" : "Guest"} joined the meeting`,
+          );
           return [
             ...prev,
             {
@@ -987,7 +1026,9 @@ function MeetingContent() {
 
       const interval = setInterval(() => {
         const qualities = ["good", "average", "poor"];
-        setConnectionQuality(qualities[Math.floor(Math.random() * qualities.length)]);
+        setConnectionQuality(
+          qualities[Math.floor(Math.random() * qualities.length)],
+        );
       }, 10000);
 
       return () => clearInterval(interval);
@@ -1002,7 +1043,10 @@ function MeetingContent() {
     const handleMouseMove = () => {
       setShowControls(true);
       clearTimeout(controlsTimeoutRef.current);
-      controlsTimeoutRef.current = setTimeout(() => setShowControls(false), 3000);
+      controlsTimeoutRef.current = setTimeout(
+        () => setShowControls(false),
+        3000,
+      );
     };
     window.addEventListener("mousemove", handleMouseMove);
     return () => {
@@ -1014,7 +1058,8 @@ function MeetingContent() {
   // Scroll chat to bottom
   useEffect(() => {
     if (chatContainerRef.current) {
-      chatContainerRef.current.scrollTop = chatContainerRef.current.scrollHeight;
+      chatContainerRef.current.scrollTop =
+        chatContainerRef.current.scrollHeight;
     }
   }, [messages]);
 
@@ -1038,7 +1083,9 @@ function MeetingContent() {
   };
 
   const copyLink = () => {
-    navigator.clipboard.writeText(`https://holovox-jade.vercel.app/meeting/${roomId}`);
+    navigator.clipboard.writeText(
+      `https://holovox-jade.vercel.app/meeting/${roomId}`,
+    );
     showNotification("Invite link copied to clipboard!", "success");
   };
 
@@ -1088,7 +1135,9 @@ function MeetingContent() {
   const toggleScreenShare = () => {
     if (permissions.shareScreen || isHost) {
       setIsScreenSharing(!isScreenSharing);
-      showNotification(isScreenSharing ? "Stopped screen sharing" : "Started screen sharing");
+      showNotification(
+        isScreenSharing ? "Stopped screen sharing" : "Started screen sharing",
+      );
     } else {
       showNotification("Screen sharing is disabled by host", "error");
     }
@@ -1105,21 +1154,27 @@ function MeetingContent() {
     setReactions([...reactions, reaction]);
     showNotification(`You sent a ${reactionType} reaction`);
     setShowReactions(false);
-    
+
     // Auto-hide reaction after 3 seconds
     setTimeout(() => {
-      setReactions(prev => prev.filter(r => r.id !== reaction.id));
+      setReactions((prev) => prev.filter((r) => r.id !== reaction.id));
     }, 3000);
   };
 
   const getReactionIcon = (type) => {
-    switch(type) {
-      case "thumbsup": return <ThumbsUp size={24} className="text-yellow-400" />;
-      case "smile": return <Smile size={24} className="text-yellow-400" />;
-      case "heart": return <Heart size={24} className="text-red-400" />;
-      case "laugh": return <Laugh size={24} className="text-yellow-400" />;
-      case "frown": return <Frown size={24} className="text-yellow-400" />;
-      default: return <Smile size={24} className="text-yellow-400" />;
+    switch (type) {
+      case "thumbsup":
+        return <ThumbsUp size={24} className="text-yellow-400" />;
+      case "smile":
+        return <Smile size={24} className="text-yellow-400" />;
+      case "heart":
+        return <Heart size={24} className="text-red-400" />;
+      case "laugh":
+        return <Laugh size={24} className="text-yellow-400" />;
+      case "frown":
+        return <Frown size={24} className="text-yellow-400" />;
+      default:
+        return <Smile size={24} className="text-yellow-400" />;
     }
   };
 
@@ -1128,8 +1183,10 @@ function MeetingContent() {
     if (whiteboardMode === "draw" || whiteboardMode === "erase") {
       isDrawingRef.current = true;
       const rect = canvasRef.current.getBoundingClientRect();
-      const x = (e.clientX - rect.left) * (canvasRef.current.width / rect.width);
-      const y = (e.clientY - rect.top) * (canvasRef.current.height / rect.height);
+      const x =
+        (e.clientX - rect.left) * (canvasRef.current.width / rect.width);
+      const y =
+        (e.clientY - rect.top) * (canvasRef.current.height / rect.height);
       ctxRef.current.beginPath();
       ctxRef.current.moveTo(x, y);
     }
@@ -1140,7 +1197,7 @@ function MeetingContent() {
     const rect = canvasRef.current.getBoundingClientRect();
     const x = (e.clientX - rect.left) * (canvasRef.current.width / rect.width);
     const y = (e.clientY - rect.top) * (canvasRef.current.height / rect.height);
-    
+
     if (whiteboardMode === "erase") {
       ctxRef.current.globalCompositeOperation = "destination-out";
       ctxRef.current.lineWidth = 20;
@@ -1149,7 +1206,7 @@ function MeetingContent() {
       ctxRef.current.strokeStyle = whiteboardColor;
       ctxRef.current.lineWidth = 2;
     }
-    
+
     ctxRef.current.lineTo(x, y);
     ctxRef.current.stroke();
     ctxRef.current.beginPath();
@@ -1165,7 +1222,12 @@ function MeetingContent() {
 
   const clearWhiteboard = () => {
     if (ctxRef.current) {
-      ctxRef.current.clearRect(0, 0, canvasRef.current.width, canvasRef.current.height);
+      ctxRef.current.clearRect(
+        0,
+        0,
+        canvasRef.current.width,
+        canvasRef.current.height,
+      );
       setWhiteboardData([]);
       showNotification("Whiteboard cleared", "success");
     }
@@ -1182,26 +1244,37 @@ function MeetingContent() {
   // Security Functions
   const toggleMeetingLock = () => {
     setMeetingLocked(!meetingLocked);
-    showNotification(meetingLocked ? "Meeting unlocked" : "Meeting locked - No new participants can join");
+    showNotification(
+      meetingLocked
+        ? "Meeting unlocked"
+        : "Meeting locked - No new participants can join",
+    );
   };
 
   const toggleHideProfilePictures = () => {
     setHideProfilePictures(!hideProfilePictures);
-    showNotification(hideProfilePictures ? "Profile pictures visible" : "Profile pictures hidden");
+    showNotification(
+      hideProfilePictures
+        ? "Profile pictures visible"
+        : "Profile pictures hidden",
+    );
   };
 
   // Permission Functions (Host only)
   const updatePermissions = (permission, value) => {
     if (isHost) {
       setPermissions({ ...permissions, [permission]: value });
-      showNotification(`${permission} ${value ? "enabled" : "disabled"}`, "success");
+      showNotification(
+        `${permission} ${value ? "enabled" : "disabled"}`,
+        "success",
+      );
     }
   };
 
   // Participant Management (Host only)
   const removeParticipant = (peerId) => {
     if (isHost) {
-      setRemotePeers(prev => prev.filter(p => p.id !== peerId));
+      setRemotePeers((prev) => prev.filter((p) => p.id !== peerId));
       showNotification("Participant removed from meeting", "success");
       // In real implementation, you'd send a signal to disconnect the peer
     }
@@ -1209,9 +1282,9 @@ function MeetingContent() {
 
   const renameParticipant = (peerId, newName) => {
     if (permissions.renameSelf || isHost) {
-      setRemotePeers(prev => prev.map(p => 
-        p.id === peerId ? { ...p, name: newName } : p
-      ));
+      setRemotePeers((prev) =>
+        prev.map((p) => (p.id === peerId ? { ...p, name: newName } : p)),
+      );
       setParticipantNames({ ...participantNames, [peerId]: newName });
       showNotification("Name updated successfully", "success");
     } else {
@@ -1237,10 +1310,14 @@ function MeetingContent() {
 
   const getConnectionColor = () => {
     switch (connectionQuality) {
-      case "good": return "text-green-400";
-      case "average": return "text-yellow-400";
-      case "poor": return "text-red-400";
-      default: return "text-green-400";
+      case "good":
+        return "text-green-400";
+      case "average":
+        return "text-yellow-400";
+      case "poor":
+        return "text-red-400";
+      default:
+        return "text-green-400";
     }
   };
 
@@ -1259,11 +1336,18 @@ function MeetingContent() {
             animate={{ opacity: 1, y: 0 }}
             exit={{ opacity: 0, y: -50 }}
             className={`fixed top-4 left-1/2 transform -translate-x-1/2 z-50 px-6 py-3 rounded-lg shadow-2xl flex items-center gap-3 ${
-              notification.type === "success" ? "bg-green-600" : 
-              notification.type === "error" ? "bg-red-600" : "bg-blue-600"
+              notification.type === "success"
+                ? "bg-green-600"
+                : notification.type === "error"
+                  ? "bg-red-600"
+                  : "bg-blue-600"
             }`}
           >
-            {notification.type === "success" ? <Check size={18} /> : <AlertCircle size={18} />}
+            {notification.type === "success" ? (
+              <Check size={18} />
+            ) : (
+              <AlertCircle size={18} />
+            )}
             <span className="text-sm font-medium">{notification.message}</span>
           </motion.div>
         )}
@@ -1271,7 +1355,7 @@ function MeetingContent() {
 
       {/* Floating Reactions */}
       <div className="fixed top-20 right-20 z-50 space-y-2">
-        {reactions.map(reaction => (
+        {reactions.map((reaction) => (
           <motion.div
             key={reaction.id}
             initial={{ opacity: 0, y: 20, scale: 0.5 }}
@@ -1396,7 +1480,9 @@ function MeetingContent() {
                   </a-scene>
                 ) : (
                   <div className="h-full flex items-center justify-center bg-slate-900">
-                    <div className="animate-pulse text-white/50">Loading 360° Scene...</div>
+                    <div className="animate-pulse text-white/50">
+                      Loading 360° Scene...
+                    </div>
                   </div>
                 )}
               </motion.div>
@@ -1414,10 +1500,14 @@ function MeetingContent() {
                   className="w-full h-full object-cover"
                   ref={(el) => {
                     if (el) {
-                      const activePeer = remotePeers.find(p => p.id === activeStreamId);
-                      const streamToDisplay = activeStreamId === "local"
-                        ? videoRefs.current["local"]?.srcObject || document.getElementById("localVideo")?.srcObject
-                        : activePeer?.stream;
+                      const activePeer = remotePeers.find(
+                        (p) => p.id === activeStreamId,
+                      );
+                      const streamToDisplay =
+                        activeStreamId === "local"
+                          ? videoRefs.current["local"]?.srcObject ||
+                            document.getElementById("localVideo")?.srcObject
+                          : activePeer?.stream;
                       if (streamToDisplay && el.srcObject !== streamToDisplay) {
                         el.srcObject = streamToDisplay;
                       }
@@ -1427,7 +1517,10 @@ function MeetingContent() {
                 <div className="absolute bottom-10 left-10 bg-black/40 backdrop-blur-md px-4 py-2 rounded-lg border border-white/10 z-20">
                   <p className="text-sm font-medium flex items-center gap-2">
                     <div className="w-2 h-2 rounded-full bg-cyan-400 animate-pulse" />
-                    Standard View: {activeStreamId === "local" ? "You (Local Preview)" : "Participant"}
+                    Standard View:{" "}
+                    {activeStreamId === "local"
+                      ? "You (Local Preview)"
+                      : "Participant"}
                   </p>
                 </div>
               </motion.div>
@@ -1531,7 +1624,9 @@ function MeetingContent() {
                   </div>
                   <div className="flex gap-1">
                     {isMuted && <MicOff size={10} className="text-red-400" />}
-                    {isVideoOff && <VideoOff size={10} className="text-red-400" />}
+                    {isVideoOff && (
+                      <VideoOff size={10} className="text-red-400" />
+                    )}
                   </div>
                 </div>
               </motion.div>
@@ -1564,13 +1659,20 @@ function MeetingContent() {
                   <div className="absolute inset-0 bg-linear-to-t from-black/60 via-transparent to-transparent"></div>
                   <div className="absolute bottom-1 left-1 right-1 flex items-center justify-between">
                     <div className="flex items-center gap-1 text-[10px] bg-black/60 px-2 py-1 rounded-full">
-                      {peer.isHost ? <Crown size={10} className="text-amber-400" /> : 
-                       !hideProfilePictures && <UserIcon size={10} />}
+                      {peer.isHost ? (
+                        <Crown size={10} className="text-amber-400" />
+                      ) : (
+                        !hideProfilePictures && <UserIcon size={10} />
+                      )}
                       <span>{participantNames[peer.id] || peer.name}</span>
                     </div>
                     <div className="flex gap-1">
-                      {peer.isMuted && <MicOff size={10} className="text-red-400" />}
-                      {peer.isVideoOff && <VideoOff size={10} className="text-red-400" />}
+                      {peer.isMuted && (
+                        <MicOff size={10} className="text-red-400" />
+                      )}
+                      {peer.isVideoOff && (
+                        <VideoOff size={10} className="text-red-400" />
+                      )}
                     </div>
                   </div>
                   {hoveredParticipant === peer.id && isHost && (
@@ -1578,7 +1680,10 @@ function MeetingContent() {
                       <button
                         onClick={(e) => {
                           e.stopPropagation();
-                          const newName = prompt("Enter new name:", participantNames[peer.id] || peer.name);
+                          const newName = prompt(
+                            "Enter new name:",
+                            participantNames[peer.id] || peer.name,
+                          );
                           if (newName) renameParticipant(peer.id, newName);
                         }}
                         className="p-1 bg-white/20 rounded hover:bg-white/30"
@@ -1588,7 +1693,8 @@ function MeetingContent() {
                       <button
                         onClick={(e) => {
                           e.stopPropagation();
-                          if (confirm("Remove this participant?")) removeParticipant(peer.id);
+                          if (confirm("Remove this participant?"))
+                            removeParticipant(peer.id);
                         }}
                         className="p-1 bg-red-500/50 rounded hover:bg-red-500"
                       >
@@ -1614,10 +1720,21 @@ function MeetingContent() {
                 whileTap={{ scale: 0.9 }}
                 onClick={toggleAudio}
                 className={`w-12 h-12 rounded-xl flex items-center justify-center transition ${
-                  isMuted ? "bg-red-600 hover:bg-red-700" : "bg-white/10 hover:bg-white/20"
+                  isMuted
+                    ? "bg-red-600 hover:bg-red-700"
+                    : "bg-white/10 hover:bg-white/20"
                 }`}
               >
                 {isMuted ? <MicOff size={20} /> : <Mic size={20} />}
+              </motion.button>
+
+              <motion.button
+                onClick={isRecording ? stopRecording : startRecording}
+                className={`px-4 py-2 rounded-lg ${
+                  isRecording ? "bg-red-600" : "bg-gray-700"
+                }`}
+              >
+                {isRecording ? "Stop Recording" : "Start Recording"}
               </motion.button>
 
               <motion.button
@@ -1625,7 +1742,9 @@ function MeetingContent() {
                 whileTap={{ scale: 0.9 }}
                 onClick={toggleVideo}
                 className={`w-12 h-12 rounded-xl flex items-center justify-center transition ${
-                  isVideoOff ? "bg-red-600 hover:bg-red-700" : "bg-white/10 hover:bg-white/20"
+                  isVideoOff
+                    ? "bg-red-600 hover:bg-red-700"
+                    : "bg-white/10 hover:bg-white/20"
                 }`}
               >
                 {isVideoOff ? <VideoOff size={20} /> : <Video size={20} />}
@@ -1636,7 +1755,9 @@ function MeetingContent() {
                 whileTap={{ scale: 0.9 }}
                 onClick={toggleScreenShare}
                 className={`w-12 h-12 rounded-xl flex items-center justify-center transition ${
-                  isScreenSharing ? "bg-green-600 hover:bg-green-700" : "bg-white/10 hover:bg-white/20"
+                  isScreenSharing
+                    ? "bg-green-600 hover:bg-green-700"
+                    : "bg-white/10 hover:bg-white/20"
                 }`}
               >
                 <ScreenShare size={20} />
@@ -1660,19 +1781,34 @@ function MeetingContent() {
                       exit={{ opacity: 0, y: 10 }}
                       className="absolute bottom-14 left-1/2 -translate-x-1/2 bg-black/80 backdrop-blur-xl rounded-full p-2 flex gap-2"
                     >
-                      <button onClick={() => addReaction("thumbsup")} className="p-2 hover:bg-white/10 rounded-full transition">
+                      <button
+                        onClick={() => addReaction("thumbsup")}
+                        className="p-2 hover:bg-white/10 rounded-full transition"
+                      >
                         <ThumbsUp size={20} />
                       </button>
-                      <button onClick={() => addReaction("smile")} className="p-2 hover:bg-white/10 rounded-full transition">
+                      <button
+                        onClick={() => addReaction("smile")}
+                        className="p-2 hover:bg-white/10 rounded-full transition"
+                      >
                         <Smile size={20} />
                       </button>
-                      <button onClick={() => addReaction("heart")} className="p-2 hover:bg-white/10 rounded-full transition">
+                      <button
+                        onClick={() => addReaction("heart")}
+                        className="p-2 hover:bg-white/10 rounded-full transition"
+                      >
                         <Heart size={20} />
                       </button>
-                      <button onClick={() => addReaction("laugh")} className="p-2 hover:bg-white/10 rounded-full transition">
+                      <button
+                        onClick={() => addReaction("laugh")}
+                        className="p-2 hover:bg-white/10 rounded-full transition"
+                      >
                         <Laugh size={20} />
                       </button>
-                      <button onClick={() => addReaction("frown")} className="p-2 hover:bg-white/10 rounded-full transition">
+                      <button
+                        onClick={() => addReaction("frown")}
+                        className="p-2 hover:bg-white/10 rounded-full transition"
+                      >
                         <Frown size={20} />
                       </button>
                     </motion.div>
@@ -1724,7 +1860,9 @@ function MeetingContent() {
                 whileTap={{ scale: 0.9 }}
                 onClick={isHost ? endMeeting : leaveMeeting}
                 className={`w-14 h-14 rounded-xl flex items-center justify-center transition shadow-lg ${
-                  isHost ? "bg-red-600 hover:bg-red-700" : "bg-orange-600 hover:bg-orange-700"
+                  isHost
+                    ? "bg-red-600 hover:bg-red-700"
+                    : "bg-orange-600 hover:bg-orange-700"
                 }`}
               >
                 <Phone size={24} className="rotate-135" />
@@ -1736,7 +1874,9 @@ function MeetingContent() {
                 whileTap={{ scale: 0.9 }}
                 onClick={() => setShowParticipants(!showParticipants)}
                 className={`w-12 h-12 rounded-xl flex items-center justify-center transition relative ${
-                  showParticipants ? "bg-cyan-600" : "bg-white/10 hover:bg-white/20"
+                  showParticipants
+                    ? "bg-cyan-600"
+                    : "bg-white/10 hover:bg-white/20"
                 }`}
               >
                 <Users size={20} />
@@ -1787,11 +1927,14 @@ function MeetingContent() {
             >
               <div className="flex items-center justify-between mb-6">
                 <h3 className="text-xl font-bold">Settings</h3>
-                <button onClick={() => setShowSettings(false)} className="p-1 hover:bg-white/10 rounded">
+                <button
+                  onClick={() => setShowSettings(false)}
+                  className="p-1 hover:bg-white/10 rounded"
+                >
                   <X size={20} />
                 </button>
               </div>
-              
+
               <div className="space-y-4">
                 <div>
                   <label className="flex items-center justify-between cursor-pointer">
@@ -1850,11 +1993,14 @@ function MeetingContent() {
                 <h3 className="text-xl font-bold flex items-center gap-2">
                   <ShieldAlert size={20} /> Security Settings
                 </h3>
-                <button onClick={() => setShowSecurity(false)} className="p-1 hover:bg-white/10 rounded">
+                <button
+                  onClick={() => setShowSecurity(false)}
+                  className="p-1 hover:bg-white/10 rounded"
+                >
                   <X size={20} />
                 </button>
               </div>
-              
+
               <div className="space-y-4">
                 <label className="flex items-center justify-between cursor-pointer">
                   <span className="flex items-center gap-2">
@@ -1869,7 +2015,7 @@ function MeetingContent() {
                     {meetingLocked ? "Locked" : "Unlocked"}
                   </button>
                 </label>
-                
+
                 <label className="flex items-center justify-between cursor-pointer">
                   <span className="flex items-center gap-2">
                     <EyeOff size={16} /> Hide Profile Pictures
@@ -1883,77 +2029,117 @@ function MeetingContent() {
                     {hideProfilePictures ? "Hidden" : "Visible"}
                   </button>
                 </label>
-                
+
                 <div className="border-t border-white/10 pt-4">
-                  <h4 className="font-semibold mb-3">Participant Permissions</h4>
+                  <h4 className="font-semibold mb-3">
+                    Participant Permissions
+                  </h4>
                   <div className="space-y-3">
                     <label className="flex items-center justify-between cursor-pointer">
                       <span>Allow Chat</span>
                       <button
-                        onClick={() => updatePermissions("chat", !permissions.chat)}
+                        onClick={() =>
+                          updatePermissions("chat", !permissions.chat)
+                        }
                         className={`w-10 h-5 rounded-full transition ${
                           permissions.chat ? "bg-cyan-600" : "bg-white/20"
                         } relative`}
                       >
-                        <div className={`absolute w-4 h-4 rounded-full bg-white top-0.5 transition ${
-                          permissions.chat ? "right-0.5" : "left-0.5"
-                        }`} />
+                        <div
+                          className={`absolute w-4 h-4 rounded-full bg-white top-0.5 transition ${
+                            permissions.chat ? "right-0.5" : "left-0.5"
+                          }`}
+                        />
                       </button>
                     </label>
-                    
+
                     <label className="flex items-center justify-between cursor-pointer">
                       <span>Allow Screen Sharing</span>
                       <button
-                        onClick={() => updatePermissions("shareScreen", !permissions.shareScreen)}
+                        onClick={() =>
+                          updatePermissions(
+                            "shareScreen",
+                            !permissions.shareScreen,
+                          )
+                        }
                         className={`w-10 h-5 rounded-full transition ${
-                          permissions.shareScreen ? "bg-cyan-600" : "bg-white/20"
+                          permissions.shareScreen
+                            ? "bg-cyan-600"
+                            : "bg-white/20"
                         } relative`}
                       >
-                        <div className={`absolute w-4 h-4 rounded-full bg-white top-0.5 transition ${
-                          permissions.shareScreen ? "right-0.5" : "left-0.5"
-                        }`} />
+                        <div
+                          className={`absolute w-4 h-4 rounded-full bg-white top-0.5 transition ${
+                            permissions.shareScreen ? "right-0.5" : "left-0.5"
+                          }`}
+                        />
                       </button>
                     </label>
-                    
+
                     <label className="flex items-center justify-between cursor-pointer">
                       <span>Allow Start Video</span>
                       <button
-                        onClick={() => updatePermissions("startVideo", !permissions.startVideo)}
+                        onClick={() =>
+                          updatePermissions(
+                            "startVideo",
+                            !permissions.startVideo,
+                          )
+                        }
                         className={`w-10 h-5 rounded-full transition ${
                           permissions.startVideo ? "bg-cyan-600" : "bg-white/20"
                         } relative`}
                       >
-                        <div className={`absolute w-4 h-4 rounded-full bg-white top-0.5 transition ${
-                          permissions.startVideo ? "right-0.5" : "left-0.5"
-                        }`} />
+                        <div
+                          className={`absolute w-4 h-4 rounded-full bg-white top-0.5 transition ${
+                            permissions.startVideo ? "right-0.5" : "left-0.5"
+                          }`}
+                        />
                       </button>
                     </label>
-                    
+
                     <label className="flex items-center justify-between cursor-pointer">
                       <span>Allow Whiteboard</span>
                       <button
-                        onClick={() => updatePermissions("shareWhiteboard", !permissions.shareWhiteboard)}
+                        onClick={() =>
+                          updatePermissions(
+                            "shareWhiteboard",
+                            !permissions.shareWhiteboard,
+                          )
+                        }
                         className={`w-10 h-5 rounded-full transition ${
-                          permissions.shareWhiteboard ? "bg-cyan-600" : "bg-white/20"
+                          permissions.shareWhiteboard
+                            ? "bg-cyan-600"
+                            : "bg-white/20"
                         } relative`}
                       >
-                        <div className={`absolute w-4 h-4 rounded-full bg-white top-0.5 transition ${
-                          permissions.shareWhiteboard ? "right-0.5" : "left-0.5"
-                        }`} />
+                        <div
+                          className={`absolute w-4 h-4 rounded-full bg-white top-0.5 transition ${
+                            permissions.shareWhiteboard
+                              ? "right-0.5"
+                              : "left-0.5"
+                          }`}
+                        />
                       </button>
                     </label>
-                    
+
                     <label className="flex items-center justify-between cursor-pointer">
                       <span>Allow Rename Self</span>
                       <button
-                        onClick={() => updatePermissions("renameSelf", !permissions.renameSelf)}
+                        onClick={() =>
+                          updatePermissions(
+                            "renameSelf",
+                            !permissions.renameSelf,
+                          )
+                        }
                         className={`w-10 h-5 rounded-full transition ${
                           permissions.renameSelf ? "bg-cyan-600" : "bg-white/20"
                         } relative`}
                       >
-                        <div className={`absolute w-4 h-4 rounded-full bg-white top-0.5 transition ${
-                          permissions.renameSelf ? "right-0.5" : "left-0.5"
-                        }`} />
+                        <div
+                          className={`absolute w-4 h-4 rounded-full bg-white top-0.5 transition ${
+                            permissions.renameSelf ? "right-0.5" : "left-0.5"
+                          }`}
+                        />
                       </button>
                     </label>
                   </div>
@@ -1983,7 +2169,9 @@ function MeetingContent() {
                       setShowChat(false);
                     }}
                     className={`px-4 py-2 rounded-lg text-sm font-medium transition ${
-                      showParticipants ? "bg-gray-400 text-gray-800" : "bg-white/5 hover:bg-white/10 cursor-pointer"
+                      showParticipants
+                        ? "bg-gray-400 text-gray-800"
+                        : "bg-white/5 hover:bg-white/10 cursor-pointer"
                     }`}
                   >
                     Participants
@@ -1994,7 +2182,9 @@ function MeetingContent() {
                       setShowParticipants(false);
                     }}
                     className={`px-4 py-2 rounded-lg text-sm font-medium transition ${
-                      showChat ? "bg-gray-400 text-gray-800" : "bg-white/5 hover:bg-white/10 cursor-pointer"
+                      showChat
+                        ? "bg-gray-400 text-gray-800"
+                        : "bg-white/5 hover:bg-white/10 cursor-pointer"
                     }`}
                   >
                     Chat
@@ -2011,7 +2201,9 @@ function MeetingContent() {
                 </button>
               </div>
               {showParticipants && (
-                <p className="text-xs text-white/40">{remotePeers.length + 1} participants</p>
+                <p className="text-xs text-white/40">
+                  {remotePeers.length + 1} participants
+                </p>
               )}
             </div>
 
@@ -2025,7 +2217,10 @@ function MeetingContent() {
                       </div>
                       <div>
                         <p className="text-sm font-medium flex items-center gap-2">
-                          You {isHost && <Crown size={12} className="text-amber-400" />}
+                          You{" "}
+                          {isHost && (
+                            <Crown size={12} className="text-amber-400" />
+                          )}
                         </p>
                         <p className="text-xs text-white/40 flex items-center gap-1">
                           <span className="w-2 h-2 rounded-full bg-green-400"></span>
@@ -2035,7 +2230,9 @@ function MeetingContent() {
                     </div>
                     <div className="flex gap-2">
                       {isMuted && <MicOff size={14} className="text-red-400" />}
-                      {isVideoOff && <VideoOff size={14} className="text-red-400" />}
+                      {isVideoOff && (
+                        <VideoOff size={14} className="text-red-400" />
+                      )}
                     </div>
                   </div>
 
@@ -2047,15 +2244,25 @@ function MeetingContent() {
                       className="flex items-center justify-between p-3 bg-white/5 rounded-lg group"
                     >
                       <div className="flex items-center gap-3">
-                        <div className={`w-8 h-8 rounded-full flex items-center justify-center ${
-                          peer.isHost ? "bg-linear-to-br from-amber-500 to-orange-600" : "bg-white/10"
-                        }`}>
-                          {peer.isHost ? <Crown size={14} /> : <UserIcon size={14} />}
+                        <div
+                          className={`w-8 h-8 rounded-full flex items-center justify-center ${
+                            peer.isHost
+                              ? "bg-linear-to-br from-amber-500 to-orange-600"
+                              : "bg-white/10"
+                          }`}
+                        >
+                          {peer.isHost ? (
+                            <Crown size={14} />
+                          ) : (
+                            <UserIcon size={14} />
+                          )}
                         </div>
                         <div>
                           <p className="text-sm font-medium flex items-center gap-2">
                             {participantNames[peer.id] || peer.name}
-                            {peer.isHost && <Crown size={12} className="text-amber-400" />}
+                            {peer.isHost && (
+                              <Crown size={12} className="text-amber-400" />
+                            )}
                           </p>
                           <p className="text-xs text-white/40 flex items-center gap-1">
                             <span className="w-2 h-2 rounded-full bg-green-400"></span>
@@ -2064,8 +2271,12 @@ function MeetingContent() {
                         </div>
                       </div>
                       <div className="flex gap-2">
-                        {peer.isMuted && <MicOff size={14} className="text-red-400" />}
-                        {peer.isVideoOff && <VideoOff size={14} className="text-red-400" />}
+                        {peer.isMuted && (
+                          <MicOff size={14} className="text-red-400" />
+                        )}
+                        {peer.isVideoOff && (
+                          <VideoOff size={14} className="text-red-400" />
+                        )}
                         {isHost && !peer.isHost && (
                           <button
                             onClick={() => removeParticipant(peer.id)}
@@ -2087,18 +2298,27 @@ function MeetingContent() {
                       <div className="text-center py-8">
                         <MessageSquare className="w-12 h-12 text-white/20 mx-auto mb-3" />
                         <p className="text-sm text-white/40">No messages yet</p>
-                        <p className="text-xs text-white/20 mt-1">Start the conversation</p>
+                        <p className="text-xs text-white/20 mt-1">
+                          Start the conversation
+                        </p>
                       </div>
                     ) : (
                       messages.map((msg) => (
                         <div key={msg.id} className="flex flex-col">
                           <div className="flex items-center gap-2 mb-1">
-                            <span className="text-sm font-medium">{msg.sender}</span>
+                            <span className="text-sm font-medium">
+                              {msg.sender}
+                            </span>
                             <span className="text-xs text-white/40">
-                              {msg.timestamp.toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" })}
+                              {msg.timestamp.toLocaleTimeString([], {
+                                hour: "2-digit",
+                                minute: "2-digit",
+                              })}
                             </span>
                           </div>
-                          <p className="text-sm bg-white/5 p-3 rounded-lg">{msg.text}</p>
+                          <p className="text-sm bg-white/5 p-3 rounded-lg">
+                            {msg.text}
+                          </p>
                         </div>
                       ))
                     )}
@@ -2110,7 +2330,11 @@ function MeetingContent() {
                         type="text"
                         value={newMessage}
                         onChange={(e) => setNewMessage(e.target.value)}
-                        placeholder={permissions.chat ? "Type a message..." : "Chat is disabled by host"}
+                        placeholder={
+                          permissions.chat
+                            ? "Type a message..."
+                            : "Chat is disabled by host"
+                        }
                         disabled={!permissions.chat}
                         className="flex-1 bg-white/5 border border-white/10 rounded-lg px-4 py-2 text-sm focus:outline-none focus:border-cyan-500 transition disabled:opacity-50"
                       />
@@ -2152,7 +2376,9 @@ export default function MeetingPage() {
         <div className="h-screen w-screen bg-linear-to-br from-slate-900 via-purple-900 to-slate-900 flex items-center justify-center">
           <div className="text-center">
             <div className="w-20 h-20 border-4 border-cyan-500 border-t-transparent rounded-full animate-spin mx-auto mb-4"></div>
-            <p className="text-lg font-semibold text-white/70">Loading meeting...</p>
+            <p className="text-lg font-semibold text-white/70">
+              Loading meeting...
+            </p>
           </div>
         </div>
       }
