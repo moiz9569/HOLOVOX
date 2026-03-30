@@ -1615,19 +1615,20 @@ import {
 } from "@livekit/components-react";
 import { Track, RoomEvent } from "livekit-client";
 import "@livekit/components-styles/index.css";
+import ThreeSixtyView from "@/components/Threesixty";
 
 // Three.js 360° component
-const ThreeSixtyView = dynamic(() => import("@/components/ThreeSixtyView"), {
-  ssr: false,
-  loading: () => (
-    <div className="w-full h-full flex items-center justify-center bg-gradient-to-br from-purple-900 to-blue-900">
-      <div className="text-center">
-        <div className="w-12 h-12 border-4 border-purple-500 border-t-transparent rounded-full animate-spin mx-auto mb-4"></div>
-        <p className="text-white/60">Loading 360° view...</p>
-      </div>
-    </div>
-  ),
-});
+// const ThreeSixtyView = dynamic(() => import("@/components/ThreeSixtyView"), {
+//   ssr: false,
+//   loading: () => (
+//     <div className="w-full h-full flex items-center justify-center bg-gradient-to-br from-purple-900 to-blue-900">
+//       <div className="text-center">
+//         <div className="w-12 h-12 border-4 border-purple-500 border-t-transparent rounded-full animate-spin mx-auto mb-4"></div>
+//         <p className="text-white/60">Loading 360° view...</p>
+//       </div>
+//     </div>
+//   ),
+// });
 
 export default function MeetingPage() {
   const { id: roomId } = useParams();
