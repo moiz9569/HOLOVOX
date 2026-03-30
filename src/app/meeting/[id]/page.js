@@ -1613,11 +1613,11 @@ import {
   useParticipants,
   useTracks,
 } from "@livekit/components-react";
-import { Track } from "livekit-client";
+import { Track, RoomEvent } from "livekit-client";
 import "@livekit/components-styles/index.css";
 
-// Import your Three.js 360° component
-const ThreeSixtyView = dynamic(() => import("@/components/Threesixty"), {
+// Three.js 360° component
+const ThreeSixtyView = dynamic(() => import("@/components/ThreeSixtyView"), {
   ssr: false,
   loading: () => (
     <div className="w-full h-full flex items-center justify-center bg-gradient-to-br from-purple-900 to-blue-900">
@@ -1636,12 +1636,10 @@ export default function MeetingPage() {
   const isHost = searchParams.get("role") === "host";
   const [token, setToken] = useState(null);
 
-  // Fetch token from your server
   useEffect(() => {
     const userId =
       localStorage.getItem("meeting_user_id") || crypto.randomUUID();
     localStorage.setItem("meeting_user_id", userId);
-
     const tokenUrl =
       process.env.NEXT_PUBLIC_TOKEN_URL || "http://localhost:7860/token";
     fetch(tokenUrl, {
@@ -1677,6 +1675,16 @@ export default function MeetingPage() {
       audio={true}
       className="h-screen w-screen bg-slate-700 text-white overflow-hidden"
       onDisconnected={() => console.log("Disconnected")}
+      options={{
+        // Force a specific region to reduce latency (choose the closest region to your users)
+        // region: 'us', // uncomment and set to 'us', 'eu', 'ap', etc.
+        publishDefaults: {
+          videoEncoding: {
+            maxBitrate: 1_000_000, // 1 Mbps – reduces bandwidth
+            maxFramerate: 24,
+          },
+        },
+      }}
     >
       <MeetingUI isHost={isHost} roomId={roomId} router={router} />
     </LiveKitRoom>
@@ -1695,7 +1703,7 @@ function MeetingUI({ isHost, roomId, router }) {
   const recordedChunksRef = useRef([]);
   const recordingStreamRef = useRef(null);
 
-  // UI states (same as your original)
+  // UI states
   const [viewMode, setViewMode] = useState("360");
   const [activeStreamId, setActiveStreamId] = useState("local");
   const [isMuted, setIsMuted] = useState(false);
@@ -1739,6 +1747,58 @@ function MeetingUI({ isHost, roomId, router }) {
   const localVideoRef = useRef(null);
   const mainVideoRef = useRef(null);
 
+  // ----- Chat using LiveKit DataChannel -----
+  useEffect(() => {
+    if (!room) return;
+
+    const handleDataReceived = (payload, participant) => {
+      try {
+        const message = JSON.parse(new TextDecoder().decode(payload));
+        setMessages((prev) => [
+          ...prev,
+          {
+            id: Date.now(),
+            text: message.text,
+            sender: participant.identity,
+            timestamp: new Date(),
+          },
+        ]);
+      } catch (e) {
+        console.error("Failed to parse chat message", e);
+      }
+    };
+
+    room.on(RoomEvent.DataReceived, handleDataReceived);
+    return () => {
+      room.off(RoomEvent.DataReceived, handleDataReceived);
+    };
+  }, [room]);
+
+  const sendMessage = async (e) => {
+    e.preventDefault();
+    if (newMessage.trim() && permissions.chat) {
+      const messageData = { text: newMessage };
+      const encoder = new TextEncoder();
+      const payload = encoder.encode(JSON.stringify(messageData));
+      await room.localParticipant.publishData(payload);
+      // Also add locally for immediate display
+      setMessages((prev) => [
+        ...prev,
+        {
+          id: Date.now(),
+          text: newMessage,
+          sender: "You",
+          timestamp: new Date(),
+        },
+      ]);
+      setNewMessage("");
+      showNotification("Message sent", "success");
+    } else if (!permissions.chat) {
+      showNotification("Chat is disabled by host", "error");
+    }
+  };
+  // ------------------------------------
+
   // Derive streams from LiveKit tracks
   const localVideoTrack = tracks.find(
     (t) =>
@@ -1752,10 +1812,12 @@ function MeetingUI({ isHost, roomId, router }) {
     ]);
   }, [localVideoTrack]);
 
+  // Include both Camera and ScreenShare for remote tracks
   const remoteTracks = tracks.filter(
     (t) =>
       t.participant.identity !== localParticipant.localParticipant?.identity &&
-      t.source === Track.Source.Camera,
+      (t.source === Track.Source.Camera ||
+        t.source === Track.Source.ScreenShare),
   );
   const remoteStreams = useMemo(() => {
     const map = new Map();
@@ -1774,12 +1836,12 @@ function MeetingUI({ isHost, roomId, router }) {
       : remoteStreams.get(activeStreamId);
   }, [activeStreamId, localStream, remoteStreams]);
 
-  // Build remotePeers array for UI
+  // Build remotePeers array for UI (including screen share, but we treat as same participant)
   const remotePeers = participants
     .filter((p) => p.identity !== localParticipant.localParticipant?.identity)
     .map((p) => ({
       id: p.identity,
-      stream: remoteStreams.get(p.identity),
+      stream: remoteStreams.get(p.identity), // this will be the last stream (camera or screen)
       isHost: p.metadata ? JSON.parse(p.metadata)?.isHost : false,
       isMuted: false, // you can track mute state if needed
       isVideoOff: false,
@@ -1836,7 +1898,7 @@ function MeetingUI({ isHost, roomId, router }) {
     }
   }, [messages]);
 
-  // Recording functions
+  // Recording functions (unchanged)
   const startRecording = async () => {
     try {
       const stream = await navigator.mediaDevices.getDisplayMedia({
@@ -1876,7 +1938,7 @@ function MeetingUI({ isHost, roomId, router }) {
     setIsRecording(false);
   };
 
-  // Reactions
+  // Reactions (unchanged)
   const addReaction = (reactionType) => {
     const reaction = {
       id: Date.now(),
@@ -1910,7 +1972,7 @@ function MeetingUI({ isHost, roomId, router }) {
     }
   };
 
-  // Whiteboard functions (keep from your original)
+  // Whiteboard functions (unchanged)
   const startDrawing = (e) => {
     if (!canvasRef.current) return;
     const rect = canvasRef.current.getBoundingClientRect();
@@ -1986,7 +2048,6 @@ function MeetingUI({ isHost, roomId, router }) {
     );
   };
 
-  // Permission updates (host only)
   const updatePermissions = (permission, value) => {
     if (isHost) {
       setPermissions({ ...permissions, [permission]: value });
@@ -1997,12 +2058,8 @@ function MeetingUI({ isHost, roomId, router }) {
     }
   };
 
-  // Participant management
   const removeParticipant = (peerId) => {
-    if (isHost) {
-      showNotification("Participant removed", "success");
-      // In a real app, you'd send a signal to disconnect the participant.
-    }
+    if (isHost) showNotification("Participant removed", "success");
   };
 
   const renameParticipant = (peerId, newName) => {
@@ -2108,8 +2165,24 @@ function MeetingUI({ isHost, roomId, router }) {
     }
   }, [showWhiteboard, whiteboardColor]);
 
+  // Debug: log audio track state
+  useEffect(() => {
+    const checkAudio = setInterval(() => {
+      const mic = localParticipant.localParticipant?.getTrack(
+        Track.Source.Microphone,
+      );
+      console.log(
+        "Mic track:",
+        mic
+          ? `enabled=${mic.isEnabled}, muted=${mic.isMuted}`
+          : "not published",
+      );
+    }, 5000);
+    return () => clearInterval(checkAudio);
+  }, [localParticipant]);
+
   return (
-    <div className="h-screen w-full flex overflow-hidden">
+    <div className="h-screen w-full flex overflow-hidden bg-slate-700 text-white">
       {/* Notification Toast */}
       <AnimatePresence>
         {notification && (
@@ -2152,7 +2225,7 @@ function MeetingUI({ isHost, roomId, router }) {
 
       {/* Main content */}
       <div className="flex-1 flex flex-col relative">
-        {/* Top navbar */}
+        {/* Top navbar (unchanged) */}
         <motion.div
           initial={{ y: -100 }}
           animate={{ y: showControls ? 0 : -100 }}
@@ -2180,7 +2253,6 @@ function MeetingUI({ isHost, roomId, router }) {
               <p className="text-xs text-white/80">Room: {roomId}</p>
             </div>
           </div>
-
           <div className="flex items-center gap-4">
             <div className="px-3 py-1.5 bg-white/5 rounded-lg">
               <span className="text-xs font-mono">00:15:23</span>
@@ -2194,7 +2266,7 @@ function MeetingUI({ isHost, roomId, router }) {
           </div>
         </motion.div>
 
-        {/* Video area */}
+        {/* Video area (unchanged but using updated remote tracks) */}
         <div className="flex-1 relative bg-black overflow-hidden">
           {/* View mode toggle */}
           <div className="absolute top-24 right-6 z-30">
@@ -2327,7 +2399,7 @@ function MeetingUI({ isHost, roomId, router }) {
             initial={{ y: 100 }}
             animate={{ y: showControls ? 0 : 100 }}
             transition={{ duration: 0.3 }}
-            className="absolute bottom-24 left-0 right-0 px-6 z-10"
+            className="absolute bottom-24 left-0 right-0 px-6 z-40"
           >
             <div className="flex gap-3 overflow-x-auto pb-2 scrollbar-thin scrollbar-thumb-white/20">
               {/* Local thumbnail */}
@@ -2335,7 +2407,7 @@ function MeetingUI({ isHost, roomId, router }) {
                 whileHover={{ scale: 1.05 }}
                 whileTap={{ scale: 0.95 }}
                 onClick={() => setActiveStreamId("local")}
-                className={`relative min-w-40 h-24 rounded-xl overflow-hidden border-2 transition-all cursor-pointer group ${
+                className={`relative flex-shrink-0 w-40 h-24 rounded-xl overflow-hidden border-2 transition-all cursor-pointer group ${
                   activeStreamId === "local"
                     ? "border-cyan-500 shadow-lg shadow-cyan-500/20"
                     : "border-white/10 hover:border-white/30"
@@ -2375,7 +2447,7 @@ function MeetingUI({ isHost, roomId, router }) {
                   onHoverStart={() => setHoveredParticipant(peer.id)}
                   onHoverEnd={() => setHoveredParticipant(null)}
                   onClick={() => setActiveStreamId(peer.id)}
-                  className={`relative min-w-40 h-24 rounded-xl overflow-hidden border-2 transition-all cursor-pointer group ${
+                  className={`relative flex-shrink-0 w-40 h-24 rounded-xl overflow-hidden border-2 transition-all cursor-pointer group ${
                     activeStreamId === peer.id
                       ? "border-cyan-500 shadow-lg shadow-cyan-500/20"
                       : "border-white/10 hover:border-white/30"
@@ -2446,7 +2518,7 @@ function MeetingUI({ isHost, roomId, router }) {
             initial={{ y: 100 }}
             animate={{ y: showControls ? 0 : 100 }}
             transition={{ duration: 0.3 }}
-            className="absolute bottom-6 left-1/2 -translate-x-1/2 z-10"
+            className="absolute bottom-6 left-1/2 -translate-x-1/2 z-50"
           >
             <div className="flex items-center gap-3 bg-black/60 backdrop-blur-xl px-6 py-3 rounded-2xl border border-white/10 shadow-2xl">
               <button
@@ -2605,7 +2677,7 @@ function MeetingUI({ isHost, roomId, router }) {
         </div>
       </div>
 
-      {/* Right sidebar (participants / chat) */}
+      {/* Right sidebar (participants / chat) - uses the new sendMessage function */}
       <AnimatePresence>
         {(showParticipants || showChat) && (
           <motion.div
@@ -2626,7 +2698,7 @@ function MeetingUI({ isHost, roomId, router }) {
                     className={`px-4 py-2 rounded-lg text-sm font-medium transition ${
                       showParticipants
                         ? "bg-gray-400 text-gray-800"
-                        : "bg-white/5 hover:bg-white/10 cursor-pointer"
+                        : "bg-white/5 hover:bg-white/10"
                     }`}
                   >
                     Participants
@@ -2639,7 +2711,7 @@ function MeetingUI({ isHost, roomId, router }) {
                     className={`px-4 py-2 rounded-lg text-sm font-medium transition ${
                       showChat
                         ? "bg-gray-400 text-gray-800"
-                        : "bg-white/5 hover:bg-white/10 cursor-pointer"
+                        : "bg-white/5 hover:bg-white/10"
                     }`}
                   >
                     Chat
@@ -2650,7 +2722,7 @@ function MeetingUI({ isHost, roomId, router }) {
                     setShowParticipants(false);
                     setShowChat(false);
                   }}
-                  className="p-2 cursor-pointer hover:bg-white/10 rounded-lg transition"
+                  className="p-2 cursor-pointer hover:bg-white/10 rounded-lg"
                 >
                   <X size={18} />
                 </button>
@@ -2665,7 +2737,6 @@ function MeetingUI({ isHost, roomId, router }) {
             <div className="flex-1 overflow-y-auto p-6 scrollbar-thin scrollbar-thumb-white/20">
               {showParticipants && (
                 <div className="space-y-3">
-                  {/* You */}
                   <div className="flex items-center justify-between p-3 bg-white/5 rounded-lg">
                     <div className="flex items-center gap-3">
                       <div className="w-8 h-8 rounded-full bg-linear-to-br from-[#E62064] to-[#E62064]/40 flex items-center justify-center">
@@ -2692,12 +2763,9 @@ function MeetingUI({ isHost, roomId, router }) {
                     </div>
                   </div>
 
-                  {/* Remote participants */}
                   {remotePeers.map((peer) => (
-                    <motion.div
+                    <div
                       key={peer.id}
-                      initial={{ opacity: 0, x: 20 }}
-                      animate={{ opacity: 1, x: 0 }}
                       className="flex items-center justify-between p-3 bg-white/5 rounded-lg group"
                     >
                       <div className="flex items-center gap-3">
@@ -2743,7 +2811,7 @@ function MeetingUI({ isHost, roomId, router }) {
                           </button>
                         )}
                       </div>
-                    </motion.div>
+                    </div>
                   ))}
                 </div>
               )}
@@ -2781,27 +2849,7 @@ function MeetingUI({ isHost, roomId, router }) {
                     )}
                   </div>
 
-                  <form
-                    onSubmit={(e) => {
-                      e.preventDefault();
-                      if (newMessage.trim() && permissions.chat) {
-                        setMessages([
-                          ...messages,
-                          {
-                            id: Date.now(),
-                            text: newMessage,
-                            sender: "You",
-                            timestamp: new Date(),
-                          },
-                        ]);
-                        setNewMessage("");
-                        showNotification("Message sent", "success");
-                      } else if (!permissions.chat) {
-                        showNotification("Chat is disabled by host", "error");
-                      }
-                    }}
-                    className="mt-auto"
-                  >
+                  <form onSubmit={sendMessage} className="mt-auto">
                     <div className="flex gap-2">
                       <input
                         type="text"
@@ -2833,15 +2881,14 @@ function MeetingUI({ isHost, roomId, router }) {
                 onClick={copyLink}
                 className="w-full cursor-pointer hover:bg-[#E62064] bg-[#E62064]/90 py-3 rounded-xl text-sm font-semibold transition flex items-center justify-center gap-2"
               >
-                <Copy size={16} />
-                Copy Invite Link
+                <Copy size={16} /> Copy Invite Link
               </button>
             </div>
           </motion.div>
         )}
       </AnimatePresence>
 
-      {/* Settings Modal */}
+      {/* Settings Modal (unchanged) */}
       <AnimatePresence>
         {showSettings && (
           <motion.div
@@ -2867,7 +2914,6 @@ function MeetingUI({ isHost, roomId, router }) {
                   <X size={20} />
                 </button>
               </div>
-
               <div className="space-y-4">
                 <div>
                   <label className="flex items-center justify-between cursor-pointer">
@@ -2905,7 +2951,7 @@ function MeetingUI({ isHost, roomId, router }) {
         )}
       </AnimatePresence>
 
-      {/* Security Modal (Host only) */}
+      {/* Security Modal (unchanged) */}
       <AnimatePresence>
         {showSecurity && isHost && (
           <motion.div
@@ -2933,7 +2979,6 @@ function MeetingUI({ isHost, roomId, router }) {
                   <X size={20} />
                 </button>
               </div>
-
               <div className="space-y-4">
                 <label className="flex items-center justify-between cursor-pointer">
                   <span className="flex items-center gap-2">
@@ -2941,140 +2986,48 @@ function MeetingUI({ isHost, roomId, router }) {
                   </span>
                   <button
                     onClick={toggleMeetingLock}
-                    className={`px-3 py-1 rounded-lg text-sm ${
-                      meetingLocked ? "bg-red-600" : "bg-green-600"
-                    }`}
+                    className={`px-3 py-1 rounded-lg text-sm ${meetingLocked ? "bg-red-600" : "bg-green-600"}`}
                   >
                     {meetingLocked ? "Locked" : "Unlocked"}
                   </button>
                 </label>
-
                 <label className="flex items-center justify-between cursor-pointer">
                   <span className="flex items-center gap-2">
                     <EyeOff size={16} /> Hide Profile Pictures
                   </span>
                   <button
                     onClick={toggleHideProfilePictures}
-                    className={`px-3 py-1 rounded-lg text-sm ${
-                      hideProfilePictures ? "bg-green-600" : "bg-white/10"
-                    }`}
+                    className={`px-3 py-1 rounded-lg text-sm ${hideProfilePictures ? "bg-green-600" : "bg-white/10"}`}
                   >
                     {hideProfilePictures ? "Hidden" : "Visible"}
                   </button>
                 </label>
-
                 <div className="border-t border-white/10 pt-4">
                   <h4 className="font-semibold mb-3">
                     Participant Permissions
                   </h4>
                   <div className="space-y-3">
-                    <label className="flex items-center justify-between cursor-pointer">
-                      <span>Allow Chat</span>
-                      <button
-                        onClick={() =>
-                          updatePermissions("chat", !permissions.chat)
-                        }
-                        className={`w-10 h-5 rounded-full transition ${
-                          permissions.chat ? "bg-cyan-600" : "bg-white/20"
-                        } relative`}
+                    {Object.entries(permissions).map(([key, value]) => (
+                      <label
+                        key={key}
+                        className="flex items-center justify-between cursor-pointer"
                       >
-                        <div
-                          className={`absolute w-4 h-4 rounded-full bg-white top-0.5 transition ${
-                            permissions.chat ? "right-0.5" : "left-0.5"
-                          }`}
-                        />
-                      </button>
-                    </label>
-
-                    <label className="flex items-center justify-between cursor-pointer">
-                      <span>Allow Screen Sharing</span>
-                      <button
-                        onClick={() =>
-                          updatePermissions(
-                            "shareScreen",
-                            !permissions.shareScreen,
-                          )
-                        }
-                        className={`w-10 h-5 rounded-full transition ${
-                          permissions.shareScreen
-                            ? "bg-cyan-600"
-                            : "bg-white/20"
-                        } relative`}
-                      >
-                        <div
-                          className={`absolute w-4 h-4 rounded-full bg-white top-0.5 transition ${
-                            permissions.shareScreen ? "right-0.5" : "left-0.5"
-                          }`}
-                        />
-                      </button>
-                    </label>
-
-                    <label className="flex items-center justify-between cursor-pointer">
-                      <span>Allow Start Video</span>
-                      <button
-                        onClick={() =>
-                          updatePermissions(
-                            "startVideo",
-                            !permissions.startVideo,
-                          )
-                        }
-                        className={`w-10 h-5 rounded-full transition ${
-                          permissions.startVideo ? "bg-cyan-600" : "bg-white/20"
-                        } relative`}
-                      >
-                        <div
-                          className={`absolute w-4 h-4 rounded-full bg-white top-0.5 transition ${
-                            permissions.startVideo ? "right-0.5" : "left-0.5"
-                          }`}
-                        />
-                      </button>
-                    </label>
-
-                    <label className="flex items-center justify-between cursor-pointer">
-                      <span>Allow Whiteboard</span>
-                      <button
-                        onClick={() =>
-                          updatePermissions(
-                            "shareWhiteboard",
-                            !permissions.shareWhiteboard,
-                          )
-                        }
-                        className={`w-10 h-5 rounded-full transition ${
-                          permissions.shareWhiteboard
-                            ? "bg-cyan-600"
-                            : "bg-white/20"
-                        } relative`}
-                      >
-                        <div
-                          className={`absolute w-4 h-4 rounded-full bg-white top-0.5 transition ${
-                            permissions.shareWhiteboard
-                              ? "right-0.5"
-                              : "left-0.5"
-                          }`}
-                        />
-                      </button>
-                    </label>
-
-                    <label className="flex items-center justify-between cursor-pointer">
-                      <span>Allow Rename Self</span>
-                      <button
-                        onClick={() =>
-                          updatePermissions(
-                            "renameSelf",
-                            !permissions.renameSelf,
-                          )
-                        }
-                        className={`w-10 h-5 rounded-full transition ${
-                          permissions.renameSelf ? "bg-cyan-600" : "bg-white/20"
-                        } relative`}
-                      >
-                        <div
-                          className={`absolute w-4 h-4 rounded-full bg-white top-0.5 transition ${
-                            permissions.renameSelf ? "right-0.5" : "left-0.5"
-                          }`}
-                        />
-                      </button>
-                    </label>
+                        <span>
+                          Allow{" "}
+                          {key
+                            .replace(/([A-Z])/g, " $1")
+                            .replace(/^./, (str) => str.toUpperCase())}
+                        </span>
+                        <button
+                          onClick={() => updatePermissions(key, !value)}
+                          className={`w-10 h-5 rounded-full transition ${value ? "bg-cyan-600" : "bg-white/20"} relative`}
+                        >
+                          <div
+                            className={`absolute w-4 h-4 rounded-full bg-white top-0.5 transition ${value ? "right-0.5" : "left-0.5"}`}
+                          />
+                        </button>
+                      </label>
+                    ))}
                   </div>
                 </div>
               </div>
