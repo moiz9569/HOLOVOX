@@ -8,6 +8,8 @@
     "start": "next start"
   },
   "dependencies": {
+    "@livekit/components-react": "^2.9.20",
+    "@livekit/components-styles": "^1.2.0",
     "@radix-ui/react-slot": "^1.2.4",
     "@tailwindcss/postcss": "^4.2.0",
     "aframe": "^1.7.1",
@@ -19,6 +21,7 @@
     "framer-motion": "^12.34.3",
     "jsonwebtoken": "^9.0.3",
     "jwt-decode": "^4.0.0",
+    "livekit-client": "^2.18.0",
     "lucide-react": "^0.575.0",
     "mongoose": "^9.3.0",
     "next": "16.1.6",
