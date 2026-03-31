@@ -1,0 +1,212 @@
+import { motion, AnimatePresence } from "framer-motion";
+import {
+  Mic,
+  MicOff,
+  Video,
+  VideoOff,
+  Phone,
+  ScreenShare,
+  Smile,
+  Paintbrush,
+  Settings,
+  Shield,
+  Users,
+  MessageSquare,
+  ThumbsUp,
+  Heart,
+  Laugh,
+  Frown,
+} from "lucide-react";
+
+export default function ControlBar({
+  showControls,
+  isMuted,
+  toggleAudio,
+  isRecording,
+  startRecording,
+  stopRecording,
+  isVideoOff,
+  toggleVideo,
+  isScreenSharing,
+  toggleScreenShare,
+  showReactions,
+  setShowReactions,
+  addReaction,
+  showWhiteboard,
+  setShowWhiteboard,
+  permissions,
+  isHost,
+  showNotification,
+  setShowSettings,
+  setShowSecurity,
+  isHostAction,
+  endMeeting,
+  leaveMeeting,
+  showParticipants,
+  setShowParticipants,
+  remotePeers,
+  showChat,
+  setShowChat,
+  messages,
+}) {
+  return (
+    <motion.div
+      initial={{ y: 100 }}
+      animate={{ y: showControls ? 0 : 100 }}
+      transition={{ duration: 0.3 }}
+      className="absolute bottom-6 left-1/2 -translate-x-1/2 z-50"
+    >
+      <div className="flex items-center gap-3 bg-black/60 backdrop-blur-xl px-6 py-3 rounded-2xl border border-white/10 shadow-2xl">
+        <button
+          onClick={toggleAudio}
+          className={`w-12 h-12 rounded-xl flex items-center justify-center transition ${
+            isMuted
+              ? "bg-red-600 hover:bg-red-700"
+              : "bg-white/10 hover:bg-white/20"
+          }`}
+        >
+          {isMuted ? <MicOff size={20} /> : <Mic size={20} />}
+        </button>
+
+        <button
+          onClick={isRecording ? stopRecording : startRecording}
+          className={`px-4 py-2 rounded-lg ${isRecording ? "bg-red-600" : "bg-gray-700"}`}
+        >
+          {isRecording ? "Stop Recording" : "Start Recording"}
+        </button>
+
+        <button
+          onClick={toggleVideo}
+          className={`w-12 h-12 rounded-xl flex items-center justify-center transition ${
+            isVideoOff
+              ? "bg-red-600 hover:bg-red-700"
+              : "bg-white/10 hover:bg-white/20"
+          }`}
+        >
+          {isVideoOff ? <VideoOff size={20} /> : <Video size={20} />}
+        </button>
+
+        <button
+          onClick={toggleScreenShare}
+          className={`w-12 h-12 rounded-xl flex items-center justify-center transition ${
+            isScreenSharing
+              ? "bg-green-600 hover:bg-green-700"
+              : "bg-white/10 hover:bg-white/20"
+          }`}
+        >
+          <ScreenShare size={20} />
+        </button>
+
+        {/* Reactions button */}
+        <div className="relative">
+          <button
+            onClick={() => setShowReactions(!showReactions)}
+            className="w-12 h-12 rounded-xl bg-white/10 hover:bg-white/20 flex items-center justify-center"
+          >
+            <Smile size={20} />
+          </button>
+          <AnimatePresence>
+            {showReactions && (
+              <motion.div
+                initial={{ opacity: 0, y: 10 }}
+                animate={{ opacity: 1, y: 0 }}
+                exit={{ opacity: 0, y: 10 }}
+                className="absolute bottom-14 left-1/2 -translate-x-1/2 bg-black/80 backdrop-blur-xl rounded-full p-2 flex gap-2"
+              >
+                <button onClick={() => addReaction("thumbsup")}>
+                  <ThumbsUp size={20} />
+                </button>
+                <button onClick={() => addReaction("smile")}>
+                  <Smile size={20} />
+                </button>
+                <button onClick={() => addReaction("heart")}>
+                  <Heart size={20} />
+                </button>
+                <button onClick={() => addReaction("laugh")}>
+                  <Laugh size={20} />
+                </button>
+                <button onClick={() => addReaction("frown")}>
+                  <Frown size={20} />
+                </button>
+              </motion.div>
+            )}
+          </AnimatePresence>
+        </div>
+
+        {/* Whiteboard button */}
+        <button
+          onClick={() => {
+            if (permissions.shareWhiteboard || isHost) {
+              setShowWhiteboard(!showWhiteboard);
+            } else {
+              showNotification("Whiteboard is disabled by host", "error");
+            }
+          }}
+          className="w-12 h-12 rounded-xl bg-white/10 hover:bg-white/20 flex items-center justify-center"
+        >
+          <Paintbrush size={20} />
+        </button>
+
+        {/* Settings button */}
+        <button
+          onClick={() => setShowSettings(true)}
+          className="w-12 h-12 rounded-xl bg-white/10 hover:bg-white/20 flex items-center justify-center"
+        >
+          <Settings size={20} />
+        </button>
+
+        {/* Security button (host only) */}
+        {isHost && (
+          <button
+            onClick={() => setShowSecurity(true)}
+            className="w-12 h-12 rounded-xl bg-white/10 hover:bg-white/20 flex items-center justify-center"
+          >
+            <Shield size={20} />
+          </button>
+        )}
+
+        {/* Leave / End meeting */}
+        <button
+          onClick={isHost ? endMeeting : leaveMeeting}
+          className={`w-14 h-14 rounded-xl flex items-center justify-center transition shadow-lg ${
+            isHost
+              ? "bg-red-600 hover:bg-red-700"
+              : "bg-orange-600 hover:bg-orange-700"
+          }`}
+        >
+          <Phone size={24} className="rotate-135" />
+        </button>
+
+        {/* Participants toggle */}
+        <button
+          onClick={() => setShowParticipants(!showParticipants)}
+          className={`w-12 h-12 rounded-xl flex items-center justify-center transition relative ${
+            showParticipants ? "bg-cyan-600" : "bg-white/10 hover:bg-white/20"
+          }`}
+        >
+          <Users size={20} />
+          {remotePeers.length > 0 && (
+            <span className="absolute -top-1 -right-1 w-5 h-5 bg-cyan-500 rounded-full text-xs flex items-center justify-center">
+              {remotePeers.length + 1}
+            </span>
+          )}
+        </button>
+
+        {/* Chat toggle */}
+        <button
+          onClick={() => setShowChat(!showChat)}
+          className={`w-12 h-12 rounded-xl flex items-center justify-center transition relative ${
+            showChat ? "bg-cyan-600" : "bg-white/10 hover:bg-white/20"
+          }`}
+        >
+          <MessageSquare size={20} />
+          {messages.length > 0 && (
+            <span className="absolute -top-1 -right-1 w-5 h-5 bg-cyan-500 rounded-full text-xs flex items-center justify-center">
+              {messages.length}
+            </span>
+          )}
+        </button>
+      </div>
+    </motion.div>
+  );
+}

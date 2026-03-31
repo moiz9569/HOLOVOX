@@ -263,7 +263,7 @@ const MeetingModal = ({ onClose }) => {
 
   const joinMeeting = () => {
     if (!joinCode.trim()) return alert("Enter meeting code!");
-    router.push(`/meeting/${joinCode}?role=guest`);
+    router.push(`/meeting-room/${joinCode}?role=guest`);
     onClose(); // close modal after join
   };
 
@@ -343,7 +343,7 @@ const Header = () => {
 
   const createMeeting = () => {
     const roomId = uuidv4().slice(0, 6);
-    router.push(`/meeting/${roomId}?role=host`);
+    router.push(`/meeting-room/${roomId}?role=host`);
   };
 
   return (
