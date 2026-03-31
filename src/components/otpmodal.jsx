@@ -303,58 +303,29 @@
 
 // export default OtpModal;
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 "use client";
 import { motion, AnimatePresence } from "framer-motion";
 import { useState, useRef, useEffect } from "react";
 import { FiShield, FiX, FiRotateCw } from "react-icons/fi";
 // import { showSuccessToast,showErrorToast } from "../../../../lib/toast";
-import { showSuccessToast,showErrorToast } from "../../lib/toast";
+import { showSuccessToast, showErrorToast } from "../../lib/toast";
 
-export default function OtpModal({ 
-  isOpen, 
-  onClose, 
-  email, 
-  userData, 
-  onVerificationSuccess 
+export default function OtpModal({
+  isOpen,
+  onClose,
+  email,
+  userData,
+  onVerificationSuccess,
 }) {
   const [otp, setOtp] = useState(["", "", "", ""]);
   const [enteredOtp, setEnteredOtp] = useState("");
   const [serverOtp, setServerOtp] = useState("");
-  const [timeLeft, setTimeLeft] = useState(120); 
+  const [timeLeft, setTimeLeft] = useState(120);
   const [loading, setLoading] = useState(false);
   const [message, setMessage] = useState("");
   const [msgType, setMsgType] = useState("");
-  const [isVerifyingAndRedirecting, setIsVerifyingAndRedirecting] = useState(false);
+  const [isVerifyingAndRedirecting, setIsVerifyingAndRedirecting] =
+    useState(false);
   const inputRefs = useRef([]);
 
   useEffect(() => {
@@ -367,7 +338,7 @@ export default function OtpModal({
       setIsVerifyingAndRedirecting(false);
 
       const timer = setInterval(() => {
-        setTimeLeft(prev => (prev <= 1 ? 0 : prev - 1));
+        setTimeLeft((prev) => (prev <= 1 ? 0 : prev - 1));
       }, 1000);
 
       return () => clearInterval(timer);
@@ -432,14 +403,14 @@ export default function OtpModal({
         setServerOtp(data.otp);
         setTimeLeft(120);
         showMessage("New OTP sent successfully!", "success");
-        showSuccessToast("New OTP sent successfully!", "success")
+        showSuccessToast("New OTP sent successfully!", "success");
       } else {
         showMessage(data.error || "Failed to resend OTP", "error");
-        showErrorToast(data.error || "Failed to resend OTP", "error")
+        showErrorToast(data.error || "Failed to resend OTP", "error");
       }
     } catch {
       showMessage("Failed to resend OTP", "error");
-      showErrorToast("Failed to resend OTP", "error")
+      showErrorToast("Failed to resend OTP", "error");
     } finally {
       setLoading(false);
     }
@@ -448,12 +419,12 @@ export default function OtpModal({
   const verifyOTP = async () => {
     if (enteredOtp.length !== 4) {
       showMessage("Please enter complete OTP", "warning");
-      showErrorToast("Please enter complete OTP", "warning")
+      showErrorToast("Please enter complete OTP", "warning");
       return;
     }
     if (!userData?.email) {
       showMessage("Email not found", "error");
-      showErrorToast("Email not found", "error")
+      showErrorToast("Email not found", "error");
       return;
     }
 
@@ -464,9 +435,9 @@ export default function OtpModal({
       const verifyRes = await fetch("/api/auth/emailVerification", {
         method: "PUT",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ 
+        body: JSON.stringify({
           email: userData.email,
-          otp: enteredOtp 
+          otp: enteredOtp,
         }),
       });
 
@@ -474,7 +445,7 @@ export default function OtpModal({
 
       if (!verifyRes.ok) {
         showMessage(verifyData.error || "Invalid OTP", "error");
-        showErrorToast(verifyData.error || "Invalid OTP", "error")
+        showErrorToast(verifyData.error || "Invalid OTP", "error");
         setIsVerifyingAndRedirecting(false);
         setLoading(false);
         return;
@@ -490,22 +461,21 @@ export default function OtpModal({
 
       if (createAccountRes.ok) {
         showMessage("Account created successfully! Redirecting...", "success");
-        showSuccessToast("Account created successfully!")
-        
+        showSuccessToast("Account created successfully!");
+
         // Call success callback if provided
         if (onVerificationSuccess) {
           onVerificationSuccess(accountData);
         }
-        
       } else {
         showMessage(accountData.error || "Account creation failed", "error");
-        showErrorToast(accountData.error || "Account creation failed", "error")
+        showErrorToast(accountData.error || "Account creation failed", "error");
         setIsVerifyingAndRedirecting(false);
         setLoading(false);
       }
     } catch {
       showMessage("Something went wrong during verification", "error");
-      showErrorToast("Something went wrong during verification", "error")
+      showErrorToast("Something went wrong during verification", "error");
       setIsVerifyingAndRedirecting(false);
       setLoading(false);
     }
@@ -533,12 +503,14 @@ export default function OtpModal({
               transition={{
                 duration: 1,
                 repeat: Infinity,
-                ease: "linear"
+                ease: "linear",
               }}
               className="w-16 h-16 border-4 border-[#E62064] border-t-transparent rounded-full mb-4"
             />
-            <p className="text-white text-lg font-semibold">Account created successfully!</p>
-            <p className="text-gray-300 mt-2">Redirecting to dashboard...</p>
+            <p className="text-white text-lg font-semibold">
+              Account created successfully!
+            </p>
+            {/* <p className="text-gray-300 mt-2">Redirecting to dashboard...</p> */}
           </motion.div>
         )}
 
@@ -558,7 +530,6 @@ export default function OtpModal({
           className="relative w-full max-w-md mx-auto"
         >
           <div className="relative bg-linear-to-r bg-gray-200 rounded-3xl border border-white/10 shadow-2xl overflow-hidden">
-
             <div className="relative p-6 pb-4 bg-gray-300">
               <motion.button
                 whileHover={{ scale: 1.1, rotate: 90 }}
@@ -578,26 +549,28 @@ export default function OtpModal({
                       transition={{
                         duration: 1,
                         repeat: Infinity,
-                        ease: "linear"
+                        ease: "linear",
                       }}
                       className="w-8 h-8 border-2 border-blue-400 border-t-transparent rounded-full"
                     />
                   ) : (
                     <motion.img
-                    initial={{ scale: 0.8, opacity: 0 }}
-                    animate={{ scale: 1, opacity: 1 }}
-                    transition={{ delay: 0.2 }}
-                    src="/holovox-icon.png"
-                    className="w-28 h-28 animate-spin-slow hover:scale-110 transition-transform duration-500 object-contain"
-                  />
+                      initial={{ scale: 0.8, opacity: 0 }}
+                      animate={{ scale: 1, opacity: 1 }}
+                      transition={{ delay: 0.2 }}
+                      src="/holovox-icon.png"
+                      className="w-28 h-28 animate-spin-slow hover:scale-110 transition-transform duration-500 object-contain"
+                    />
                   )}
                 </div>
                 <h2 className="text-2xl font-bold bg-[#E62064] bg-clip-text text-transparent mb-2">
-                  {isVerifyingAndRedirecting ? "Processing..." : "Verify Your Email"}
+                  {isVerifyingAndRedirecting
+                    ? "Processing..."
+                    : "Verify Your Email"}
                 </h2>
                 <p className="text-gray-700 text-sm mb-1">
-                  {isVerifyingAndRedirecting 
-                    ? "Your account is being created..." 
+                  {isVerifyingAndRedirecting
+                    ? "Your account is being created..."
                     : "Enter the 4-digit code sent to"}
                 </p>
                 <p className="text-[#E62064] font-semibold text-sm mb-4">
@@ -628,7 +601,11 @@ export default function OtpModal({
 
                 <div className="text-center mb-6">
                   <p className="text-gray-700 text-sm mb-3">
-                    {timeLeft > 0 ? `Code expires in ${formatTime(timeLeft)}` : <span className="text-black-400">OTP expired</span>}
+                    {timeLeft > 0 ? (
+                      `Code expires in ${formatTime(timeLeft)}`
+                    ) : (
+                      <span className="text-black-400">OTP expired</span>
+                    )}
                   </p>
 
                   <button
@@ -643,10 +620,16 @@ export default function OtpModal({
                 </div>
 
                 {message && (
-                  <div className={`text-center mb-4 p-3 rounded-lg border 
-                    ${msgType === "success" ? "text-green-300 border-green-300/40 bg-green-300/10" :
-                      msgType === "error" ? "text-red-300 border-red-300/40 bg-red-300/10" :
-                      "text-yellow-300 border-yellow-300/40 bg-yellow-300/10"}`}>
+                  <div
+                    className={`text-center mb-4 p-3 rounded-lg border 
+                    ${
+                      msgType === "success"
+                        ? "text-green-300 border-green-300/40 bg-green-300/10"
+                        : msgType === "error"
+                          ? "text-red-300 border-red-300/40 bg-red-300/10"
+                          : "text-yellow-300 border-yellow-300/40 bg-yellow-300/10"
+                    }`}
+                  >
                     {message}
                   </div>
                 )}
@@ -665,7 +648,7 @@ export default function OtpModal({
                         transition={{
                           duration: 1,
                           repeat: Infinity,
-                          ease: "linear"
+                          ease: "linear",
                         }}
                         className="inline-block w-5 h-5 border-2 border-white border-t-transparent rounded-full mr-2"
                       />
