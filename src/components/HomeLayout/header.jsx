@@ -268,7 +268,7 @@ const MeetingModal = ({ onClose }) => {
   };
 
   return (
-    <div className="fixed inset-0 mt-80 z-50 flex items-center justify-center bg-black/60">
+    <div className="fixed inset-0 mt-80 z-50 flex items-center justify-center bg-white">
       <motion.div
         initial={{ scale: 0.8, opacity: 0 }}
         animate={{ scale: 1, opacity: 1 }}
@@ -282,18 +282,18 @@ const MeetingModal = ({ onClose }) => {
         </button>
 
         <div className="text-center mb-6">
-          <h2 className="text-2xl font-bold text-white">Join Meeting</h2>
-          <p className="text-white/60 text-sm">Enter Meeting ID to continue</p>
+          <h2 className="text-2xl font-bold text-gray-800">Join Meeting</h2>
+          <p className="text-gray-600 text-sm">Enter Meeting ID to continue</p>
         </div>
 
         <div className="relative mb-4">
-          <Mail className="absolute left-3 top-1/2 -translate-y-1/2 text-white/40" />
+          <Mail className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400" />
           <input
             type="text"
             value={joinCode}
             onChange={(e) => setJoinCode(e.target.value)}
             placeholder="Enter meeting ID"
-            className="w-full pl-10 pr-4 py-3 bg-white/10 border border-white/20 rounded-xl text-white"
+            className="w-full pl-10 pr-4 py-3 bg-gray-100 border border-white/20 rounded-xl text-gray-800"
           />
         </div>
 
