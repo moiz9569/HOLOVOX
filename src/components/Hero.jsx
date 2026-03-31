@@ -52,12 +52,12 @@ export const Hero = () => {
         <FloatingParticles />
 
         {/* Top Content - Logo */}
-        <div className="relative z-10 pt-24 md:pt-32 px-4">
+        <div className="relative z-10 pt-24 sm:pt-32 px-4">
           <motion.div className="flex justify-center">
             <motion.img
               src="/holovox-logo.png"
               alt="HoloVox"
-              className="h-16 md:h-24"
+              className="h-20 lg:h-24 mt-14 sm:mt-0 lg:-mt-2"
               initial={{
                 opacity: 0,
                 y: -20,
@@ -73,22 +73,22 @@ export const Hero = () => {
           </motion.div>
         </div>
         {/* Buttons Over Hero Image */}
-        <div className="relative z-10 flex justify-center mt-68">
+        <div className="relative z-10 flex justify-center mt-88 sm:mt-68 lg:mt-84 xl:mt-94">
           <motion.div
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.8, delay: 0.3 }}
             className="flex gap-4 flex-wrap justify-center"
           >
-            <Button className="rounded-full cursor-pointer px-7 py-2 bg-[#E4246E] hover:bg-[#d11f63] border border-white text-white text-base font-semibold backdrop-blur-md shadow-lg">
+            <Button className="rounded-full cursor-pointer px-4 sm:px-7 py-2 bg-[#E4246E] hover:bg-[#d11f63] border border-white text-white text-base font-medium sm:font-semibold backdrop-blur-md shadow-lg">
               Hold At Me
             </Button>
 
-            <Button className="rounded-full cursor-pointer px-7 py-2 bg-[#4FA6D8] hover:bg-[#3b95c9] border border-white text-white text-base font-semibold shadow-lg backdrop-blur-md">
+            <Button className="rounded-full cursor-pointer px-4 sm:px-7 py-2 bg-[#4FA6D8] hover:bg-[#3b95c9] border border-white text-white text-base font-medium sm:font-semibold shadow-lg backdrop-blur-md">
               Podcast
             </Button>
 
-            <Button className="rounded-full cursor-pointer px-7 py-2 bg-[#D73C3C] hover:bg-[#ff4f4f] border border-white text-white text-base font-semibold shadow-lg backdrop-blur-md">
+            <Button className="rounded-full cursor-pointer px-4 sm:px-7 py-2 bg-[#D73C3C] hover:bg-[#ff4f4f] border border-white text-white text-base font-medium sm:font-semibold shadow-lg backdrop-blur-md">
               Watch Podcast
             </Button>
           </motion.div>
@@ -98,7 +98,7 @@ export const Hero = () => {
       </section>
 
       {/* Glass Card - Below the hero image with breathing room */}
-      <div className="relative z-20 px-4 flex justify-center -mt-20 md:mt-24">
+      <div className="relative z-20 px-4 flex justify-center mt-24">
         <div className="items-center shadow-[0_10px_25px_rgba(233,22,75,0.3)] justify-center text-center w-5xl bg-white rounded-3xl p-8 md:p-12 flex flex-col gap-6">
           <motion.h1
             className="font-creata text-gray-800 text-4xl md:text-6xl lg:text-8xl font-medium tracking-tight"
