@@ -171,23 +171,12 @@
 
 // export default LoginForm;
 
-
-
-
-
-
-
-
-
-
-
-
 "use client";
 import { motion, AnimatePresence } from "framer-motion";
 import { FiMail, FiLock, FiEye, FiEyeOff, FiX } from "react-icons/fi";
 import { useState } from "react";
 import { useRouter } from "next/navigation";
-import { showSuccessToast,showErrorToast } from "../../lib/toast";
+import { showSuccessToast, showErrorToast } from "../../lib/toast";
 
 export default function LoginForm({ isOpen, onClose, openSignup }) {
   if (!isOpen) return null;
@@ -218,7 +207,7 @@ export default function LoginForm({ isOpen, onClose, openSignup }) {
 
       if (!res.ok) {
         console.error(data.error);
-        showErrorToast(data.error)
+        showErrorToast(data.error);
         setIsLoading(false);
         return;
       }
@@ -227,26 +216,26 @@ export default function LoginForm({ isOpen, onClose, openSignup }) {
       showSuccessToast("Login successful!");
       console.log("Login successful!");
       console.log("TOKEN:", data.token);
-      
+
       // Set redirecting state
       setIsRedirecting(true);
-      
+
       // Save token
       if (data?.token) {
         localStorage.setItem("token", data.token);
       }
 
       // Determine redirect path
-      const redirectPath = data?.user?.role === "user" ? "/home" : "/admindashboard";
-      
+      const redirectPath =
+        data?.user?.role === "user" ? "/home" : "/admindashboard";
+
       // Add a small delay to show loading state
       setTimeout(() => {
         router.push(redirectPath);
       }, 500);
-
     } catch (err) {
       console.error("Login error:", err);
-      showErrorToast("Unable to Login, Please try again!")
+      showErrorToast("Unable to Login, Please try again!");
       setIsLoading(false);
       setIsRedirecting(false);
     }
@@ -266,12 +255,14 @@ export default function LoginForm({ isOpen, onClose, openSignup }) {
             transition={{
               duration: 1,
               repeat: Infinity,
-              ease: "linear"
+              ease: "linear",
             }}
             className="w-20 h-20 border-4 border-[#E9164B] border-t-transparent rounded-full mb-6"
           />
-          <p className="text-white text-2xl font-bold mb-2">Login Successful!</p>
-          <p className="text-gray-300 text-lg">Redirecting to dashboard...</p>
+          <p className="text-white text-2xl font-bold mb-2">
+            Login Successful!
+          </p>
+          {/* <p className="text-gray-300 text-lg">Redirecting to dashboard...</p> */}
           <motion.div
             initial={{ width: 0 }}
             animate={{ width: "200px" }}
@@ -347,13 +338,13 @@ export default function LoginForm({ isOpen, onClose, openSignup }) {
                       rotate: {
                         duration: 2,
                         repeat: Infinity,
-                        ease: "linear"
+                        ease: "linear",
                       },
                       scale: {
                         duration: 1.5,
                         repeat: Infinity,
-                        ease: "easeInOut"
-                      }
+                        ease: "easeInOut",
+                      },
                     }}
                     className="w-28 h-28 flex items-center justify-center"
                   >
@@ -362,7 +353,7 @@ export default function LoginForm({ isOpen, onClose, openSignup }) {
                       transition={{
                         duration: 1,
                         repeat: Infinity,
-                        ease: "linear"
+                        ease: "linear",
                       }}
                       className="w-20 h-20 border-4 border-blue-400 border-t-transparent rounded-full"
                     />
@@ -388,7 +379,9 @@ export default function LoginForm({ isOpen, onClose, openSignup }) {
                   {isRedirecting ? "Welcome Back!" : "Welcome Back"}
                 </h2>
                 <p className="text-gray-700 font-inter text-sm">
-                  {isRedirecting ? "Redirecting to your dashboard..." : "Access your Holovox portfolio securely"}
+                  {isRedirecting
+                    ? "Redirecting to your dashboard..."
+                    : "Access your Holovox portfolio securely"}
                 </p>
               </motion.div>
             </div>
@@ -396,7 +389,10 @@ export default function LoginForm({ isOpen, onClose, openSignup }) {
             {/* Only show form if not redirecting */}
             {!isRedirecting && (
               <div className="px-6 pb-6">
-                <form className="space-y-4 font-exo-2" onSubmit={(e) => e.preventDefault()}>
+                <form
+                  className="space-y-4 font-exo-2"
+                  onSubmit={(e) => e.preventDefault()}
+                >
                   {/* Email */}
                   <div className="relative">
                     <FiMail className="absolute left-4 top-1/2 -translate-y-1/2 text-[#E62064]" />
@@ -436,8 +432,12 @@ export default function LoginForm({ isOpen, onClose, openSignup }) {
                     type="button"
                     onClick={handleLogin}
                     disabled={isLoading || !email || !password}
-                    whileHover={!isLoading && email && password ? { scale: 1.02 } : {}}
-                    whileTap={!isLoading && email && password ? { scale: 0.98 } : {}}
+                    whileHover={
+                      !isLoading && email && password ? { scale: 1.02 } : {}
+                    }
+                    whileTap={
+                      !isLoading && email && password ? { scale: 0.98 } : {}
+                    }
                     className="w-full cursor-pointer mt-3 py-3 rounded-2xl bg-[#E62064] text-white font-semibold text-lg shadow-md hover:shadow-lg transition-all disabled:opacity-50 disabled:cursor-not-allowed relative overflow-hidden"
                   >
                     {isLoading ? (
@@ -487,12 +487,16 @@ export default function LoginForm({ isOpen, onClose, openSignup }) {
                     transition={{
                       duration: 1.5,
                       repeat: Infinity,
-                      ease: "linear"
+                      ease: "linear",
                     }}
                     className="w-16 h-16 border-4 border-[#E9164B] border-t-transparent rounded-full mx-auto mb-6"
                   />
-                  <h3 className="text-xl font-bold text-[#E9164B] mb-2">Login Successful!</h3>
-                  <p className="text-gray-700 mb-4">You are being redirected to your dashboard</p>
+                  <h3 className="text-xl font-bold text-[#E9164B] mb-2">
+                    Login Successful!
+                  </h3>
+                  <p className="text-gray-700 mb-4">
+                    You are being redirected to your dashboard
+                  </p>
                   <div className="w-full h-1 bg-gray-300 rounded-full overflow-hidden">
                     <motion.div
                       initial={{ width: "0%" }}

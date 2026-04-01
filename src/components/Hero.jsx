@@ -81,7 +81,7 @@ export const Hero = () => {
             className="flex gap-4 flex-wrap justify-center"
           >
             <Button className="rounded-full cursor-pointer px-4 sm:px-7 py-2 bg-[#E4246E] hover:bg-[#d11f63] border border-white text-white text-base font-medium sm:font-semibold backdrop-blur-md shadow-lg">
-              Hold At Me
+              Holo At Me
             </Button>
 
             <Button className="rounded-full cursor-pointer px-4 sm:px-7 py-2 bg-[#4FA6D8] hover:bg-[#3b95c9] border border-white text-white text-base font-medium sm:font-semibold shadow-lg backdrop-blur-md">
