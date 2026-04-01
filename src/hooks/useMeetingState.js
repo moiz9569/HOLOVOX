@@ -120,9 +120,10 @@ export const useMeetingState = () => {
   // Debug audio track
   useEffect(() => {
     const checkAudio = setInterval(() => {
-      const mic = localParticipant.localParticipant?.getTrack(
-        Track.Source.Microphone,
-      );
+      // const mic = localParticipant.localParticipant?.getTrack(
+      //   Track.Source.Microphone,
+      // );
+      const mic = localParticipant.localParticipant?.getTrackPublication(Track.Source.Microphone);
       console.log(
         "Mic track:",
         mic

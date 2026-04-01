@@ -56,6 +56,7 @@ export default function VideoArea({
             className="h-full w-full flex items-center justify-center bg-slate-950"
           >
             <video
+              key={activeStreamId}
               autoPlay
               playsInline
               className="w-full h-full object-cover"
