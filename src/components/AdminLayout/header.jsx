@@ -73,7 +73,7 @@ const MeetingModal = ({ onClose }) => {
 
 const AdminHeader = () => {
   const router = useRouter();
-
+  const [loading, setLoading] = useState(false);
   const [searchQuery, setSearchQuery] = useState("");
   const [showUserMenu, setShowUserMenu] = useState(false);
   const [showNotifications, setShowNotifications] = useState(false);
