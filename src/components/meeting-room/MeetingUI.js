@@ -265,7 +265,6 @@ export default function MeetingUI({ isHost, roomId, router }) {
           activeStreamId={meetingState.activeStreamId}
           mainVideoRef={meetingState.mainVideoRef}
           showWhiteboard={meetingState.showWhiteboard}
-          room={meetingState.room}
           WhiteboardComponent={
             <WhiteboardComponent
               showWhiteboard={meetingState.showWhiteboard}

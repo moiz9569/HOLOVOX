@@ -1,5 +1,3 @@
-"use client";
-
 // "use client";
 // import React from "react";
 // import {
@@ -238,7 +236,7 @@
 
 // export default Header;
 
-
+"use client";
 import React, { useState, useEffect } from "react";
 import {
   Menu,
@@ -314,7 +312,6 @@ const Header = () => {
   const router = useRouter();
 
   const [searchQuery, setSearchQuery] = useState("");
-  const [loading, setLoading] = useState(false);
   const [showUserMenu, setShowUserMenu] = useState(false);
   const [showNotifications, setShowNotifications] = useState(false);
   const [showModal, setShowModal] = useState(false);
