@@ -73,10 +73,20 @@ export default function VideoArea({
 //                 mainVideoRef.current = el;
 //               }}
 
+// working
+// ref={(el) => {
+//   if (el && activeStream && el.srcObject !== activeStream) {
+//     el.srcObject = activeStream;
+//   }
+//   mainVideoRef.current = el;
+// }}
 ref={(el) => {
-  if (el && activeStream && el.srcObject !== activeStream) {
+  if (!el) return;
+
+  if (activeStream && el.srcObject !== activeStream) {
     el.srcObject = activeStream;
   }
+
   mainVideoRef.current = el;
 }}
             />

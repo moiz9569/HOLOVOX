@@ -44,14 +44,16 @@ export const useMeetingState = () => {
       t.participant.identity === localParticipant.localParticipant?.identity &&
       t.source === Track.Source.Camera,
   );
-
-  const localStream = useMemo(() => {
-    if (!localVideoTrack?.publication?.track?.mediaStream) return null;
-    return new MediaStream([
-      localVideoTrack.publication.track.mediaStreamTrack,
-    ]);
-  }, [localVideoTrack]);
-
+// working
+  // const localStream = useMemo(() => {
+  //   if (!localVideoTrack?.publication?.track?.mediaStream) return null;
+  //   return new MediaStream([
+  //     localVideoTrack.publication.track.mediaStreamTrack,
+  //   ]);
+  // }, [localVideoTrack]);
+const localStream = useMemo(() => {
+  return localVideoTrack?.publication?.track?.mediaStream || null;
+}, [localVideoTrack]);
   const remoteTracks = tracks.filter(
     (t) =>
       t.participant.identity !== localParticipant.localParticipant?.identity &&
@@ -70,22 +72,22 @@ export const useMeetingState = () => {
   //   return map;
   // }, [remoteTracks]);
 
-  const remoteStreams = useMemo(() => {
-  const map = new Map();
+//   const remoteStreams = useMemo(() => {
+//   const map = new Map();
 
-  remoteTracks.forEach((track) => {
-    const existing = map.get(track.participant.identity);
+//   remoteTracks.forEach((track) => {
+//     const existing = map.get(track.participant.identity);
 
-    if (existing) return;
+//     if (existing) return;
 
-    const mediaTrack = track.publication?.track?.mediaStreamTrack;
-    if (mediaTrack) {
-      map.set(track.participant.identity, new MediaStream([mediaTrack]));
-    }
-  });
+//     const mediaTrack = track.publication?.track?.mediaStreamTrack;
+//     if (mediaTrack) {
+//       map.set(track.participant.identity, new MediaStream([mediaTrack]));
+//     }
+//   });
 
-  return map;
-}, [remoteTracks]);
+//   return map;
+// }, [remoteTracks]);
   
 
 const remotePeers = useMemo(() => {
@@ -275,7 +277,7 @@ const remotePeers = useMemo(() => {
 
     // Streams
     localStream,
-    remoteStreams,
+    // remoteStreams,
     activeStream,
     remotePeers,
     participantCount,
