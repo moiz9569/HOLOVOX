@@ -58,35 +58,100 @@ export const useMeetingState = () => {
       (t.source === Track.Source.Camera ||
         t.source === Track.Source.ScreenShare),
   );
+// working code
+  // const remoteStreams = useMemo(() => {
+  //   const map = new Map();
+  //   remoteTracks.forEach((track) => {
+  //     const stream = new MediaStream([
+  //       track.publication.track.mediaStreamTrack,
+  //     ]);
+  //     map.set(track.participant.identity, stream);
+  //   });
+  //   return map;
+  // }, [remoteTracks]);
 
   const remoteStreams = useMemo(() => {
-    const map = new Map();
-    remoteTracks.forEach((track) => {
-      const stream = new MediaStream([
-        track.publication.track.mediaStreamTrack,
-      ]);
-      map.set(track.participant.identity, stream);
-    });
-    return map;
-  }, [remoteTracks]);
+  const map = new Map();
 
-  const activeStream = useMemo(() => {
-    return activeStreamId === "local"
-      ? localStream
-      : remoteStreams.get(activeStreamId);
-  }, [activeStreamId, localStream, remoteStreams]);
+  remoteTracks.forEach((track) => {
+    const existing = map.get(track.participant.identity);
 
-  const remotePeers = participants
+    if (existing) return;
+
+    const mediaTrack = track.publication?.track?.mediaStreamTrack;
+    if (mediaTrack) {
+      map.set(track.participant.identity, new MediaStream([mediaTrack]));
+    }
+  });
+
+  return map;
+}, [remoteTracks]);
+  
+
+const remotePeers = useMemo(() => {
+  return participants
     .filter((p) => p.identity !== localParticipant.localParticipant?.identity)
-    .map((p) => ({
-      id: p.identity,
-      stream: remoteStreams.get(p.identity),
-      isHost: p.metadata ? JSON.parse(p.metadata)?.isHost : false,
-      isMuted: false,
-      isVideoOff: false,
-      name: participantNames[p.identity] || `Guest ${p.identity.slice(0, 6)}`,
-    }));
+    .map((p) => {
+      const videoPub = Array.from(p.videoTrackPublications.values())
+        .find((pub) => pub.track);
 
+      return {
+        id: p.identity,
+        name: p.name || p.identity,
+        isHost: p.metadata?.includes("isHost"),
+        stream: videoPub?.track?.mediaStream || null, // ✅ NO NEW STREAM
+        isMuted: p.isMicrophoneEnabled === false,
+        isVideoOff: !videoPub?.track,
+      };
+    });
+}, [participants]);
+// currently working
+// const remotePeers = participants
+  // .filter((p) => p.identity !== localParticipant.localParticipant?.identity)
+  // .map((p) => {
+  //   const videoPub = Array.from(p.videoTrackPublications.values())
+  //     .find((pub) => pub.track);
+
+  //   let stream = null;
+
+  //   if (videoPub?.track?.mediaStreamTrack) {
+  //     stream = new MediaStream([
+  //       videoPub.track.mediaStreamTrack,
+  //     ]);
+  //   }
+
+  //   return {
+  //     id: p.identity,
+  //     name: p.name || p.identity,
+  //     isHost: p.metadata?.includes("isHost"),
+  //     stream: stream, // ✅ FIXED
+  //     isMuted: p.isMicrophoneEnabled === false,
+  //     isVideoOff: !stream,
+  //   };
+  // });
+  // const activeStream = useMemo(() => {
+  //   return activeStreamId === "local"
+  //     ? localStream
+  //     : remoteStreams.get(activeStreamId);
+  // }, [activeStreamId, localStream, remoteStreams]);
+  const activeStream = useMemo(() => {
+  if (activeStreamId === "local") return localStream;
+
+  const peer = remotePeers.find(p => p.id === activeStreamId);
+  return peer?.stream || null;
+}, [activeStreamId, localStream, remotePeers]);
+
+  // const remotePeers = participants
+  //   .filter((p) => p.identity !== localParticipant.localParticipant?.identity)
+  //   .map((p) => ({
+  //     id: p.identity,
+  //     stream: remoteStreams.get(p.identity),
+  //     isHost: p.metadata ? JSON.parse(p.metadata)?.isHost : false,
+  //     isMuted: false,
+  //     isVideoOff: false,
+  //     name: participantNames[p.identity] || `Guest ${p.identity.slice(0, 6)}`,
+  //   }));
+ 
   const participantCount = participants.length + 1;
 
   // Auto-hide controls

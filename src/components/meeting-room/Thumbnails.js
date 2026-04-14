@@ -51,7 +51,9 @@ export default function Thumbnails({
             className="w-full h-full object-cover"
             style={{ transform: "scaleX(-1)" }}
             ref={(el) => {
-              if (el && localStream) el.srcObject = localStream;
+              if (el && localStream && el.srcObject !== localStream) {
+  el.srcObject = localStream;
+}
               localVideoRef.current = el;
             }}
           />
@@ -87,9 +89,19 @@ export default function Thumbnails({
               autoPlay
               playsInline
               className="w-full h-full object-cover"
-              ref={(el) => {
-                if (el && peer.stream) el.srcObject = peer.stream;
-              }}
+//               ref={(el) => {
+//                 // if (el && peer.stream) el.srcObject = peer.stream;
+//                if (el) {
+//  if (el && peer.stream) {
+//   el.srcObject = peer.stream;
+// }
+// }
+//               }}
+ref={(el) => {
+  if (el && peer.stream && el.srcObject !== peer.stream) {
+    el.srcObject = peer.stream;
+  }
+}}
             />
             <div className="absolute inset-0 bg-linear-to-t from-black/60 via-transparent to-transparent" />
             <div className="absolute bottom-1 left-1 right-1 flex items-center justify-between">

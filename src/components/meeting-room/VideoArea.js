@@ -56,15 +56,29 @@ export default function VideoArea({
             className="h-full w-full flex items-center justify-center bg-slate-950"
           >
             <video
-              key={activeStreamId}
+              // key={activeStreamId}
               autoPlay
               playsInline
               className="w-full h-full object-cover"
               style={activeStreamId === "local" ? { transform: "scaleX(-1)" } : undefined}
-              ref={(el) => {
-                if (el && activeStream) el.srcObject = activeStream;
-                mainVideoRef.current = el;
-              }}
+//               ref={(el) => {
+//                 // if (el && activeStream) el.srcObject = activeStream;
+//                if (el) {
+//  if (el && activeStream) {
+//   el.srcObject = activeStream;
+// } else {
+//     el.srcObject = null;
+//   }
+// }
+//                 mainVideoRef.current = el;
+//               }}
+
+ref={(el) => {
+  if (el && activeStream && el.srcObject !== activeStream) {
+    el.srcObject = activeStream;
+  }
+  mainVideoRef.current = el;
+}}
             />
             <div className="absolute bottom-10 left-10 bg-black/40 backdrop-blur-md px-4 py-2 rounded-lg border border-white/10 z-20">
               <p className="text-sm font-medium flex items-center gap-2">
