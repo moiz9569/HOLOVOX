@@ -52,12 +52,12 @@ const RecordingsPage = () => {
   ];
 
   return (
-    <div className="min-h-screen bg-[#1A1835] text-white p-6">
+    <div className="min-h-screen bg-white text-white p-6">
       
       {/* Header */}
       <div className="mb-6">
-        <h1 className="text-2xl font-bold">Recordings</h1>
-        <p className="text-white/60 text-sm">
+        <h1 className="text-2xl font-bold text-black">Recordings</h1>
+        <p className="text-[#E9164B] text-sm">
           Manage your meeting recordings
         </p>
       </div>
@@ -73,7 +73,7 @@ const RecordingsPage = () => {
               className={`flex items-center gap-2 px-4 py-2 rounded-lg text-sm transition ${
                 activeTab === tab.key
                   ? "bg-[#E9164B]"
-                  : "bg-white/5 hover:bg-white/10"
+                  : "bg-white/5 hover:bg-white/10 border-2 border border-black text-black"
               }`}
             >
               <Icon className="w-4 h-4" />

@@ -37,12 +37,12 @@ const SummariesPage = () => {
   };
 
   return (
-    <div className="min-h-screen bg-[#1A1835] text-white p-6">
+    <div className="min-h-screen bg-white text-white p-6">
       
       {/* Header */}
       <div className="mb-6">
-        <h1 className="text-2xl font-bold">Summaries</h1>
-        <p className="text-white/60 text-sm">
+        <h1 className="text-2xl font-bold text-black">Summaries</h1>
+        <p className="text-[#E9164B] text-sm">
           Manage your meeting summaries
         </p>
       </div>
@@ -54,7 +54,7 @@ const SummariesPage = () => {
           className={`px-4 py-2 rounded-lg text-sm ${
             activeTab === "summaries"
               ? "bg-[#E9164B]"
-              : "bg-white/5 hover:bg-white/10"
+              : "bg-white/5 hover:bg-white/10 border-2 border border-black text-black"
           }`}
         >
           My Summaries
@@ -65,7 +65,7 @@ const SummariesPage = () => {
           className={`px-4 py-2 rounded-lg text-sm ${
             activeTab === "trash"
               ? "bg-[#E9164B]"
-              : "bg-white/5 hover:bg-white/10"
+              : "bg-white/5 hover:bg-white/10 border-2 border border-black text-black"
           }`}
         >
           Trash
@@ -73,7 +73,7 @@ const SummariesPage = () => {
       </div>
 
       {/* Table Container */}
-      <div className="bg-white/5 border border-white/10 rounded-2xl overflow-hidden">
+      <div className="bg-black/65 border border-white/10 rounded-2xl overflow-hidden">
         
         {/* Table Header */}
         <div className="grid grid-cols-5 gap-4 px-6 py-4 border-b border-white/10 text-sm text-white/60">

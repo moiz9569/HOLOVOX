@@ -39,13 +39,13 @@ const NotesPage = () => {
   ];
 
   return (
-    <div className="min-h-screen bg-[#1A1835] text-white p-6">
+    <div className="min-h-screen bg-white text-white p-6">
       
       {/* Header */}
       <div className="mb-6 flex justify-between items-center">
         <div>
-          <h1 className="text-2xl font-bold">Notes</h1>
-          <p className="text-white/60 text-sm">
+          <h1 className="text-2xl text-black font-bold">Notes</h1>
+          <p className="text-[#E9164B] text-sm">
             Manage your notes and ideas
           </p>
         </div>
@@ -57,7 +57,7 @@ const NotesPage = () => {
             className={`px-4 py-2 rounded-lg text-sm ${
               mode === "modern"
                 ? "bg-[#E9164B]"
-                : "bg-white/5"
+                : "bg-white/5 border-2 border border-black text-black"
             }`}
           >
             My Notes
@@ -67,7 +67,7 @@ const NotesPage = () => {
             className={`px-4 py-2 rounded-lg text-sm ${
               mode === "classic"
                 ? "bg-[#E9164B]"
-                : "bg-white/5"
+                : "bg-white/5 border-2 border border-black text-black"
             }`}
           >
             Classic
@@ -87,7 +87,7 @@ const NotesPage = () => {
                 className={`px-4 py-2 rounded-lg text-sm ${
                   activeTab === tab
                     ? "bg-[#E9164B]"
-                    : "bg-white/5 hover:bg-white/10"
+                    : "bg-white/5 hover:bg-white/10 border-2 border border-black text-black"
                 }`}
               >
                 {tab === "mynotes" && "My Notes"}
@@ -102,7 +102,7 @@ const NotesPage = () => {
           <div className="grid md:grid-cols-3 gap-6">
             
             {/* Add Note */}
-            <div className="p-6 bg-white/5 rounded-2xl border border-white/10 flex flex-col items-center justify-center cursor-pointer hover:bg-white/10">
+            <div className="p-6 bg-black/65 rounded-2xl border border-white/10 flex flex-col items-center justify-center cursor-pointer hover:bg-white/10">
               <Plus className="mb-2 text-[#E9164B]" />
               <p className="text-sm">New Note</p>
             </div>
@@ -110,7 +110,7 @@ const NotesPage = () => {
             {notesData.map((note, index) => (
               <div
                 key={index}
-                className="p-5 bg-white/5 rounded-2xl border border-white/10 hover:bg-white/10 transition"
+                className="p-5 bg-black/65 rounded-2xl border border-white/10 hover:bg-white/10 transition"
               >
                 <div className="flex justify-between items-start">
                   <h3 className="font-medium">{note.title}</h3>
@@ -141,7 +141,7 @@ const NotesPage = () => {
         <div className="flex gap-6">
           
           {/* Sidebar */}
-          <div className="w-64 bg-white/5 border border-white/10 rounded-2xl p-4">
+          <div className="w-64 bg-black/65 border border-white/10 rounded-2xl p-4">
             {sidebarItems.map((item) => {
               const Icon = item.icon;
               return (
@@ -162,7 +162,7 @@ const NotesPage = () => {
           </div>
 
           {/* Notes List */}
-          <div className="flex-1 bg-white/5 border border-white/10 rounded-2xl p-6">
+          <div className="flex-1 bg-black/65 border border-white/10 rounded-2xl p-6">
             <h2 className="text-lg font-semibold mb-4">
               {activeSidebar.toUpperCase()}
             </h2>

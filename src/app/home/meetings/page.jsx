@@ -1,13 +1,6 @@
 "use client";
 import React, { useState } from "react";
-import {
-  Calendar,
-  Clock,
-  Video,
-  Users,
-  Plus,
-  Copy,
-} from "lucide-react";
+import { Calendar, Clock, Video, Users, Plus, Copy } from "lucide-react";
 import { useRouter } from "next/navigation";
 import { v4 as uuidv4 } from "uuid";
 
@@ -56,8 +49,7 @@ const MeetingsPage = () => {
   ];
 
   return (
-    <div className="min-h-screen bg-[#1A1835] text-white p-6">
-      
+    <div className="min-h-screen bg-white text-white p-6">
       {/* Header */}
       <div className="mb-6">
         <h1 className="text-2xl font-bold text-black">Meetings</h1>
@@ -68,14 +60,11 @@ const MeetingsPage = () => {
 
       {/* Top Actions */}
       <div className="grid md:grid-cols-3 gap-6 mb-8">
-        
         {/* Schedule */}
         <div className="p-6 bg-gray-300 rounded-2xl border border-white/10">
           <Calendar className="mb-3 text-[#E9164B]" />
           <h3 className="font-semibold">Schedule Meeting</h3>
-          <p className="text-sm text-white/60 mb-4">
-            Plan a meeting for later
-          </p>
+          <p className="text-sm text-white/60 mb-4">Plan a meeting for later</p>
           <button className="px-4 py-2 bg-[#E9164B] rounded-lg text-sm">
             Schedule
           </button>
@@ -88,9 +77,7 @@ const MeetingsPage = () => {
         >
           <Video className="mb-3" />
           <h3 className="font-semibold">Start Instant Meeting</h3>
-          <p className="text-sm opacity-80">
-            Start meeting right now
-          </p>
+          <p className="text-sm opacity-80">Start meeting right now</p>
         </div>
 
         {/* Personal Room */}
@@ -129,7 +116,6 @@ const MeetingsPage = () => {
 
       {/* Meetings List */}
       <div className="bg-white/5 rounded-2xl border border-white/10 p-6">
-        
         {/* Upcoming */}
         {activeTab === "upcoming" && (
           <div className="space-y-4">
