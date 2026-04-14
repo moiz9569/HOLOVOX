@@ -102,7 +102,7 @@ const NotesPage = () => {
           <div className="grid md:grid-cols-3 gap-6">
             
             {/* Add Note */}
-            <div className="p-6 bg-black/65 rounded-2xl border border-white/10 flex flex-col items-center justify-center cursor-pointer hover:bg-white/10">
+            <div className="p-6 bg-black/65 rounded-2xl border border-white/10 flex flex-col items-center justify-center cursor-pointer hover:bg-black/50">
               <Plus className="mb-2 text-[#E9164B]" />
               <p className="text-sm">New Note</p>
             </div>
@@ -110,7 +110,7 @@ const NotesPage = () => {
             {notesData.map((note, index) => (
               <div
                 key={index}
-                className="p-5 bg-black/65 rounded-2xl border border-white/10 hover:bg-white/10 transition"
+                className="p-5 bg-black/65 rounded-2xl border border-white/10 hover:bg-black/50 transition"
               >
                 <div className="flex justify-between items-start">
                   <h3 className="font-medium">{note.title}</h3>

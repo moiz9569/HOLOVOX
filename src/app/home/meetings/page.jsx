@@ -61,11 +61,11 @@ const MeetingsPage = () => {
       {/* Top Actions */}
       <div className="grid md:grid-cols-3 gap-6 mb-8">
         {/* Schedule */}
-        <div className="p-6 bg-gray-300 rounded-2xl border border-white/10">
+        <div className="p-6 bg-gray-100 text-black rounded-2xl border border-white/10">
           <Calendar className="mb-3 text-[#E9164B]" />
           <h3 className="font-semibold">Schedule Meeting</h3>
           <p className="text-sm text-white/60 mb-4">Plan a meeting for later</p>
-          <button className="px-4 py-2 bg-[#E9164B] rounded-lg text-sm">
+          <button className="px-4 py-2 bg-[#E9164B] text-white rounded-lg text-sm">
             Schedule
           </button>
         </div>
@@ -81,10 +81,10 @@ const MeetingsPage = () => {
         </div>
 
         {/* Personal Room */}
-        <div className="p-6 bg-gray-300 rounded-2xl border border-white/10">
+        <div className="p-6 bg-gray-100 rounded-2xl border border-white/10">
           <Users className="mb-3 text-[#E9164B]" />
-          <h3 className="font-semibold">Personal Room</h3>
-          <p className="text-sm text-white/60 mb-3">
+          <h3 className="font-semibold text-black">Personal Room</h3>
+          <p className="text-sm text-black mb-3">
             Always available meeting room
           </p>
 

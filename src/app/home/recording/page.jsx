@@ -84,7 +84,7 @@ const RecordingsPage = () => {
       </div>
 
       {/* Recordings List */}
-      <div className="bg-white/5 border border-white/10 rounded-2xl p-6">
+      <div className="bg-black/65 border border-white/10 rounded-2xl p-6">
         {recordings[activeTab].length === 0 ? (
           <div className="text-center py-12">
             <Video className="mx-auto mb-4 text-white/40" size={40} />
