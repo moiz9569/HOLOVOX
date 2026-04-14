@@ -5,6 +5,7 @@ import { useRouter } from "next/navigation";
 import { v4 as uuidv4 } from "uuid";
 import { useState, useEffect } from "react";
 import { getTokenData } from "../content/data";
+import { Podcast } from "lucide-react";
 
 const HomeDashboard = () => {
   const router = useRouter();
@@ -45,6 +46,10 @@ const HomeDashboard = () => {
     alert("Meeting ID copied!");
   };
 
+  const goToPodcastLanding = () => {
+    router.push("/podcast");
+  };
+
   return (
     <div className="min-h-screen bg-white text-black p-6">
       {/* Header */}
@@ -74,6 +79,17 @@ const HomeDashboard = () => {
           <Users className="mb-4" />
           <h3 className="font-semibold text-lg">Join Meeting</h3>
           <p className="text-sm text-black">Enter meeting ID</p>
+        </div>
+
+        <div
+          onClick={goToPodcastLanding}
+          className="cursor-pointer p-6 rounded-2xl bg-[#E9164B] hover:scale-105 transition"
+        >
+          <Podcast className="mb-4 text-white" />
+          <h3 className="font-semibold text-lg text-white">Podcast Mode</h3>
+          <p className="text-sm opacity-80 text-white">
+            Immersive 3D experience
+          </p>
         </div>
 
         {/* Schedule */}

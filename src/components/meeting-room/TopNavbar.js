@@ -18,10 +18,10 @@ export default function TopNavbar({
     >
       <div className="flex items-center gap-4">
         <div className="w-10 h-10 rounded-xl bg-linear-to-br from-[#E62064] to-[#E62064]/40 flex items-center justify-center">
-          <span className="text-lg font-bold">H</span>
+          <span className="text-lg text-white font-bold">H</span>
         </div>
         <div>
-          <h1 className="text-sm font-semibold flex items-center gap-2">
+          <h1 className="text-sm text-white font-semibold flex items-center gap-2">
             Business Weekly Meeting
             {isHost && (
               <span className="px-2 py-0.5 bg-amber-500/20 text-amber-400 rounded-full text-xs flex items-center gap-1">
@@ -39,11 +39,11 @@ export default function TopNavbar({
       </div>
       <div className="flex items-center gap-4">
         <div className="px-3 py-1.5 bg-white/5 rounded-lg">
-          <span className="text-xs font-mono">00:15:23</span>
+          <span className="text-xs text-white font-mono">00:15:23</span>
         </div>
         <button
           onClick={toggleFullscreen}
-          className="p-2 hover:bg-white/10 rounded-lg transition"
+          className="p-2 hover:bg-white/10 text-white rounded-lg transition"
         >
           {isFullscreen ? <Minimize2 size={18} /> : <Maximize2 size={18} />}
         </button>
