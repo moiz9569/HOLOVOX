@@ -49,6 +49,7 @@ export default function Thumbnails({
             muted
             playsInline
             className="w-full h-full object-cover"
+            style={{ transform: "scaleX(-1)" }}
             ref={(el) => {
               if (el && localStream) el.srcObject = localStream;
               localVideoRef.current = el;

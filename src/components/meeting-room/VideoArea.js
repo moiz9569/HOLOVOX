@@ -60,6 +60,7 @@ export default function VideoArea({
               autoPlay
               playsInline
               className="w-full h-full object-cover"
+              style={activeStreamId === "local" ? { transform: "scaleX(-1)" } : undefined}
               ref={(el) => {
                 if (el && activeStream) el.srcObject = activeStream;
                 mainVideoRef.current = el;
