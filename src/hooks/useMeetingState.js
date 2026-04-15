@@ -38,29 +38,32 @@ export const useMeetingState = () => {
   const localVideoRef = useRef(null);
   const mainVideoRef = useRef(null);
 
+  const [showNotes, setShowNotes] = useState(false);
+  const [notes, setNotes] = useState([{ id: Date.now(), text: "" }]);
+
   // Derive streams from LiveKit tracks
   const localVideoTrack = tracks.find(
     (t) =>
       t.participant.identity === localParticipant.localParticipant?.identity &&
-      t.source === Track.Source.Camera,
+      t.source === Track.Source.Camera
   );
-// working
+  // working
   // const localStream = useMemo(() => {
   //   if (!localVideoTrack?.publication?.track?.mediaStream) return null;
   //   return new MediaStream([
   //     localVideoTrack.publication.track.mediaStreamTrack,
   //   ]);
   // }, [localVideoTrack]);
-const localStream = useMemo(() => {
-  return localVideoTrack?.publication?.track?.mediaStream || null;
-}, [localVideoTrack]);
+  const localStream = useMemo(() => {
+    return localVideoTrack?.publication?.track?.mediaStream || null;
+  }, [localVideoTrack]);
   const remoteTracks = tracks.filter(
     (t) =>
       t.participant.identity !== localParticipant.localParticipant?.identity &&
       (t.source === Track.Source.Camera ||
-        t.source === Track.Source.ScreenShare),
+        t.source === Track.Source.ScreenShare)
   );
-// working code
+  // working code
   // const remoteStreams = useMemo(() => {
   //   const map = new Map();
   //   remoteTracks.forEach((track) => {
@@ -72,43 +75,43 @@ const localStream = useMemo(() => {
   //   return map;
   // }, [remoteTracks]);
 
-//   const remoteStreams = useMemo(() => {
-//   const map = new Map();
+  //   const remoteStreams = useMemo(() => {
+  //   const map = new Map();
 
-//   remoteTracks.forEach((track) => {
-//     const existing = map.get(track.participant.identity);
+  //   remoteTracks.forEach((track) => {
+  //     const existing = map.get(track.participant.identity);
 
-//     if (existing) return;
+  //     if (existing) return;
 
-//     const mediaTrack = track.publication?.track?.mediaStreamTrack;
-//     if (mediaTrack) {
-//       map.set(track.participant.identity, new MediaStream([mediaTrack]));
-//     }
-//   });
+  //     const mediaTrack = track.publication?.track?.mediaStreamTrack;
+  //     if (mediaTrack) {
+  //       map.set(track.participant.identity, new MediaStream([mediaTrack]));
+  //     }
+  //   });
 
-//   return map;
-// }, [remoteTracks]);
-  
+  //   return map;
+  // }, [remoteTracks]);
 
-const remotePeers = useMemo(() => {
-  return participants
-    .filter((p) => p.identity !== localParticipant.localParticipant?.identity)
-    .map((p) => {
-      const videoPub = Array.from(p.videoTrackPublications.values())
-        .find((pub) => pub.track);
+  const remotePeers = useMemo(() => {
+    return participants
+      .filter((p) => p.identity !== localParticipant.localParticipant?.identity)
+      .map((p) => {
+        const videoPub = Array.from(p.videoTrackPublications.values()).find(
+          (pub) => pub.track
+        );
 
-      return {
-        id: p.identity,
-        name: p.name || p.identity,
-        isHost: p.metadata?.includes("isHost"),
-        stream: videoPub?.track?.mediaStream || null, // ✅ NO NEW STREAM
-        isMuted: p.isMicrophoneEnabled === false,
-        isVideoOff: !videoPub?.track,
-      };
-    });
-}, [participants]);
-// currently working
-// const remotePeers = participants
+        return {
+          id: p.identity,
+          name: p.name || p.identity,
+          isHost: p.metadata?.includes("isHost"),
+          stream: videoPub?.track?.mediaStream || null, // ✅ NO NEW STREAM
+          isMuted: p.isMicrophoneEnabled === false,
+          isVideoOff: !videoPub?.track,
+        };
+      });
+  }, [participants]);
+  // currently working
+  // const remotePeers = participants
   // .filter((p) => p.identity !== localParticipant.localParticipant?.identity)
   // .map((p) => {
   //   const videoPub = Array.from(p.videoTrackPublications.values())
@@ -137,11 +140,11 @@ const remotePeers = useMemo(() => {
   //     : remoteStreams.get(activeStreamId);
   // }, [activeStreamId, localStream, remoteStreams]);
   const activeStream = useMemo(() => {
-  if (activeStreamId === "local") return localStream;
+    if (activeStreamId === "local") return localStream;
 
-  const peer = remotePeers.find(p => p.id === activeStreamId);
-  return peer?.stream || null;
-}, [activeStreamId, localStream, remotePeers]);
+    const peer = remotePeers.find((p) => p.id === activeStreamId);
+    return peer?.stream || null;
+  }, [activeStreamId, localStream, remotePeers]);
 
   // const remotePeers = participants
   //   .filter((p) => p.identity !== localParticipant.localParticipant?.identity)
@@ -153,7 +156,7 @@ const remotePeers = useMemo(() => {
   //     isVideoOff: false,
   //     name: participantNames[p.identity] || `Guest ${p.identity.slice(0, 6)}`,
   //   }));
- 
+
   const participantCount = participants.length + 1;
 
   // Auto-hide controls
@@ -163,7 +166,7 @@ const remotePeers = useMemo(() => {
       clearTimeout(controlsTimeoutRef.current);
       controlsTimeoutRef.current = setTimeout(
         () => setShowControls(false),
-        3000,
+        3000
       );
     };
     window.addEventListener("mousemove", handleMouseMove);
@@ -178,7 +181,7 @@ const remotePeers = useMemo(() => {
     const interval = setInterval(() => {
       const qualities = ["good", "average", "poor"];
       setConnectionQuality(
-        qualities[Math.floor(Math.random() * qualities.length)],
+        qualities[Math.floor(Math.random() * qualities.length)]
       );
     }, 10000);
     return () => clearInterval(interval);
@@ -190,12 +193,12 @@ const remotePeers = useMemo(() => {
       // const mic = localParticipant.localParticipant?.getTrack(
       //   Track.Source.Microphone,
       // );
-      const mic = localParticipant.localParticipant?.getTrackPublication(Track.Source.Microphone);
+      const mic = localParticipant.localParticipant?.getTrackPublication(
+        Track.Source.Microphone
+      );
       console.log(
         "Mic track:",
-        mic
-          ? `enabled=${mic.isEnabled}, muted=${mic.isMuted}`
-          : "not published",
+        mic ? `enabled=${mic.isEnabled}, muted=${mic.isMuted}` : "not published"
       );
     }, 5000);
     return () => clearInterval(checkAudio);
@@ -221,7 +224,7 @@ const remotePeers = useMemo(() => {
     setReactions([...reactions, reaction]);
     setTimeout(
       () => setReactions((prev) => prev.filter((r) => r.id !== reaction.id)),
-      3000,
+      3000
     );
     return reaction;
   };
@@ -232,6 +235,18 @@ const remotePeers = useMemo(() => {
 
   const renameParticipant = (peerId, newName) => {
     setParticipantNames({ ...participantNames, [peerId]: newName });
+  };
+
+  const addNote = () => {
+    setNotes([...notes, { id: Date.now(), text: "" }]);
+  };
+  
+  const updateNote = (id, newText) => {
+    setNotes(notes.map(note => note.id === id ? { ...note, text: newText } : note));
+  };
+  
+  const deleteNote = (id) => {
+    setNotes(notes.filter(note => note.id !== id));
   };
 
   return {
@@ -269,6 +284,12 @@ const remotePeers = useMemo(() => {
     hideProfilePictures,
     setHideProfilePictures,
     participantNames,
+    showNotes,
+    setShowNotes,
+    notes,
+    addNote,
+    updateNote,
+    deleteNote,
 
     // Refs
     videoRefs,

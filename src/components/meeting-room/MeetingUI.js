@@ -78,7 +78,10 @@ export default function MeetingUI({ isHost, roomId, router }) {
     return () => window.removeEventListener("click", handleGlobalClick);
   }, []);
 
-  const { permissions, updatePermissions } = usePermissions(isHost, showNotification);
+  const { permissions, updatePermissions } = usePermissions(
+    isHost,
+    showNotification
+  );
   const chat = useChat(meetingState.room, permissions);
   const whiteboard = useWhiteboard(
     meetingState.showWhiteboard,
@@ -352,6 +355,12 @@ export default function MeetingUI({ isHost, roomId, router }) {
         chatContainerRef={chat.chatContainerRef}
         permissions={permissions}
         copyLink={copyLink}
+        showNotes={meetingState.showNotes}
+        setShowNotes={meetingState.setShowNotes}
+        notes={meetingState.notes}
+        addNote={meetingState.addNote}
+        updateNote={meetingState.updateNote}
+        deleteNote={meetingState.deleteNote}
       />
 
       <SettingsModal
@@ -372,8 +381,12 @@ export default function MeetingUI({ isHost, roomId, router }) {
 
       <style jsx>{`
         @keyframes slide-in-right {
-          from { transform: translateX(100%); }
-          to { transform: translateX(0); }
+          from {
+            transform: translateX(100%);
+          }
+          to {
+            transform: translateX(0);
+          }
         }
         .animate-slide-in-right {
           animation: slide-in-right 0.3s ease-out;
@@ -382,14 +395,6 @@ export default function MeetingUI({ isHost, roomId, router }) {
     </div>
   );
 }
-
-
-
-
-
-
-
-
 
 // import { useState } from "react";
 // import { useRouter } from "next/navigation";

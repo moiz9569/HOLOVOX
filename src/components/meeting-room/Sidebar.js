@@ -8,9 +8,17 @@ import {
   UserMinus,
   MessageSquare,
   Copy,
+  Plus,
+  Trash2,
 } from "lucide-react";
 
 export default function Sidebar({
+  showNotes,
+  setShowNotes,
+  notes,
+  addNote,
+  updateNote,
+  deleteNote,
   showParticipants,
   showChat,
   setShowParticipants,
@@ -31,7 +39,7 @@ export default function Sidebar({
 }) {
   return (
     <AnimatePresence>
-      {(showParticipants || showChat) && (
+      {(showParticipants || showChat || showNotes) && (
         <motion.div
           initial={{ width: 0, opacity: 0 }}
           animate={{ width: 320, opacity: 1 }}
@@ -46,6 +54,7 @@ export default function Sidebar({
                   onClick={() => {
                     setShowParticipants(true);
                     setShowChat(false);
+                    setShowNotes(false);
                   }}
                   className={`px-4 py-2 rounded-lg text-sm font-medium transition ${
                     showParticipants
@@ -58,6 +67,7 @@ export default function Sidebar({
                 <button
                   onClick={() => {
                     setShowChat(true);
+                    setShowNotes(false);
                     setShowParticipants(false);
                   }}
                   className={`px-4 py-2 rounded-lg text-sm font-medium transition ${
@@ -68,11 +78,28 @@ export default function Sidebar({
                 >
                   Chat
                 </button>
+
+                <button
+                  onClick={() => {
+                    setShowNotes(true);
+                    setShowParticipants(false);
+                    setShowChat(false);
+                  }}
+                  className={`px-4 py-2 rounded-lg text-sm font-medium transition ${
+                    showNotes
+                      ? "bg-gray-400 text-gray-800"
+                      : "bg-white/5 hover:bg-white/10"
+                  }`}
+                >
+                  Notes
+                </button>
               </div>
+              
               <button
                 onClick={() => {
                   setShowParticipants(false);
                   setShowChat(false);
+                  setShowNotes(false);   // add this line
                 }}
                 className="p-2 cursor-pointer hover:bg-white/10 rounded-lg"
               >
@@ -224,6 +251,59 @@ export default function Sidebar({
                     </button>
                   </div>
                 </form>
+              </div>
+            )}
+
+            {showNotes && (
+              <div className="space-y-4">
+                <div className="flex items-center justify-between">
+                  <p className="text-xs text-white/40">Your private notes</p>
+                  <button
+                    onClick={addNote}
+                    className="p-1.5 bg-white/10 hover:bg-white/20 rounded-lg"
+                  >
+                    <Plus size={16} />
+                  </button>
+                </div>
+
+                {notes.length === 0 && (
+                  <div className="text-center py-8">
+                    <p className="text-sm text-white/40">No notes yet</p>
+                    <button
+                      onClick={addNote}
+                      className="mt-2 text-xs text-cyan-400 hover:underline"
+                    >
+                      Create your first note
+                    </button>
+                  </div>
+                )}
+
+                <div className="space-y-3 max-h-[60vh] overflow-y-auto pr-1">
+                  {notes.map((note) => (
+                    <div
+                      key={note.id}
+                      className="bg-white/5 rounded-lg p-3 group relative"
+                    >
+                      <textarea
+                        value={note.text}
+                        onChange={(e) => updateNote(note.id, e.target.value)}
+                        placeholder="Write your note here..."
+                        rows={3}
+                        className="w-full bg-transparent text-sm text-white placeholder-white/30 resize-y focus:outline-none"
+                      />
+                      <button
+                        onClick={() => deleteNote(note.id)}
+                        className="absolute top-2 right-2 p-1 opacity-0 group-hover:opacity-100 hover:bg-red-500/20 rounded transition"
+                      >
+                        <Trash2 size={14} className="text-red-400" />
+                      </button>
+                    </div>
+                  ))}
+                </div>
+
+                <p className="text-[10px] text-white/20 text-center">
+                  Notes are saved only in this browser session
+                </p>
               </div>
             )}
           </div>
