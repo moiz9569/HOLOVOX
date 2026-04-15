@@ -348,45 +348,35 @@ const Header = () => {
   };
 
   return (
-    <header className="sticky top-0 z-40 bg-gray-100 backdrop-blur-xl border-b border-[#E62064]">
-      <div className="flex items-center justify-between px-6 py-4">
-        {/* Left */}
+    <header className="sticky top-0 h-16 z-40 bg-white border-b border-[#E62064]">
+      <div className="flex items-center justify-between h-full px-6">
+        {/* LEFT */}
         <div className="flex items-center gap-4">
-          <button className="lg:hidden p-2 hover:bg-white/10 rounded-lg">
+          <button className="lg:hidden p-2 rounded-lg hover:bg-gray-100">
             <Menu className="w-5 h-5" />
           </button>
 
-          {/* <div className="relative hidden md:block">
-            <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-white/40" />
-            <input
-              type="text"
-              placeholder="Search..."
-              value={searchQuery}
-              onChange={(e) => setSearchQuery(e.target.value)}
-              className="w-80 pl-10 pr-4 py-2 placeholder-[#E62064] bg-white text-black border border-[#E62064] focus:outline-none focus:border-[#E62064] focus:ring-1 focus:ring-[#E62064] rounded-lg text-sm"
+          {/* Logo */}
+          <div className="flex items-center gap-2">
+            <img
+              src="/holo-new-logo.png"
+              alt="HoloVox"
+              className="h-12 object-contain"
             />
-          </div> */}
-          <div className="border-b border-white/10">
-            {/* <div className="flex items-center gap-3"> */}
-            <div className="w-full flex items-center justify-start">
-              <img
-                src="/holovox-icon.png"
-                alt="HoloVox Logo"
-                className="w-[8%] h-[8%] object-cover"
-              />
-              <span className="text-3xl font-bold text-[#E62064] ml-2">
-                HoloVox
-              </span>
-            </div>
+            <img
+              src="/holo-logo-2.png"
+              alt="HoloVox"
+              className="-ml-2 h-10 object-contain"
+            />
           </div>
         </div>
 
-        {/* Right */}
+        {/* RIGHT */}
         <div className="flex items-center gap-3">
           {/* Create */}
           <button
             onClick={createMeeting}
-            className="hidden cursor-pointer md:flex items-center gap-2 px-4 py-2 border border-[#E62064] text-[#E62064] rounded-lg text-sm hover:bg-[#E9164B] hover:text-white hover:border-none transition"
+            className="hidden md:flex items-center gap-2 px-4 h-10 border border-[#E62064] text-[#E62064] rounded-lg text-sm hover:bg-[#E9164B] hover:text-white transition"
           >
             <Video className="w-4 h-4" />
             Create
@@ -395,17 +385,17 @@ const Header = () => {
           {/* Join */}
           <button
             onClick={() => setShowModal(true)}
-            className="hidden cursor-pointer md:flex items-center gap-2 px-4 py-2 bg-[#E9164B] rounded-lg text-sm"
+            className="hidden md:flex items-center gap-2 px-4 h-10 bg-[#E9164B] text-white rounded-lg text-sm"
           >
             <Video className="w-4 h-4" />
             Join
           </button>
 
           {/* Notifications */}
-          <div className="relative">
+          {/* <div className="relative">
             <button
               onClick={() => setShowNotifications(!showNotifications)}
-              className="p-2 hover:bg-white/10 rounded-lg"
+              className="p-2 rounded-lg hover:bg-gray-100"
             >
               <Bell className="w-5 h-5 text-[#E9164B]" />
             </button>
@@ -422,15 +412,18 @@ const Header = () => {
                 </motion.div>
               )}
             </AnimatePresence>
-          </div>
+          </div> */}
 
-          {/* User */}
+          {/* USER */}
           <div className="relative">
             <button
               onClick={() => setShowUserMenu(!showUserMenu)}
-              className="flex items-center gap-2"
+              className="flex rounded-2xl items-center gap-2"
             >
-              <img src={userData.avatar} className="w-8 h-8 rounded-lg" />
+              <img
+                src={userData.avatar}
+                className="w-8 h-8 rounded-lg object-cover"
+              />
               <ChevronDown className="w-4 h-4 text-black" />
             </button>
 
@@ -466,7 +459,6 @@ const Header = () => {
         </div>
       </div>
 
-      {/* ✅ Modal */}
       {showModal && <MeetingModal onClose={() => setShowModal(false)} />}
     </header>
   );

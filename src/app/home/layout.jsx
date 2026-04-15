@@ -4,7 +4,7 @@ import Sidebar from "@/components/HomeLayout/sidebar";
 
 const Layout = ({ children }) => {
   return (
-    <div className="h-screen flex flex-col bg-gray-50">
+    <div className="h-screen flex flex-col bg-[#EAEAF4]">
       {/* Background Gradient */}
       <div className="fixed inset-0 bg-linear-to-br from-[#E9164B]/5 via-transparent to-[#4E54E9]/5 pointer-events-none" />
 
