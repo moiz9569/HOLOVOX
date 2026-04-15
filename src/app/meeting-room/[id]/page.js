@@ -26,7 +26,7 @@ export default function MeetingPage() {
       .then((data) => setToken(data.token))
       .catch((err) => console.error("Token fetch failed", err));
   }, [roomId, isHost]);
-
+  
   if (!token) {
     return (
       <div className="h-screen w-screen bg-black flex items-center justify-center text-white">

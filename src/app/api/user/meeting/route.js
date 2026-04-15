@@ -5,7 +5,7 @@ import MeetingModel from "@/app/models/Meeting.model";
 export async function POST(){
 try {
     const {hostId,name,email,meetingId}= await request.json();
-
+  console.log("Create Meeting Payload:", {hostId,name,email,meetingId});
 if(!hostId || !name || !email || !meetingId){
     return NextResponse.json({error : "Missing required fields"}, {status:400});
 }

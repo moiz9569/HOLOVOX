@@ -80,13 +80,12 @@ const UserSchema = new mongoose.Schema(
       default: "user",
     },
     verified:{
-      type: String,
-      enum:["verified","unverified"],
-      default:"unverified"
+      type: Boolean,
+      default: false
     },
     image:{
-      type: String,
-      
+      type: String, 
+      default: "" // Default to empty string if no image is provided
     }
   },
   {
