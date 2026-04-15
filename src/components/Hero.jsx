@@ -1,8 +1,7 @@
 "use client";
 import { motion } from "framer-motion";
 import { Button } from "./ui/button";
-import { Input } from "./ui/input";
-import { ArrowRight } from "lucide-react";
+import { Navbar } from "./Navbar";
 
 const FloatingParticles = () => {
   return (
@@ -36,7 +35,8 @@ export const Hero = () => {
   return (
     <div>
       {/* Hero Image Section */}
-      <section className="relative min-h-screen flex flex-col">
+      <section className="relative min-h-screen flex flex-col justify-between">
+        <Navbar />
         <div className="absolute inset-0">
           <img
             src="/hero-family.png"
@@ -52,28 +52,21 @@ export const Hero = () => {
         <FloatingParticles />
 
         {/* Top Content - Logo */}
-        <div className="relative z-10 pt-24 sm:pt-32 px-4">
-          <motion.div className="flex justify-center">
-            <motion.img
-              src="/holovox-logo.png"
-              alt="HoloVox"
-              className="h-20 lg:h-24 mt-14 sm:mt-0 lg:-mt-2"
-              initial={{
-                opacity: 0,
-                y: -20,
-              }}
-              animate={{
-                opacity: 1,
-                y: 0,
-              }}
-              transition={{
-                duration: 0.8,
-              }}
-            />
-          </motion.div>
+        <div className="absolute xl:top-1/7 left-1/2 -translate-x-1/2 z-10">
+          <motion.img
+            src="/holovox-logo.png"
+            alt="HoloVox"
+            className="h-20 lg:h-24"
+            initial={{ opacity: 0, y: -20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.8 }}
+          />
         </div>
         {/* Buttons Over Hero Image */}
-        <div className="relative z-10 flex justify-center mt-88 sm:mt-68 lg:mt-84 xl:mt-94">
+        <div
+          id="buttons"
+          className="absolute bottom-10 left-1/2 -translate-x-1/2"
+        >
           <motion.div
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
@@ -81,7 +74,7 @@ export const Hero = () => {
             className="flex gap-4 flex-wrap justify-center"
           >
             <Button className="rounded-full cursor-pointer px-4 sm:px-7 py-2 bg-[#E4246E] hover:bg-[#d11f63] border border-white text-white text-base font-medium sm:font-semibold backdrop-blur-md shadow-lg">
-              Holo At Me
+              Hold At Me
             </Button>
 
             <Button className="rounded-full cursor-pointer px-4 sm:px-7 py-2 bg-[#4FA6D8] hover:bg-[#3b95c9] border border-white text-white text-base font-medium sm:font-semibold shadow-lg backdrop-blur-md">
@@ -96,88 +89,6 @@ export const Hero = () => {
 
         <div className="flex justify-center mt-16 mb-10" />
       </section>
-
-      {/* Glass Card - Below the hero image with breathing room */}
-      <div className="relative z-20 px-4 flex justify-center mt-24">
-        <div className="items-center shadow-[0_10px_25px_rgba(233,22,75,0.3)] justify-center text-center w-5xl bg-white rounded-3xl p-8 md:p-12 flex flex-col gap-6">
-          <motion.h1
-            className="font-creata text-gray-800 text-4xl md:text-6xl lg:text-8xl font-medium tracking-tight"
-            initial={{
-              opacity: 0.5,
-              y: 20,
-            }}
-            animate={{
-              opacity: 1,
-              y: 0,
-            }}
-            transition={{
-              duration: 0.8,
-              delay: 0.2,
-            }}
-          >
-            Step Into Someone's
-            <span className="block text-[#E4246E]">Reality</span>
-          </motion.h1>
-
-          <motion.p
-            className="text-lg md:text-xl max-w-3xl drop-shadow-lg text-[#8585ad]"
-            initial={{
-              opacity: 0,
-              y: 20,
-            }}
-            animate={{
-              opacity: 1,
-              y: 0,
-            }}
-            transition={{
-              duration: 0.8,
-              delay: 0.4,
-            }}
-          >
-            {/* Immersive 360° streaming that brings you closer. 
-          Use any device—phone, smart glasses, or VR—to experience 
-          the world through someone else's eyes. */}
-            Experience immersive, AI-powered video that feels like you're really
-            there. Enjoy a wide-angle 360° view using just your phone—no
-            expensive hardware required. Step beyond flat calls and into real
-            presence.
-          </motion.p>
-
-          <motion.div
-            className="w-full max-w-md"
-            initial={{
-              opacity: 0,
-              y: 20,
-            }}
-            animate={{
-              opacity: 1,
-              y: 0,
-            }}
-            transition={{
-              duration: 0.8,
-              delay: 0.6,
-            }}
-          >
-            <p className="text-sm text-gray-600 mb-3 drop-shadow">
-              Coming Soon — Join the waitlist
-            </p>
-            <form className="flex flex-col sm:flex-row gap-3">
-              <Input
-                type="email"
-                placeholder="Enter your email"
-                className="flex-1 h-12 bg-card/60 backdrop-blur-sm border-border/50 text-gray-600 placeholder:text-gray-400"
-              />
-              <Button
-                type="submit"
-                className="h-12 px-8 bg-[#E9164B] hover:bg-red-500 text-white font-medium glow-coral transition-all"
-              >
-                Notify Me
-                <ArrowRight className="w-4 h-4 ml-2" />
-              </Button>
-            </form>
-          </motion.div>
-        </div>
-      </div>
     </div>
   );
 };

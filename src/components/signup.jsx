@@ -192,26 +192,6 @@
 
 // export default SignUpForm;
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 "use client";
 import { motion, AnimatePresence } from "framer-motion";
 import { useState } from "react";
@@ -224,7 +204,7 @@ import {
   FiX,
   FiUpload,
 } from "react-icons/fi";
-import { showSuccessToast,showErrorToast } from "../../lib/toast";
+import { showSuccessToast, showErrorToast } from "../../lib/toast";
 
 export default function SignUpForm({ isOpen, onClose, openLogin, openOTP }) {
   const [showPassword, setShowPassword] = useState(false);
@@ -290,7 +270,7 @@ export default function SignUpForm({ isOpen, onClose, openLogin, openOTP }) {
         email,
         password,
         role,
-        image : base64Image,
+        image: base64Image,
       });
     } catch (err) {
       showErrorToast("Signup Error:", err);
@@ -326,7 +306,7 @@ export default function SignUpForm({ isOpen, onClose, openLogin, openOTP }) {
             className="relative w-full max-w-md mx-auto my-8"
           >
             <div
-              className="relative bg-linear-to-r bg-gray-300 rounded-3xl border border-white/10 shadow-2xl overflow-hidden"
+              className="relative bg-linear-to-r bg-[#EAEAF4] rounded-3xl border border-white/10 shadow-2xl overflow-hidden"
               style={{
                 boxShadow: `
                   0 0 40px rgba(255, 215, 0, 0.08),
@@ -350,8 +330,8 @@ export default function SignUpForm({ isOpen, onClose, openLogin, openOTP }) {
                     initial={{ scale: 0.8, opacity: 0 }}
                     animate={{ scale: 1, opacity: 1 }}
                     transition={{ delay: 0.2 }}
-                    src="/holovox-icon.png"
-                    className="w-28 h-28 object-contain animate-spin-slow hover:scale-110 transition-transform duration-500"
+                    src="/holo-new-logo.png"
+                    className="w-32 h-32 object-contain animate-spin-slow hover:scale-110 transition-transform duration-500"
                   />
                 </div>
 
@@ -359,9 +339,9 @@ export default function SignUpForm({ isOpen, onClose, openLogin, openOTP }) {
                   initial={{ opacity: 0, y: 20 }}
                   animate={{ opacity: 1, y: 0 }}
                   transition={{ delay: 0.3 }}
-                  className="text-center"
+                  className="text-center -mt-4"
                 >
-                  <h2 className="text-2xl font-bold bg-[#E62064] bg-clip-text text-transparent mb-1">
+                  <h2 className="text-2xl font-bold bg-[#E51A54] bg-clip-text text-transparent mb-1">
                     Create an Account
                   </h2>
                   <p className="text-gray-700 font-inter text-sm">
@@ -376,24 +356,24 @@ export default function SignUpForm({ isOpen, onClose, openLogin, openOTP }) {
                   {/* Name + Email */}
                   <div className="flex">
                     <div className="relative w-2/4">
-                      <FiUser className="absolute left-4 top-1/2 -translate-y-1/2 text-[#E62064]" />
+                      <FiUser className="absolute left-4 top-1/2 -translate-y-1/2 text-[#E51A54]" />
                       <input
                         type="text"
                         value={name}
                         onChange={(e) => setName(e.target.value)}
                         placeholder="Full Name"
-                        className="w-full pl-12 pr-4 py-3 rounded-2xl bg-white/40 border border-[#E62064] text-black placeholder-gray-700 font-exo-2 focus:outline-none focus:border-[#E62064] focus:ring-1 focus:ring-[#E62064] disabled:opacity-50 disabled:cursor-not-allowed"
+                        className="w-full pl-12 pr-4 py-3 rounded-2xl bg-white/40 border border-[#E51A54] text-black placeholder-gray-700 font-exo-2 focus:outline-none focus:border-[#E51A54] focus:ring-1 focus:ring-[#E51A54] disabled:opacity-50 disabled:cursor-not-allowed"
                       />
                     </div>
 
                     <div className="relative w-2/4 ml-4">
-                      <FiMail className="absolute left-4 top-1/2 -translate-y-1/2 text-[#E62064]" />
+                      <FiMail className="absolute left-4 top-1/2 -translate-y-1/2 text-[#E51A54]" />
                       <input
                         type="email"
                         value={email}
                         onChange={(e) => setEmail(e.target.value)}
                         placeholder="Email Address"
-                        className="w-full pl-12 pr-4 py-3 rounded-2xl bg-white/40 border border-[#E62064] text-black placeholder-gray-700 font-exo-2 focus:outline-none focus:border-[#E62064] focus:ring-1 focus:ring-[#E62064] disabled:opacity-50 disabled:cursor-not-allowed"
+                        className="w-full pl-12 pr-4 py-3 rounded-2xl bg-white/40 border border-[#E51A54] text-black placeholder-gray-700 font-exo-2 focus:outline-none focus:border-[#E51A54] focus:ring-1 focus:ring-[#E51A54] disabled:opacity-50 disabled:cursor-not-allowed"
                       />
                     </div>
                   </div>
@@ -401,36 +381,36 @@ export default function SignUpForm({ isOpen, onClose, openLogin, openOTP }) {
                   {/* Password + Confirm */}
                   <div className="flex">
                     <div className="relative w-2/4">
-                      <FiLock className="absolute left-4 top-1/2 -translate-y-1/2 text-[#E62064]" />
+                      <FiLock className="absolute left-4 top-1/2 -translate-y-1/2 text-[#E51A54]" />
                       <input
                         type={showPassword ? "text" : "password"}
                         value={password}
                         onChange={(e) => setPassword(e.target.value)}
                         placeholder="Password"
-                        className="w-full pl-12 pr-12 py-3 rounded-2xl bg-white/40 border border-[#E62064] text-black placeholder-gray-700 font-exo-2 focus:outline-none focus:border-[#E62064] focus:ring-1 focus:ring-[#E62064] disabled:opacity-50 disabled:cursor-not-allowed"
+                        className="w-full pl-12 pr-12 py-3 rounded-2xl bg-white/40 border border-[#E51A54] text-black placeholder-gray-700 font-exo-2 focus:outline-none focus:border-[#E51A54] focus:ring-1 focus:ring-[#E51A54] disabled:opacity-50 disabled:cursor-not-allowed"
                       />
                       <button
                         type="button"
                         onClick={() => setShowPassword(!showPassword)}
-                        className="absolute cursor-pointer right-4 top-1/2 -translate-y-1/2 text-[#E62064]"
+                        className="absolute cursor-pointer right-4 top-1/2 -translate-y-1/2 text-[#E51A54]"
                       >
                         {showPassword ? <FiEyeOff /> : <FiEye />}
                       </button>
                     </div>
 
                     <div className="relative w-2/4 ml-4">
-                      <FiLock className="absolute left-4 top-1/2 -translate-y-1/2 text-[#E62064]" />
+                      <FiLock className="absolute left-4 top-1/2 -translate-y-1/2 text-[#E51A54]" />
                       <input
                         type={showConfirm ? "text" : "password"}
                         value={confirmPassword}
                         onChange={(e) => setConfirmPassword(e.target.value)}
                         placeholder="Re-type Password"
-                        className="w-full pl-12 pr-12 py-3 rounded-2xl bg-white/40 border border-[#E62064] text-black placeholder-gray-700 font-exo-2 focus:outline-none focus:border-[#E62064] focus:ring-1 focus:ring-[#E62064] disabled:opacity-50 disabled:cursor-not-allowed"
+                        className="w-full pl-12 pr-12 py-3 rounded-2xl bg-white/40 border border-[#E51A54] text-black placeholder-gray-700 font-exo-2 focus:outline-none focus:border-[#E51A54] focus:ring-1 focus:ring-[#E51A54] disabled:opacity-50 disabled:cursor-not-allowed"
                       />
                       <button
                         type="button"
                         onClick={() => setShowConfirm(!showConfirm)}
-                        className="absolute cursor-pointer right-4 top-1/2 -translate-y-1/2 text-[#E62064]"
+                        className="absolute cursor-pointer right-4 top-1/2 -translate-y-1/2 text-[#E51A54]"
                       >
                         {showConfirm ? <FiEyeOff /> : <FiEye />}
                       </button>
@@ -442,12 +422,12 @@ export default function SignUpForm({ isOpen, onClose, openLogin, openOTP }) {
                     Upload Profile Picture
                   </h1>
                   <div className="relative">
-                    <FiUpload className="absolute left-4 top-1/2 -translate-y-1/2 text-[#E62064]" />
+                    <FiUpload className="absolute left-4 top-1/2 -translate-y-1/2 text-[#E51A54]" />
                     <input
                       type="file"
                       accept="image/*"
                       onChange={(e) => setProfilePic(e.target.files[0])}
-                      className="w-full pl-12 pr-4 py-3 rounded-2xl bg-white/40 border border-[#E62064] text-black placeholder-gray-700 font-exo-2 focus:outline-none focus:border-[#E62064] focus:ring-1 focus:ring-[#E62064] disabled:opacity-50 disabled:cursor-not-allowed"
+                      className="w-full pl-12 pr-4 py-3 rounded-2xl bg-white/40 border border-[#E51A54] text-black placeholder-gray-700 font-exo-2 focus:outline-none focus:border-[#E51A54] focus:ring-1 focus:ring-[#E51A54] disabled:opacity-50 disabled:cursor-not-allowed"
                     />
                   </div>
 
@@ -457,7 +437,7 @@ export default function SignUpForm({ isOpen, onClose, openLogin, openOTP }) {
                     onClick={handleSignup}
                     whileHover={{ scale: isLoading ? 1 : 1.02 }}
                     whileTap={{ scale: isLoading ? 1 : 0.98 }}
-                    className="w-full cursor-pointer mt-3 py-3 rounded-2xl bg-[#E62064] text-white font-semibold text-lg"
+                    className="w-full cursor-pointer mt-3 py-3 rounded-2xl bg-[#E51A54] text-white font-semibold text-lg"
                   >
                     {isLoading ? "Sending OTP..." : "Sign Up"}
                   </motion.button>
@@ -471,7 +451,7 @@ export default function SignUpForm({ isOpen, onClose, openLogin, openOTP }) {
                         onClose();
                         openLogin();
                       }}
-                      className="cursor-pointer bg-[#E62064] text-transparent bg-clip-text font-semibold hover:text-[#E62064]/80 transition"
+                      className="cursor-pointer bg-[#E51A54] text-transparent bg-clip-text font-semibold hover:text-[#E51A54]/80 transition"
                     >
                       Login
                     </button>
