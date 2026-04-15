@@ -71,7 +71,7 @@ if (image) {
       email: email.toLowerCase(),
       password: hashPassword,
       role: role || "user",
-      verified : "verified",
+      verified : true,
       image: imageUrl
     });
 
