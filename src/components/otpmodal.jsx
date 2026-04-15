@@ -529,8 +529,8 @@ export default function OtpModal({
           transition={{ type: "spring", damping: 25, stiffness: 250 }}
           className="relative w-full max-w-md mx-auto"
         >
-          <div className="relative bg-linear-to-r bg-gray-200 rounded-3xl border border-white/10 shadow-2xl overflow-hidden">
-            <div className="relative p-6 pb-4 bg-gray-300">
+          <div className="relative bg-linear-to-r bg-[#EAEAF4] rounded-3xl border border-white/10 shadow-2xl overflow-hidden">
+            <div className="relative p-6 pb-4 bg-[#EAEAF4]">
               <motion.button
                 whileHover={{ scale: 1.1, rotate: 90 }}
                 whileTap={{ scale: 0.9 }}
@@ -558,12 +558,12 @@ export default function OtpModal({
                       initial={{ scale: 0.8, opacity: 0 }}
                       animate={{ scale: 1, opacity: 1 }}
                       transition={{ delay: 0.2 }}
-                      src="/holovox-icon.png"
-                      className="w-28 h-28 animate-spin-slow hover:scale-110 transition-transform duration-500 object-contain"
+                      src="/holo-new-logo.png"
+                      className="w-32 h-32 animate-spin-slow hover:scale-110 transition-transform duration-500 object-contain"
                     />
                   )}
                 </div>
-                <h2 className="text-2xl font-bold bg-[#E62064] bg-clip-text text-transparent mb-2">
+                <h2 className="text-2xl font-bold bg-[#E51A54] bg-clip-text text-transparent mb-2">
                   {isVerifyingAndRedirecting
                     ? "Processing..."
                     : "Verify Your Email"}
@@ -580,7 +580,7 @@ export default function OtpModal({
             </div>
 
             {!isVerifyingAndRedirecting && (
-              <div className="px-6 pb-6 bg-gray-300">
+              <div className="px-6 pb-6 bg-[#EAEAF4]">
                 <div className="flex justify-center space-x-3 mb-6">
                   {otp.map((digit, index) => (
                     <motion.input
