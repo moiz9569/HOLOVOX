@@ -1,3 +1,4 @@
+import { getTokenData } from "@/app/content/data";
 import { motion, AnimatePresence } from "framer-motion";
 import {
   X,
@@ -11,8 +12,11 @@ import {
   Plus,
   Trash2,
 } from "lucide-react";
+import { useEffect } from "react";
 
 export default function Sidebar({
+  roomId,
+  userId,
   showNotes,
   setShowNotes,
   notes,
@@ -37,6 +41,46 @@ export default function Sidebar({
   permissions,
   copyLink,
 }) {
+
+  // console.log("Sidebar Props - userId:", userId);
+  // console.log("Sidebar Props - roomId:", roomId);
+
+  const saveNotes = (e) => {
+    e.preventDefault();
+    // localStorage.setItem("meeting_notes", JSON.stringify(notes));
+    const noteTexts = notes.map((note) => note.text);
+    console.log("Notes saved:", noteTexts);
+    console.log("userId:", userId);
+    console.log("roomId:", roomId);
+
+    
+    fetch("/api/user/notes", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({  
+        meetingId: roomId,
+        userId: userId,
+        note: noteTexts,
+      }),
+    })
+      .then((res) => res.json())
+      .then((data) => {
+        if (data.success) {
+          console.log("Notes saved successfully:", data.data);
+        } else {
+          console.error("Failed to save notes:", data.message);
+        }
+      })
+      .catch((error) => {
+        console.error("Error saving notes:", error);
+       }
+
+      )
+  };
+
+
   return (
     <AnimatePresence>
       {(showParticipants || showChat || showNotes) && (
@@ -299,6 +343,9 @@ export default function Sidebar({
                       </button>
                     </div>
                   ))}
+                  <button  onClick={(e)=>saveNotes(e)} className="w-full py-2 bg-cyan-600 hover:bg-cyan-700 rounded-lg text-sm font-medium transition">
+                    Save
+                  </button>
                 </div>
 
                 <p className="text-[10px] text-white/20 text-center">

@@ -19,18 +19,25 @@ import Sidebar from "./Sidebar";
 import WhiteboardComponent from "./Whiteboard";
 import SettingsModal from "./Modals/SettingsModal";
 import SecurityModal from "./Modals/SecurityModal";
+import { getTokenData } from "@/app/content/data";
 
 export default function MeetingUI({ isHost, roomId, router }) {
   const audioElementsRef = useRef([]);
   const [notification, setNotification] = useState(null);
+  const [userId, setUserId] = useState(null);
 
   const showNotification = (message, type = "info") => {
     setNotification({ message, type });
     setTimeout(() => setNotification(null), 3000);
   };
 
-  const meetingState = useMeetingState(roomId);
-
+  const meetingState = useMeetingState();
+useEffect(() => {
+  getTokenData().then((res)=>{
+    console.log("Token Data in MeetingUI:", res.id);
+    setUserId(res?.id);
+  })
+},[])
   // Subscribe to remote audio tracks
   useEffect(() => {
     if (!meetingState.room) return;
@@ -83,7 +90,6 @@ export default function MeetingUI({ isHost, roomId, router }) {
     showNotification
   );
   const chat = useChat(meetingState.room, permissions);
-  
   const whiteboard = useWhiteboard(
     meetingState.showWhiteboard,
     meetingState.whiteboardColor
@@ -339,6 +345,8 @@ export default function MeetingUI({ isHost, roomId, router }) {
       </div>
 
       <Sidebar
+        roomId={roomId}
+        userId={userId}
         showParticipants={meetingState.showParticipants}
         showChat={meetingState.showChat}
         setShowParticipants={meetingState.setShowParticipants}
@@ -396,7 +404,6 @@ export default function MeetingUI({ isHost, roomId, router }) {
     </div>
   );
 }
-
 
 
 

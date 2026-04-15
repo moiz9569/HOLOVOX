@@ -7,7 +7,7 @@ import {
 } from "@livekit/components-react";
 import { Track } from "livekit-client";
 
-export const useMeetingState = (meetingId) => {
+export const useMeetingState = () => {
   const room = useRoomContext();
   const localParticipant = useLocalParticipant();
   const participants = useParticipants();
@@ -33,17 +33,13 @@ export const useMeetingState = (meetingId) => {
   const [hideProfilePictures, setHideProfilePictures] = useState(false);
   const [participantNames, setParticipantNames] = useState({});
 
-  const [showNotes, setShowNotes] = useState(false);
-  const [notes, setNotes] = useState([]);   // ✅ start empty, not with dummy note
-  const [notesLoading, setNotesLoading] = useState(false);
-  const [notesDocId, setNotesDocId] = useState(null);
-
-  //const [notes, setNotes] = useState([{ id: Date.now(), text: "" }]);
-
   const videoRefs = useRef({});
   const controlsTimeoutRef = useRef(null);
   const localVideoRef = useRef(null);
   const mainVideoRef = useRef(null);
+
+  const [showNotes, setShowNotes] = useState(false);
+  const [notes, setNotes] = useState([{ id: Date.now(), text: "" }]);
 
   // Derive streams from LiveKit tracks
   const localVideoTrack = tracks.find(
@@ -208,108 +204,6 @@ export const useMeetingState = (meetingId) => {
     return () => clearInterval(checkAudio);
   }, [localParticipant]);
 
-  // ✅ LOAD NOTES FROM API when meeting starts
-  useEffect(() => {
-    const userId = localStorage.getItem("meeting_user_id");
-    if (!userId || !meetingId) return;
-
-    const fetchNotes = async () => {
-      setNotesLoading(true);
-      try {
-        const res = await fetch(`/api/notes?userId=${userId}&meetingId=${meetingId}`);
-        const result = await res.json();
-        if (result.success && result.data) {
-          // result.data is an array of note strings
-          const loadedNotes = result.data.map((text, idx) => ({
-            id: `${result.docId}-${idx}`,
-            text: text,
-          }));
-          setNotes(loadedNotes);
-          setNotesDocId(result.docId);
-        } else {
-          setNotes([]);
-        }
-      } catch (err) {
-        console.error("Failed to load notes:", err);
-      } finally {
-        setNotesLoading(false);
-      }
-    };
-    fetchNotes();
-  }, [meetingId]);
-
-
-   // ✅ ADD NOTE (calls API)
-   const addNote = async () => {
-    const userId = localStorage.getItem("meeting_user_id");
-    if (!userId || !meetingId) return;
-
-    try {
-      const res = await fetch("/api/notes", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ meetingId, userId, note: "" }),
-      });
-      const result = await res.json();
-      if (result.success) {
-        // Refetch to get updated list with correct IDs
-        const fetchRes = await fetch(`/api/notes?userId=${userId}&meetingId=${meetingId}`);
-        const fetchResult = await fetchRes.json();
-        if (fetchResult.success) {
-          const updatedNotes = fetchResult.data.map((text, idx) => ({
-            id: `${fetchResult.docId}-${idx}`,
-            text: text,
-          }));
-          setNotes(updatedNotes);
-          setNotesDocId(fetchResult.docId);
-        }
-      }
-    } catch (err) {
-      console.error("Failed to add note:", err);
-    }
-  };
-
-  // ✅ UPDATE NOTE (calls API)
-  const updateNote = async (id, newText) => {
-    const userId = localStorage.getItem("meeting_user_id");
-    if (!userId || !meetingId) return;
-    const docId = id.split("-")[0];
-    const index = parseInt(id.split("-")[1], 10);
-    if (isNaN(index)) return;
-
-    try {
-      await fetch("/api/notes", {
-        method: "PUT",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ noteId: docId, index, newText }),
-      });
-      // Optimistic update
-      setNotes(prev => prev.map(n => n.id === id ? { ...n, text: newText } : n));
-    } catch (err) {
-      console.error("Failed to update note:", err);
-    }
-  };
-
-  // ✅ DELETE NOTE (calls API)
-  const deleteNote = async (id) => {
-    const userId = localStorage.getItem("meeting_user_id");
-    if (!userId || !meetingId) return;
-    const docId = id.split("-")[0];
-    const index = parseInt(id.split("-")[1], 10);
-    if (isNaN(index)) return;
-
-    try {
-      await fetch("/api/notes", {
-        method: "DELETE",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ noteId: docId, index }),
-      });
-      setNotes(prev => prev.filter(n => n.id !== id));
-    } catch (err) {
-      console.error("Failed to delete note:", err);
-    }
-  };
-
   const toggleFullscreen = () => {
     if (!document.fullscreenElement) {
       document.documentElement.requestFullscreen();
@@ -341,6 +235,18 @@ export const useMeetingState = (meetingId) => {
 
   const renameParticipant = (peerId, newName) => {
     setParticipantNames({ ...participantNames, [peerId]: newName });
+  };
+
+  const addNote = () => {
+    setNotes([...notes, { id: Date.now(), text: "" }]);
+  };
+  
+  const updateNote = (id, newText) => {
+    setNotes(notes.map(note => note.id === id ? { ...note, text: newText } : note));
+  };
+  
+  const deleteNote = (id) => {
+    setNotes(notes.filter(note => note.id !== id));
   };
 
   return {
@@ -381,7 +287,6 @@ export const useMeetingState = (meetingId) => {
     showNotes,
     setShowNotes,
     notes,
-    notesLoading,
     addNote,
     updateNote,
     deleteNote,

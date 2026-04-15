@@ -12,7 +12,7 @@ export async function POST(req) {
     const body = await req.json();
 
     const { meetingId, userId, note } = body;
-
+    console.log("Create Note Payload:", { meetingId, userId, note });
     if (!meetingId || !userId || !note) {
       return NextResponse.json(
         { success: false, message: "Missing fields" },
@@ -36,7 +36,7 @@ export async function POST(req) {
         userId,
         Notes: [note],
       });
-
+      console.log("New Notes Document Created:", notes);
       return NextResponse.json({ success: true, data: notes });
     }
 
