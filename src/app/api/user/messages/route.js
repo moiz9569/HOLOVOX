@@ -1,5 +1,5 @@
 import { NextResponse } from "next/server";
-import connectDB from "@/lib/db";
+import connectDB from "../../../../../lib/db";
 import MessageModel from "@/app/models/meetingMessages.model";
 import cloudinary from "cloudinary";
 

@@ -26,23 +26,23 @@ const HomeDashboard = () => {
     //     setLoading(false);
     //   }
     // };
-getTokenData().then((user) => {
-  console.log("Decoded User:", user);
-  setDecodedUser(user || {});
-  setLoading(false);
-}).catch((error) => {
-  console.error("Error fetching user data:", error);
-  setLoading(false);
-});
+    getTokenData()
+      .then((user) => {
+        console.log("Decoded User:", user);
+        setDecodedUser(user || {});
+        setLoading(false);
+      })
+      .catch((error) => {
+        console.error("Error fetching user data:", error);
+        setLoading(false);
+      });
     // fetchUser();
   }, []);
 
- 
-
-  const createMeeting = async() => {
+  const createMeeting = async () => {
     const id = uuidv4().slice(0, 6);
     setMeetingId(id);
-  
+
     router.push(`/meeting/${id}?role=host`);
   };
 
@@ -54,14 +54,14 @@ getTokenData().then((user) => {
   const goToPodcastLanding = () => {
     router.push("/podcast");
   };
-   const user = {
+  const user = {
     name: decodedUser?.name,
     email: decodedUser?.email,
     avatar: decodedUser?.image,
-    meetingId:meetingId ,
+    meetingId: meetingId,
   };
   return (
-    <div className="min-h-screen bg-white text-black p-6">
+    <div className="min-h-screen text-black p-6">
       {/* Header */}
       <div className="mb-8">
         <h1 className="text-2xl font-bold">Welcome back, {user.name}</h1>
@@ -71,7 +71,7 @@ getTokenData().then((user) => {
       </div>
 
       {/* Top Cards */}
-      <div className="grid md:grid-cols-3 gap-6 mb-8">
+      <div className="grid md:grid-cols-4 gap-6 mb-8">
         {/* Create Meeting */}
         <div
           onClick={createMeeting}
@@ -85,7 +85,7 @@ getTokenData().then((user) => {
         </div>
 
         {/* Join Meeting */}
-        <div className="p-6 rounded-2xl bg-gray-100 text-black hover:bg-gray-200 transition">
+        <div className="cursor-pointer p-6 rounded-2xl bg-white text-black hover:scale-105 transition">
           <Users className="mb-4" />
           <h3 className="font-semibold text-lg">Join Meeting</h3>
           <p className="text-sm text-black">Enter meeting ID</p>
@@ -103,7 +103,7 @@ getTokenData().then((user) => {
         </div>
 
         {/* Schedule */}
-        <div className="p-6 rounded-2xl bg-gray-100 text-black hover:bg-gray-200 transition">
+        <div className="cursor-pointer p-6 rounded-2xl bg-white text-black hover:scale-105 transition">
           <Calendar className="mb-4" />
           <h3 className="font-semibold text-lg">Schedule</h3>
           <p className="text-sm text-black">Plan your meetings</p>

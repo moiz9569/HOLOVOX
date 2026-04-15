@@ -53,7 +53,7 @@ const Sidebar = () => {
     <motion.div
       initial={{ x: -300 }}
       animate={{ x: 0 }}
-      className="fixed lg:static inset-y-0 left-0 z-20 w-72 bg-gray-100 backdrop-blur-xl border-r border-[#E62064]"
+      className="fixed lg:static inset-y-0 left-0 z-20 bg-white backdrop-blur-xl border-r border-[#E62064]"
     >
       {/* Flex container with full height and flex column */}
       <div className="flex flex-col h-screen">
@@ -73,11 +73,13 @@ const Sidebar = () => {
         {/* Profile - Always at bottom, never scrolls */}
         <div className="p-4 border-t border-white/10 bg-gray-100">
           <div className="flex items-center gap-3">
-            <img
-              src={userData.avatar}
-              alt={userData.name}
-              className="w-10 h-10 rounded-xl border-2 border-[#E9164B] object-cover"
-            />
+            <div className="rounded-full border-2 border-[#E9164B] p-0.5">
+              <img
+                src={userData.avatar}
+                alt={userData.name}
+                className="w-10 h-10 rounded-xl border-2 border-[#E9164B] object-cover"
+              />
+            </div>
             <div className="flex-1 min-w-0">
               <p className="text-sm font-medium text-gray-800 truncate">
                 {userData.name}
