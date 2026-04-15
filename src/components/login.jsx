@@ -257,7 +257,7 @@ export default function LoginForm({ isOpen, onClose, openSignup }) {
               repeat: Infinity,
               ease: "linear",
             }}
-            className="w-20 h-20 border-4 border-[#E9164B] border-t-transparent rounded-full mb-6"
+            className="w-20 h-20 border-4 border-[#E51A54] border-t-transparent rounded-full mb-6"
           />
           <p className="text-white text-2xl font-bold mb-2">
             Login Successful!
@@ -310,7 +310,7 @@ export default function LoginForm({ isOpen, onClose, openSignup }) {
           className="relative w-full max-w-md mx-auto my-8"
         >
           <div
-            className="relative bg-linear-to-r bg-gray-300 rounded-3xl border border-white/10 shadow-2xl overflow-hidden"
+            className="relative bg-linear-to-r bg-[#EAEAF4] rounded-3xl border border-white/10 shadow-2xl overflow-hidden"
             style={{
               boxShadow: `
                 0 0 40px rgba(255, 215, 0, 0.08),
@@ -363,8 +363,8 @@ export default function LoginForm({ isOpen, onClose, openSignup }) {
                     initial={{ scale: 0.8, opacity: 0 }}
                     animate={{ scale: 1, opacity: 1 }}
                     transition={{ delay: 0.2 }}
-                    src="/holovox-icon.png"
-                    className="w-28 h-28 animate-spin-slow hover:scale-110 transition-transform duration-500 object-contain"
+                    src="/holo-new-logo.png"
+                    className="w-36 h-36 animate-spin-slow hover:scale-110 transition-transform duration-500 object-contain"
                   />
                 )}
               </div>
@@ -373,9 +373,9 @@ export default function LoginForm({ isOpen, onClose, openSignup }) {
                 initial={{ opacity: 0, y: 20 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ delay: 0.3 }}
-                className="text-center"
+                className="text-center -mt-6"
               >
-                <h2 className="text-2xl font-exo-2 font-bold bg-[#E62064] bg-clip-text text-transparent mb-1">
+                <h2 className="text-2xl font-exo-2 font-bold bg-[#E51A54] bg-clip-text text-transparent mb-1">
                   {isRedirecting ? "Welcome Back!" : "Welcome Back"}
                 </h2>
                 <p className="text-gray-700 font-inter text-sm">
@@ -395,33 +395,33 @@ export default function LoginForm({ isOpen, onClose, openSignup }) {
                 >
                   {/* Email */}
                   <div className="relative">
-                    <FiMail className="absolute left-4 top-1/2 -translate-y-1/2 text-[#E62064]" />
+                    <FiMail className="absolute left-4 top-1/2 -translate-y-1/2 text-[#E51A54]" />
                     <input
                       type="email"
                       value={email}
                       onChange={(e) => setEmail(e.target.value)}
                       placeholder="Enter your email"
                       disabled={isLoading}
-                      className="w-full pl-12 pr-4 py-3 rounded-2xl bg-white/40 border border-[#E62064] text-black placeholder-gray-700 font-exo-2 focus:outline-none focus:border-[#E62064] focus:ring-1 focus:ring-[#E62064] disabled:opacity-50 disabled:cursor-not-allowed"
+                      className="w-full pl-12 pr-4 py-3 rounded-2xl bg-white/40 border border-[#E51A54] text-black placeholder-gray-700 font-exo-2 focus:outline-none focus:border-[#E51A54] focus:ring-1 focus:ring-[#E51A54] disabled:opacity-50 disabled:cursor-not-allowed"
                     />
                   </div>
 
                   {/* Password */}
                   <div className="relative">
-                    <FiLock className="absolute left-4 top-1/2 -translate-y-1/2 text-[#E62064]" />
+                    <FiLock className="absolute left-4 top-1/2 -translate-y-1/2 text-[#E51A54]" />
                     <input
                       type={showPassword ? "text" : "password"}
                       value={password}
                       onChange={(e) => setPassword(e.target.value)}
                       placeholder="Enter your password"
                       disabled={isLoading}
-                      className="w-full pl-12 pr-4 py-3 rounded-2xl bg-white/40 border border-[#E62064] text-black placeholder-gray-700 font-exo-2 focus:outline-none focus:border-[#E62064] focus:ring-1 focus:ring-[#E62064] disabled:opacity-50 disabled:cursor-not-allowed"
+                      className="w-full pl-12 pr-4 py-3 rounded-2xl bg-white/40 border border-[#E51A54] text-black placeholder-gray-700 font-exo-2 focus:outline-none focus:border-[#E51A54] focus:ring-1 focus:ring-[#E51A54] disabled:opacity-50 disabled:cursor-not-allowed"
                     />
                     <button
                       type="button"
                       onClick={() => setShowPassword(!showPassword)}
                       disabled={isLoading}
-                      className="absolute cursor-pointer right-4 top-1/2 -translate-y-1/2 text-[#E62064] hover:text-[#E62064]/80 transition disabled:opacity-50 disabled:cursor-not-allowed"
+                      className="absolute cursor-pointer right-4 top-1/2 -translate-y-1/2 text-[#E51A54] hover:text-[#E51A54]/80 transition disabled:opacity-50 disabled:cursor-not-allowed"
                     >
                       {showPassword ? <FiEyeOff /> : <FiEye />}
                     </button>
@@ -438,7 +438,7 @@ export default function LoginForm({ isOpen, onClose, openSignup }) {
                     whileTap={
                       !isLoading && email && password ? { scale: 0.98 } : {}
                     }
-                    className="w-full cursor-pointer mt-3 py-3 rounded-2xl bg-[#E62064] text-white font-semibold text-lg shadow-md hover:shadow-lg transition-all disabled:opacity-50 disabled:cursor-not-allowed relative overflow-hidden"
+                    className="w-full cursor-pointer mt-3 py-3 rounded-2xl bg-[#E51A54] text-white font-semibold text-lg shadow-md hover:shadow-lg transition-all disabled:opacity-50 disabled:cursor-not-allowed relative overflow-hidden"
                   >
                     {isLoading ? (
                       <div className="flex justify-center items-center">
@@ -469,7 +469,7 @@ export default function LoginForm({ isOpen, onClose, openSignup }) {
                         openSignup();
                       }}
                       disabled={isLoading}
-                      className="cursor-pointer bg-[#E62064] text-transparent bg-clip-text font-semibold hover:text-[#E62064]/80 transition disabled:opacity-50 disabled:cursor-not-allowed"
+                      className="cursor-pointer bg-[#E51A54] text-transparent bg-clip-text font-semibold hover:text-[#E51A54]/80 transition disabled:opacity-50 disabled:cursor-not-allowed"
                     >
                       Create Account
                     </button>
@@ -489,9 +489,9 @@ export default function LoginForm({ isOpen, onClose, openSignup }) {
                       repeat: Infinity,
                       ease: "linear",
                     }}
-                    className="w-16 h-16 border-4 border-[#E9164B] border-t-transparent rounded-full mx-auto mb-6"
+                    className="w-16 h-16 border-4 border-[#E51A54] border-t-transparent rounded-full mx-auto mb-6"
                   />
-                  <h3 className="text-xl font-bold text-[#E9164B] mb-2">
+                  <h3 className="text-xl font-bold text-[#E51A54] mb-2">
                     Login Successful!
                   </h3>
                   <p className="text-gray-700 mb-4">
@@ -502,7 +502,7 @@ export default function LoginForm({ isOpen, onClose, openSignup }) {
                       initial={{ width: "0%" }}
                       animate={{ width: "100%" }}
                       transition={{ duration: 1.5, ease: "easeInOut" }}
-                      className="h-full bg-[#E9164B]"
+                      className="h-full bg-[#E51A54]"
                     />
                   </div>
                 </div>

@@ -29,7 +29,7 @@ export default function MeetingUI({ isHost, roomId, router }) {
     setTimeout(() => setNotification(null), 3000);
   };
 
-  const meetingState = useMeetingState();
+  const meetingState = useMeetingState(roomId);
 
   // Subscribe to remote audio tracks
   useEffect(() => {
@@ -83,6 +83,7 @@ export default function MeetingUI({ isHost, roomId, router }) {
     showNotification
   );
   const chat = useChat(meetingState.room, permissions);
+  
   const whiteboard = useWhiteboard(
     meetingState.showWhiteboard,
     meetingState.whiteboardColor
@@ -395,6 +396,11 @@ export default function MeetingUI({ isHost, roomId, router }) {
     </div>
   );
 }
+
+
+
+
+
 
 // import { useState } from "react";
 // import { useRouter } from "next/navigation";

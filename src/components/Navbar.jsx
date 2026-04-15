@@ -218,27 +218,12 @@
 //   );
 // }
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 "use client";
 import { useState, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { Button } from "./ui/button";
 import { useRouter } from "next/navigation";
-import { Menu, X, Mail, Lock, User } from "lucide-react";
+import { Menu, X } from "lucide-react";
 import SignUpForm from "./signup";
 import LoginForm from "./login";
 import OtpModal from "./otpmodal";
@@ -260,40 +245,63 @@ export const Navbar = () => {
   const [isOtpOpen, setIsOtpOpen] = useState(false);
   const [otpUserData, setOtpUserData] = useState(null);
 
-
-
+  // useEffect(() => {
+  //   const handleScroll = () => {
+  //     setIsScrolled(window.scrollY > 50);
+  //   };
+  //   window.addEventListener("scroll", handleScroll);
+  //   return () => window.removeEventListener("scroll", handleScroll);
+  // }, []);
   useEffect(() => {
     const handleScroll = () => {
-      setIsScrolled(window.scrollY > 50);
+      const main = document.getElementById("main-scroll");
+      if (!main) return;
+
+      if (main.scrollTop > 50) {
+        setIsScrolled(true);
+      } else {
+        setIsScrolled(false);
+      }
     };
-    window.addEventListener("scroll", handleScroll);
-    return () => window.removeEventListener("scroll", handleScroll);
+
+    const main = document.getElementById("main-scroll");
+
+    if (main) {
+      main.addEventListener("scroll", handleScroll);
+    }
+
+    // 🔥 ALSO trigger once initially
+    handleScroll();
+
+    return () => {
+      if (main) {
+        main.removeEventListener("scroll", handleScroll);
+      }
+    };
   }, []);
 
   return (
     <>
       <motion.nav
-        className={`fixed top-0 left-0 right-0 z-50 transition-all duration-300 ${
+        className={`top-0 left-0 right-0 z-50 transition-all duration-300 ${
           isScrolled
-            // ? "bg-background/80 backdrop-blur-xl border-b border-border/50"
-            // : "bg-transparent"
             ? "bg-[#0f0f0f]/80 backdrop-blur-xl border-b border-white/10"
-: "bg-transparent"
+            : "bg-transparent"
         }`}
         initial={{ y: -100 }}
         animate={{ y: 0 }}
         transition={{ duration: 0.5 }}
       >
         <div className="container px-4">
-          <div className="flex items-center justify-between h-16 md:h-20">
+          <div className="flex items-center space-x-2 justify-between h-16 md:h-20">
             {/* Logo */}
             <a href="/" className="flex items-center gap-2">
               <img
-                src="/holovox-icon.png"
+                src="/holo-new-logo.png"
                 alt="HoloVox"
-                className="h-8 md:h-10"
+                className="h-8 md:h-14"
               />
-              <span className="font-creata text-xl font-semibold text-white hidden sm:block">
+              <span className="font-creata -ml-2 text-2xl font-semibold text-white hidden sm:block">
                 HOLOVOX
               </span>
             </a>
@@ -320,12 +328,12 @@ export const Navbar = () => {
                 Sign In
               </Button> */}
               <Button
-               onClick={() => {
-  setIsLoginOpen(true);
-  setIsMobileMenuOpen(false);
-}}
+                onClick={() => {
+                  setIsLoginOpen(true);
+                  setIsMobileMenuOpen(false);
+                }}
                 // onClick={() => router.push("/connect")}
-                className="bg-[#E9164B] cursor-pointer hover:bg-red-500 text-white"
+                className="bg-[#E51A54] cursor-pointer hover:bg-[#E51A54]/80 text-white"
               >
                 Get Started
               </Button>
@@ -368,23 +376,23 @@ export const Navbar = () => {
           </motion.div>
         )}
       </AnimatePresence>
-        <LoginForm
+      <LoginForm
         isOpen={isLoginOpen}
         onClose={() => setIsLoginOpen(false)}
         // openSignup={() => setIsSignupOpen(true)}
         openSignup={() => {
-  setIsLoginOpen(false);
-  setIsSignupOpen(true);
-}}
+          setIsLoginOpen(false);
+          setIsSignupOpen(true);
+        }}
       />
       <SignUpForm
         isOpen={isSignupOpen}
         onClose={() => setIsSignupOpen(false)}
         // openLogin={() => setIsLoginOpen(true)}
         openLogin={() => {
-  setIsSignupOpen(false);
-  setIsLoginOpen(true);
-}}
+          setIsSignupOpen(false);
+          setIsLoginOpen(true);
+        }}
         openOTP={(user) => {
           setIsSignupOpen(false);
           setOtpUserData(user);

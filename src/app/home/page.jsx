@@ -11,33 +11,38 @@ const HomeDashboard = () => {
   const router = useRouter();
   const [loading, setLoading] = useState(true);
   const [decodedUser, setDecodedUser] = useState([]);
+  const [meetingId, setMeetingId] = useState("");
 
   useEffect(() => {
-    const fetchUser = async () => {
-      try {
-        setLoading(true);
-        const user = await getTokenData();
-        // console.log("Decoded User:", user);
-        setDecodedUser(user || {});
-      } catch (error) {
-        console.error("Error fetching user data:", error);
-      } finally {
-        setLoading(false);
-      }
-    };
-
-    fetchUser();
+    // const fetchUser = async () => {
+    //   try {
+    //     setLoading(true);
+    //     const user = await getTokenData();
+    //     console.log("Decoded User:", user);
+    //     setDecodedUser(user || {});
+    //   } catch (error) {
+    //     console.error("Error fetching user data:", error);
+    //   } finally {
+    //     setLoading(false);
+    //   }
+    // };
+getTokenData().then((user) => {
+  console.log("Decoded User:", user);
+  setDecodedUser(user || {});
+  setLoading(false);
+}).catch((error) => {
+  console.error("Error fetching user data:", error);
+  setLoading(false);
+});
+    // fetchUser();
   }, []);
 
-  const user = {
-    name: decodedUser?.name,
-    email: decodedUser?.email,
-    avatar: decodedUser?.image,
-    meetingId: "123-456-789",
-  };
+ 
 
-  const createMeeting = () => {
+  const createMeeting = async() => {
     const id = uuidv4().slice(0, 6);
+    setMeetingId(id);
+  
     router.push(`/meeting/${id}?role=host`);
   };
 
@@ -49,7 +54,12 @@ const HomeDashboard = () => {
   const goToPodcastLanding = () => {
     router.push("/podcast");
   };
-
+   const user = {
+    name: decodedUser?.name,
+    email: decodedUser?.email,
+    avatar: decodedUser?.image,
+    meetingId:meetingId ,
+  };
   return (
     <div className="min-h-screen bg-white text-black p-6">
       {/* Header */}

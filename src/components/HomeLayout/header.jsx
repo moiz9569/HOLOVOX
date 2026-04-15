@@ -321,7 +321,7 @@ const Header = () => {
   useEffect(() => {
     const fetchUser = async () => {
       try {
-        setLoading(true);
+        // setLoading(true);
         const user = await getTokenData();
         // console.log("Decoded User:", user);
         setDecodedUser(user || {});
@@ -343,6 +343,7 @@ const Header = () => {
 
   const createMeeting = () => {
     const roomId = uuidv4().slice(0, 6);
+    console.log("Creating meeting with ID:", roomId);
     router.push(`/meeting-room/${roomId}?role=host`);
   };
 
