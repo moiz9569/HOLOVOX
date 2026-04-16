@@ -52,12 +52,12 @@ const RecordingsPage = () => {
   ];
 
   return (
-    <div className="min-h-screen bg-white text-white p-6">
+    <div className="min-h-screen bg-[#EAEAF4] text-white p-6">
       
       {/* Header */}
       <div className="mb-6">
         <h1 className="text-2xl font-bold text-black">Recordings</h1>
-        <p className="text-[#E9164B] text-sm">
+        <p className="text-[#E51A54] text-sm">
           Manage your meeting recordings
         </p>
       </div>
@@ -72,8 +72,8 @@ const RecordingsPage = () => {
               onClick={() => setActiveTab(tab.key)}
               className={`flex items-center gap-2 px-4 py-2 rounded-lg text-sm transition ${
                 activeTab === tab.key
-                  ? "bg-[#E9164B]"
-                  : "bg-white/5 hover:bg-white/10 border-2 border border-black text-black"
+                  ? "bg-[#E51A54]"
+                  : "bg-white/5 hover:bg-[#E51A54] hover:text-white border border-[#E51A54] text-[#E51A54] cursor-pointer"
               }`}
             >
               <Icon className="w-4 h-4" />
@@ -84,7 +84,7 @@ const RecordingsPage = () => {
       </div>
 
       {/* Recordings List */}
-      <div className="bg-black/65 border border-white/10 rounded-2xl p-6">
+      <div className="border border-white/10 rounded-2xl">
         {recordings[activeTab].length === 0 ? (
           <div className="text-center py-12">
             <Video className="mx-auto mb-4 text-white/40" size={40} />
@@ -95,12 +95,12 @@ const RecordingsPage = () => {
             {recordings[activeTab].map((rec, index) => (
               <div
                 key={index}
-                className="flex items-center justify-between p-4 bg-black/20 rounded-xl hover:bg-black/30 transition"
+                className="flex items-center justify-between p-4 bg-white rounded-xl transition"
               >
                 {/* Info */}
                 <div>
-                  <p className="font-medium">{rec.title}</p>
-                  <p className="text-sm text-white/60">
+                  <p className="font-medium text-black">{rec.title}</p>
+                  <p className="text-sm text-gray-600">
                     {rec.date} • {rec.duration}
                   </p>
                 </div>
@@ -108,15 +108,15 @@ const RecordingsPage = () => {
                 {/* Actions */}
                 <div className="flex items-center gap-3">
                   
-                  <button className="p-2 hover:bg-white/10 rounded-lg">
+                  <button className="p-2 text-gray-600 hover:bg-white/10 rounded-lg">
                     <Play className="w-4 h-4" />
                   </button>
 
-                  <button className="p-2 hover:bg-white/10 rounded-lg">
+                  <button className="p-2 text-gray-600 hover:bg-white/10 rounded-lg">
                     <Download className="w-4 h-4" />
                   </button>
 
-                  <button className="p-2 hover:bg-white/10 rounded-lg">
+                  <button className="p-2 text-gray-600 hover:bg-white/10 rounded-lg">
                     <MoreVertical className="w-4 h-4" />
                   </button>
 

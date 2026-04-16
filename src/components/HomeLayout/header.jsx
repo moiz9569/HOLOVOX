@@ -268,7 +268,7 @@ const MeetingModal = ({ onClose }) => {
   };
 
   return (
-    <div className="fixed inset-0 mt-80 z-50 flex items-center justify-center bg-black/60">
+    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/60">
       <motion.div
         initial={{ scale: 0.8, opacity: 0 }}
         animate={{ scale: 1, opacity: 1 }}
@@ -293,7 +293,7 @@ const MeetingModal = ({ onClose }) => {
             value={joinCode}
             onChange={(e) => setJoinCode(e.target.value)}
             placeholder="Enter meeting ID"
-            className="w-full pl-10 pr-4 py-3 bg-gray-100 border border-white/20 rounded-xl text-gray-800"
+            className="w-full pl-10 pr-4 py-3 bg-gray-100 border border-[#E51A54] rounded-xl text-gray-800"
           />
         </div>
 
@@ -348,7 +348,7 @@ const Header = () => {
   };
 
   return (
-    <header className="sticky top-0 h-16 z-40 bg-white border-b border-[#E62064]">
+    <header className="sticky top-0 h-16 z-40 bg-white border-b border-[#E51A54]">
       <div className="flex items-center justify-between h-full px-6">
         {/* LEFT */}
         <div className="flex items-center gap-4">
@@ -376,7 +376,7 @@ const Header = () => {
           {/* Create */}
           <button
             onClick={createMeeting}
-            className="hidden md:flex items-center gap-2 px-4 h-10 border border-[#E62064] text-[#E62064] rounded-lg text-sm hover:bg-[#E9164B] hover:text-white transition"
+            className="hidden cursor-pointer md:flex items-center gap-2 px-4 h-10 border border-[#E51A54] text-[#E51A54] rounded-lg text-sm hover:bg-[#E51A54] hover:text-white transition"
           >
             <Video className="w-4 h-4" />
             Create
@@ -385,7 +385,7 @@ const Header = () => {
           {/* Join */}
           <button
             onClick={() => setShowModal(true)}
-            className="hidden md:flex items-center gap-2 px-4 h-10 bg-[#E9164B] text-white rounded-lg text-sm"
+            className="hidden cursor-pointer md:flex items-center gap-2 px-4 h-10 bg-[#E51A54] text-white rounded-lg text-sm"
           >
             <Video className="w-4 h-4" />
             Join
@@ -416,7 +416,7 @@ const Header = () => {
 
           {/* USER */}
           <div className="relative">
-            <button
+            {/* <button
               onClick={() => setShowUserMenu(!showUserMenu)}
               className="flex rounded-2xl items-center gap-2"
             >
@@ -425,9 +425,21 @@ const Header = () => {
                 className="w-8 h-8 rounded-lg object-cover"
               />
               <ChevronDown className="w-4 h-4 text-black" />
-            </button>
+            </button> */}
+            <div className="flex items-center gap-3">
+              <button
+                onClick={() => setShowUserMenu(!showUserMenu)}
+                className="flex cursor-pointer rounded-2xl items-center gap-2"
+              >
+                <img
+                  src={userData.avatar}
+                  alt={userData.name}
+                  className="w-10 h-10 rounded-full object-cover border border-[#E51A54]"
+                />
+              </button>
+            </div>
 
-            <AnimatePresence>
+            {/* <AnimatePresence>
               {showUserMenu && (
                 <motion.div
                   initial={{ opacity: 0 }}
@@ -454,7 +466,7 @@ const Header = () => {
                   </button>
                 </motion.div>
               )}
-            </AnimatePresence>
+            </AnimatePresence> */}
           </div>
         </div>
       </div>

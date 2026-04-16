@@ -39,7 +39,7 @@ const NotesPage = () => {
   ];
 
   return (
-    <div className="min-h-screen bg-white text-white p-6">
+    <div className="min-h-screen bg-[#EAEAF4] text-white p-6">
       
       {/* Header */}
       <div className="mb-6 flex justify-between items-center">
@@ -57,7 +57,7 @@ const NotesPage = () => {
             className={`px-4 py-2 rounded-lg text-sm ${
               mode === "modern"
                 ? "bg-[#E9164B]"
-                : "bg-white/5 border-2 border border-black text-black"
+                : "bg-white/5 border border-[#E51A54] text-[#E51A54] cursor-pointer hover:bg-[#E51A54] hover:text-white"
             }`}
           >
             My Notes
@@ -67,7 +67,7 @@ const NotesPage = () => {
             className={`px-4 py-2 rounded-lg text-sm ${
               mode === "classic"
                 ? "bg-[#E9164B]"
-                : "bg-white/5 border-2 border border-black text-black"
+                : "bg-white/5 border border-[#E51A54] text-[#E51A54] cursor-pointer hover:bg-[#E51A54] hover:text-white"
             }`}
           >
             Classic
@@ -87,7 +87,7 @@ const NotesPage = () => {
                 className={`px-4 py-2 rounded-lg text-sm ${
                   activeTab === tab
                     ? "bg-[#E9164B]"
-                    : "bg-white/5 hover:bg-white/10 border-2 border border-black text-black"
+                    : "bg-white/5 cursor-pointer border border-[#E51A54] text-[#E51A54] hover:bg-[#E51A54] hover:text-white"
                 }`}
               >
                 {tab === "mynotes" && "My Notes"}
@@ -102,23 +102,23 @@ const NotesPage = () => {
           <div className="grid md:grid-cols-3 gap-6">
             
             {/* Add Note */}
-            <div className="p-6 bg-black/65 rounded-2xl border border-white/10 flex flex-col items-center justify-center cursor-pointer hover:bg-black/50">
+            <div className="p-6 bg-white rounded-2xl border border-white/10 flex flex-col items-center justify-center cursor-pointer hover:scale-105 transition">
               <Plus className="mb-2 text-[#E9164B]" />
-              <p className="text-sm">New Note</p>
+              <p className="text-sm text-[#E9164B]">New Note</p>
             </div>
 
             {notesData.map((note, index) => (
               <div
                 key={index}
-                className="p-5 bg-black/65 rounded-2xl border border-white/10 hover:bg-black/50 transition"
+                className="p-5 bg-white rounded-2xl border border-white/10 transition"
               >
                 <div className="flex justify-between items-start">
-                  <h3 className="font-medium">{note.title}</h3>
+                  <h3 className="font-medium text-gray-800">{note.title}</h3>
                   {note.starred && (
                     <Star className="w-4 h-4 text-yellow-400" />
                   )}
                 </div>
-                <p className="text-sm text-white/60 mt-2">
+                <p className="text-sm text-gray-500 mt-2">
                   {note.date}
                 </p>
 
@@ -126,7 +126,7 @@ const NotesPage = () => {
                   <button className="text-xs px-3 py-1 bg-[#E9164B] rounded-lg">
                     Open
                   </button>
-                  <button className="text-xs px-3 py-1 bg-white/10 rounded-lg">
+                  <button className="text-xs px-3 py-1 bg-[#EAEAF4] text-gray-600 rounded-lg">
                     Share
                   </button>
                 </div>
@@ -141,7 +141,7 @@ const NotesPage = () => {
         <div className="flex gap-6">
           
           {/* Sidebar */}
-          <div className="w-64 bg-black/65 border border-white/10 rounded-2xl p-4">
+          <div className="w-64 bg-white border border-white/10 rounded-2xl p-4">
             {sidebarItems.map((item) => {
               const Icon = item.icon;
               return (
@@ -151,7 +151,7 @@ const NotesPage = () => {
                   className={`w-full flex items-center gap-3 px-3 py-2 rounded-lg text-sm mb-2 ${
                     activeSidebar === item.key
                       ? "bg-[#E9164B]"
-                      : "hover:bg-white/10"
+                      : "text-gray-600 cursor-pointer transition hover:text-white hover:bg-[#E51A54]  "
                   }`}
                 >
                   <Icon className="w-4 h-4" />
@@ -162,23 +162,23 @@ const NotesPage = () => {
           </div>
 
           {/* Notes List */}
-          <div className="flex-1 bg-black/65 border border-white/10 rounded-2xl p-6">
-            <h2 className="text-lg font-semibold mb-4">
+          <div className="flex-1 bg-white border border-white/10 rounded-2xl p-6">
+            <h2 className="text-lg text-gray-800 font-semibold mb-4">
               {activeSidebar.toUpperCase()}
             </h2>
 
             {notesData.length === 0 ? (
-              <p className="text-white/60">No notes found</p>
+              <p className="text-gray-600">No notes found</p>
             ) : (
               <div className="space-y-4">
                 {notesData.map((note, index) => (
                   <div
                     key={index}
-                    className="p-4 bg-black/20 rounded-xl flex justify-between items-center"
+                    className="p-4 bg-[#EAEAF4] rounded-xl flex justify-between items-center"
                   >
                     <div>
-                      <p className="font-medium">{note.title}</p>
-                      <p className="text-sm text-white/60">
+                      <p className="font-medium text-gray-600">{note.title}</p>
+                      <p className="text-sm text-gray-500">
                         {note.date}
                       </p>
                     </div>
@@ -187,7 +187,7 @@ const NotesPage = () => {
                       <button className="px-3 py-1 text-xs bg-[#E9164B] rounded-lg">
                         Open
                       </button>
-                      <button className="px-3 py-1 text-xs bg-white/10 rounded-lg">
+                      <button className="px-3 py-1 text-xs bg-white/10 text-gray-600 rounded-lg">
                         Delete
                       </button>
                     </div>

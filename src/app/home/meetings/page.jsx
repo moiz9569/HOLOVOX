@@ -49,7 +49,7 @@ const MeetingsPage = () => {
   ];
 
   return (
-    <div className="min-h-screen bg-white text-white p-6">
+    <div className="min-h-screen bg-[#EAEAF4] text-white p-6">
       {/* Header */}
       <div className="mb-6">
         <h1 className="text-2xl font-bold text-black">Meetings</h1>
@@ -61,11 +61,11 @@ const MeetingsPage = () => {
       {/* Top Actions */}
       <div className="grid md:grid-cols-3 gap-6 mb-8">
         {/* Schedule */}
-        <div className="p-6 bg-gray-100 text-black rounded-2xl border border-white/10">
+        <div className="p-6 bg-white text-black rounded-2xl border border-white/10">
           <Calendar className="mb-3 text-[#E9164B]" />
           <h3 className="font-semibold">Schedule Meeting</h3>
-          <p className="text-sm text-white/60 mb-4">Plan a meeting for later</p>
-          <button className="px-4 py-2 bg-[#E9164B] text-white rounded-lg text-sm">
+          <p className="text-sm text-gray-600 mb-4">Plan a meeting for later</p>
+          <button className="px-4 cursor-pointer py-2 bg-[#E9164B] text-white rounded-lg text-sm">
             Schedule
           </button>
         </div>
@@ -81,16 +81,16 @@ const MeetingsPage = () => {
         </div>
 
         {/* Personal Room */}
-        <div className="p-6 bg-gray-100 rounded-2xl border border-white/10">
+        <div className="p-6 bg-white rounded-2xl border border-white/10">
           <Users className="mb-3 text-[#E9164B]" />
           <h3 className="font-semibold text-black">Personal Room</h3>
-          <p className="text-sm text-black mb-3">
+          <p className="text-sm text-gray-600 mb-3">
             Always available meeting room
           </p>
 
-          <div className="flex items-center justify-between bg-black/20 p-2 rounded-lg">
-            <span className="text-sm">{user.meetingId}</span>
-            <button onClick={copyMeetingId}>
+          <div className="flex items-center justify-between bg-[#EAEAF4] p-2 rounded-lg">
+            <span className="text-sm text-gray-800">{user.meetingId}</span>
+            <button className="cursor-pointer" onClick={copyMeetingId}>
               <Copy className="w-4 h-4 text-[#E9164B]" />
             </button>
           </div>
@@ -106,7 +106,7 @@ const MeetingsPage = () => {
             className={`px-4 py-2 rounded-lg text-sm ${
               activeTab === tab
                 ? "bg-[#E9164B]"
-                : "bg-white/5 hover:bg-white/10"
+                : "bg-white/5 hover:bg-white/10 text-[#E51A54] cursor-pointer"
             }`}
           >
             {tab === "upcoming" ? "Upcoming" : "Previous"}
@@ -115,23 +115,23 @@ const MeetingsPage = () => {
       </div>
 
       {/* Meetings List */}
-      <div className="bg-white/5 rounded-2xl border border-white/10 p-6">
+      <div className="rounded-2xl border border-white/10">
         {/* Upcoming */}
         {activeTab === "upcoming" && (
           <div className="space-y-4">
             {upcomingMeetings.map((meeting, index) => (
               <div
                 key={index}
-                className="flex items-center justify-between p-4 bg-black/20 rounded-xl"
+                className="flex items-center justify-between bg-white rounded-xl p-4"
               >
                 <div>
-                  <p className="font-medium">{meeting.title}</p>
-                  <p className="text-sm text-white/60">
+                  <p className="font-medium text-black">{meeting.title}</p>
+                  <p className="text-sm text-gray-600">
                     {meeting.date} • {meeting.time}
                   </p>
                 </div>
 
-                <button className="px-4 py-2 bg-[#E9164B] rounded-lg text-sm">
+                <button className="px-4 py-2 bg-[#E9164B] cursor-pointer rounded-lg text-sm">
                   Join
                 </button>
               </div>
@@ -145,11 +145,11 @@ const MeetingsPage = () => {
             {previousMeetings.map((meeting, index) => (
               <div
                 key={index}
-                className="flex items-center justify-between p-4 bg-black/20 rounded-xl"
+                className="flex items-center justify-between p-4 bg-white rounded-xl"
               >
                 <div>
-                  <p className="font-medium">{meeting.title}</p>
-                  <p className="text-sm text-white/60">
+                  <p className="font-medium text-black">{meeting.title}</p>
+                  <p className="text-sm text-gray-600">
                     {meeting.date} • {meeting.duration}
                   </p>
                 </div>

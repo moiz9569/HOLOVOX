@@ -37,7 +37,7 @@ const SummariesPage = () => {
   };
 
   return (
-    <div className="min-h-screen bg-white text-white p-6">
+    <div className="min-h-screen bg-[#EAEAF4] text-white p-6">
       
       {/* Header */}
       <div className="mb-6">
@@ -48,13 +48,13 @@ const SummariesPage = () => {
       </div>
 
       {/* Tabs */}
-      <div className="flex gap-3 mb-6">
+      {/* <div className="flex gap-3 mb-6">
         <button
           onClick={() => setActiveTab("summaries")}
           className={`px-4 py-2 rounded-lg text-sm ${
             activeTab === "summaries"
               ? "bg-[#E9164B]"
-              : "bg-white/5 hover:bg-white/10 border-2 border border-black text-black"
+              : "bg-white/5 hover:bg-[#E51A54] border border-[#E51A54] text-[#E51A54] cursor-pointer hover:text-white"
           }`}
         >
           My Summaries
@@ -63,20 +63,43 @@ const SummariesPage = () => {
         <button
           onClick={() => setActiveTab("trash")}
           className={`px-4 py-2 rounded-lg text-sm ${
-            activeTab === "trash"
+           activeTab === "summaries"
               ? "bg-[#E9164B]"
-              : "bg-white/5 hover:bg-white/10 border-2 border border-black text-black"
+              : "bg-white/5 hover:bg-[#E51A54] border border-[#E51A54] text-[#E51A54] cursor-pointer hover:text-white"
           }`}
         >
           Trash
         </button>
-      </div>
+      </div> */}
+
+       <div className="flex gap-2">
+          <button
+            onClick={() => setActiveTab("summaries")}
+            className={`px-4 py-2 rounded-lg text-sm ${
+               activeTab === "summaries"
+                ? "bg-[#E9164B]"
+                : "bg-white/5 border border-[#E51A54] text-[#E51A54] cursor-pointer hover:bg-[#E51A54] hover:text-white"
+            }`}
+          >
+             My Summaries
+          </button>
+          <button
+           onClick={() => setActiveTab("trash")}
+            className={`px-4 py-2 rounded-lg text-sm ${
+               activeTab === "trash"
+                ? "bg-[#E9164B]"
+                : "bg-white/5 border border-[#E51A54] text-[#E51A54] cursor-pointer hover:bg-[#E51A54] hover:text-white"
+            }`}
+          >
+              Trash
+          </button>
+        </div>
 
       {/* Table Container */}
-      <div className="bg-black/65 border border-white/10 rounded-2xl overflow-hidden">
+      <div className="bg-white mt-4 border border-white/10 rounded-2xl overflow-hidden">
         
         {/* Table Header */}
-        <div className="grid grid-cols-5 gap-4 px-6 py-4 border-b border-white/10 text-sm text-white/60">
+        <div className="grid grid-cols-5 gap-4 px-6 py-4 border-b border-white/10 text-sm text-gray-800 uppercase">
           <span>Topic</span>
           <span>ID</span>
           <span>Host</span>
@@ -87,26 +110,26 @@ const SummariesPage = () => {
         {/* Table Body */}
         {summariesData[activeTab].length === 0 ? (
           <div className="text-center py-12">
-            <FileText className="mx-auto mb-4 text-white/40" size={40} />
-            <p className="text-white/60">No summaries found</p>
+            <FileText className="mx-auto mb-4 text-gray-400" size={40} />
+            <p className="text-gray-500">No summaries found</p>
           </div>
         ) : (
           summariesData[activeTab].map((item, index) => (
             <div
               key={index}
-              className="grid grid-cols-5 gap-4 px-6 py-4 border-b border-white/5 items-center hover:bg-black/20 transition"
+              className="grid grid-cols-5 gap-4 px-6 py-4 border-b border-white/5 items-center transition"
             >
               {/* Topic */}
-              <span className="font-medium">{item.topic}</span>
+              <span className="font-medium text-gray-600">{item.topic}</span>
 
               {/* ID */}
-              <span className="text-sm text-white/60">{item.id}</span>
+              <span className="text-sm text-gray-500">{item.id}</span>
 
               {/* Host */}
-              <span className="text-sm">{item.host}</span>
+              <span className="text-sm text-gray-600">{item.host}</span>
 
               {/* Date */}
-              <span className="text-sm text-white/60">
+              <span className="text-sm text-gray-500">
                 {item.date}
               </span>
 
@@ -114,22 +137,22 @@ const SummariesPage = () => {
               <div className="flex justify-end gap-2">
                 
                 {/* View */}
-                <button className="p-2 hover:bg-white/10 rounded-lg">
+                <button className="p-2 text-gray-600 hover:bg-white/10 rounded-lg">
                   <Eye className="w-4 h-4" />
                 </button>
 
                 {/* Conditional Actions */}
                 {activeTab === "summaries" ? (
-                  <button className="p-2 hover:bg-white/10 rounded-lg">
+                  <button className="p-2 text-gray-600 hover:bg-white/10 rounded-lg">
                     <Trash2 className="w-4 h-4 text-red-400" />
                   </button>
                 ) : (
-                  <button className="p-2 hover:bg-white/10 rounded-lg">
+                  <button className="p-2 text-gray-600 hover:bg-white/10 rounded-lg">
                     <RotateCcw className="w-4 h-4 text-green-400" />
                   </button>
                 )}
 
-                <button className="p-2 hover:bg-white/10 rounded-lg">
+                <button className="p-2 text-gray-600 hover:bg-white/10 rounded-lg">
                   <MoreVertical className="w-4 h-4" />
                 </button>
               </div>
