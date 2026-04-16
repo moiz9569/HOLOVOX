@@ -345,7 +345,9 @@ useEffect(() => {
       </div>
 
       <Sidebar
+        room={meetingState.room}
         roomId={roomId}
+        showNotification={showNotification}
         userId={userId}
         showParticipants={meetingState.showParticipants}
         showChat={meetingState.showChat}

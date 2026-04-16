@@ -460,17 +460,23 @@ import {
   MicOff,
   VideoOff,
   UserMinus,
-  MessageSquare,
   Copy,
   Plus,
   Trash2,
   Edit2,
   Save,
   Loader2,
+  Users,
+  MessageSquare,
+  FileText,
+  Paperclip,
 } from "lucide-react";
 import { useEffect, useState } from "react";
+import { useFileSharing } from "@/hooks/useFileSharing";
 
 export default function Sidebar({
+  room,
+  showNotification,
   roomId,
   userId,
   showNotes,
@@ -667,7 +673,8 @@ export default function Sidebar({
 
   // Handle editing a note
   const handleEditNote = (note) => {
-    setEditingNoteId(note.id);
+    setEditingNoteId(note._id);
+    console.log("Editing note:", note);
     setEditText(note.text);
     setEditingGlobalIndex(note.globalIndex);
     setEditingDocId(note.docId);
@@ -731,15 +738,22 @@ export default function Sidebar({
 
   const hasNotes = apiNotes && apiNotes.length > 0;
 
+  const [showFiles, setShowFiles] = useState(false);
+
+  const { sendFile, uploadProgress, downloadingFile, fileTransfers } =
+    useFileSharing(room, showNotification);
+
+  const [activeTab, setActiveTab] = useState("participants");
+
   return (
     <AnimatePresence>
-      {(showParticipants || showChat || showNotes) && (
+      {(showParticipants || showChat || showNotes || showFiles) && (
         <motion.div
           initial={{ width: 0, opacity: 0 }}
           animate={{ width: 320, opacity: 1 }}
           exit={{ width: 0, opacity: 0 }}
           transition={{ duration: 0.3 }}
-          className="bg-black/40 backdrop-blur-xl border-l border-white/10 flex flex-col relative"
+          className="bg-black/40 backdrop-blur-xl border-l border-white/10 flex flex-col relative "
         >
           <div className="p-6 border-b border-white/10">
             <div className="flex items-center justify-between mb-4">
@@ -756,7 +770,7 @@ export default function Sidebar({
                       : "bg-white/5 hover:bg-white/10"
                   }`}
                 >
-                  Participants
+                  <Users size={16} />
                 </button>
                 <button
                   onClick={() => {
@@ -770,7 +784,7 @@ export default function Sidebar({
                       : "bg-white/5 hover:bg-white/10"
                   }`}
                 >
-                  Chat
+                  <MessageSquare size={16} />
                 </button>
 
                 <button
@@ -785,7 +799,21 @@ export default function Sidebar({
                       : "bg-white/5 hover:bg-white/10"
                   }`}
                 >
-                  Notes
+                  <FileText size={16} />
+                </button>
+
+                <button
+                  onClick={() => {
+                    setShowFiles(true);
+                    setShowChat(false);
+                    setShowNotes(false);
+                    setShowParticipants(false);
+                  }}
+                  className={`px-4 py-2 rounded-lg text-sm ${
+                    showFiles ? "bg-gray-400 text-gray-800" : "bg-white/5"
+                  }`}
+                >
+                  <Paperclip size={16} />
                 </button>
               </div>
 
@@ -1021,7 +1049,7 @@ export default function Sidebar({
                         exit={{ opacity: 0, scale: 0.95 }}
                         className="max-w-48 h-16 bg-gradient-to-br from-white/10 to-white/5 rounded-xl p-3 border border-white/10 hover:border-white/20 transition-all duration-200 group"
                       >
-                        {editingNoteId === note.id ? (
+                        {editingNoteId === note?._id ? (
                           // Edit mode
                           <div>
                             <textarea
@@ -1035,7 +1063,7 @@ export default function Sidebar({
                             <div className="flex gap-2 mt-3">
                               <button
                                 onClick={handleSaveEdit}
-                                disabled={!editText.trim() || isSaving}
+                                disabled={!editText?.trim() || isSaving}
                                 className="flex-1 py-1.5 bg-cyan-600 hover:bg-cyan-700 disabled:opacity-50 rounded-lg text-xs font-medium transition flex items-center justify-center gap-1"
                               >
                                 {isSaving ? (
@@ -1104,6 +1132,54 @@ export default function Sidebar({
                 <p className="text-[10px] text-white/20 text-center">
                   Notes are automatically saved to the cloud
                 </p>
+              </div>
+            )}
+
+            {showFiles && (
+              <div className="space-y-4">
+                <p className="text-xs text-white/40">Share files</p>
+
+                {/* Upload */}
+                <label>
+                  <input
+                    type="file"
+                    accept="image/*,.pdf"
+                    hidden
+                    onChange={(e) => {
+                      const file = e.target.files[0];
+                      if (file) sendFile(file);
+                    }}
+                  />
+                  <div className="p-4 bg-white/10 rounded-lg text-center cursor-pointer">
+                    Upload File
+                  </div>
+                </label>
+
+                {/* Upload Progress */}
+                {uploadProgress > 0 && (
+                  <p className="text-xs text-cyan-400">
+                    Uploading: {uploadProgress}%
+                  </p>
+                )}
+
+                {/* Receiving */}
+                {downloadingFile && (
+                  <p className="text-xs text-green-400">
+                    Receiving: {downloadingFile.name}
+                  </p>
+                )}
+
+                {/* File list */}
+                <div className="space-y-2">
+                  {fileTransfers.map((file) => (
+                    <div key={file.id} className="p-2 bg-white/5 rounded">
+                      <p>{file.name}</p>
+                      <span className="text-xs text-white/40">
+                        {file.sender}
+                      </span>
+                    </div>
+                  ))}
+                </div>
               </div>
             )}
           </div>
