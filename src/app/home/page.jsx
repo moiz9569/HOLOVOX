@@ -72,7 +72,7 @@ const HomeDashboard = () => {
           className="cursor-pointer p-6 rounded-2xl bg-[#E51A54] hover:scale-105 transition"
         >
           <Video className="mb-4 text-white" />
-          <h3 className="font-semibold text-lg text-white">New Meeting</h3>
+          <h3 className="font-semibold text-base text-white">New Meeting</h3>
           <p className="text-sm opacity-80 text-white">
             Start an instant meeting
           </p>
@@ -81,13 +81,13 @@ const HomeDashboard = () => {
         {/* Join Meeting */}
         <div className="cursor-pointer p-6 rounded-2xl bg-white text-black hover:scale-105 transition">
           <Users className="mb-4" />
-          <h3 className="font-semibold text-lg">Join Meeting</h3>
+          <h3 className="font-semibold text-base">Join Meeting</h3>
           <p className="text-sm text-black">Enter meeting ID</p>
         </div>
 
         <div className="cursor-pointer p-6 rounded-2xl bg-[#E51A54] text-white hover:scale-105 transition">
           <Calendar className="mb-4" />
-          <h3 className="font-semibold text-white text-lg">Schedule</h3>
+          <h3 className="font-semibold text-white text-base">Schedule</h3>
           <p className="text-sm text-white">Plan your meetings</p>
         </div>
 
@@ -99,7 +99,7 @@ const HomeDashboard = () => {
     className="cursor-pointer p-6 rounded-2xl bg-white hover:scale-105 transition"
   >
     <Podcast className="mb-4 text-black" />
-    <h3 className="font-semibold text-lg text-black">
+    <h3 className="font-semibold text-base text-black">
       View More Features
     </h3>
     <p className="text-sm opacity-80 text-black">
