@@ -75,7 +75,15 @@ import RecordingModel from "@/app/models/Recording.model";
 //     );
 //   }
 // }
+import cloudinary from "cloudinary";
 
+
+// Cloudinary config
+cloudinary.v2.config({
+  cloud_name: "dfzattnt8",
+  api_key: "329133647243299",
+  api_secret: "XNz_V8eNvJVF-56u768ExGErlbA",
+});
 export async function POST(req) {
   try {
     await connectDB();
@@ -118,6 +126,7 @@ export async function GET(req) {
 
     const { searchParams } = new URL(req.url);
     const userId = searchParams.get("userId");
+    console.log("Fetching recordings for userId:", userId);
     const recordings = await RecordingModel.find(
       userId ? { userId } : {}
     )
@@ -140,6 +149,7 @@ export async function DELETE(req) {
     await connectDB();
     const { searchParams } = new URL(req.url);
     const recordingId = searchParams.get("recordingId");
+    console.log("Delete request for recordingId:", recordingId);
     if (!recordingId) {
         return NextResponse.json(
             { success: false, message: "recordingId is required" },
@@ -147,22 +157,21 @@ export async function DELETE(req) {
         );
     }
     const recording = await RecordingModel.findById(recordingId);
+    console.log("Recording found for deletion:", recording);
     if (!recording) {
         return NextResponse.json(
             { success: false, message: "Recording not found" },
             { status: 404 }
         );
     }
-    // // 🗑️ delete file from storage
-    // fs.unlinkSync(path.join(process.cwd(), recording.videoUrl));
-    // // 🗑️ delete from DB
-    // await RecordingModel.findByIdAndDelete(recordingId);
 
+    console.log("Deleting recording with publicId:", recording.publicId);
      // ☁️ delete from cloudinary
     if (recording.publicId) {
-      await cloudinary.uploader.destroy(recording.publicId, {
+    const cloud=  await cloudinary.uploader.destroy(recording.publicId, {
         resource_type: "video",
       });
+      console.log("Cloudinary deletion result:", cloud);
     }
      // 🗑️ delete from DB
     await RecordingModel.findByIdAndDelete(recordingId);
