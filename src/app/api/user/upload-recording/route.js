@@ -14,63 +14,99 @@ cloudinary.v2.config({
   api_secret: "XNz_V8eNvJVF-56u768ExGErlbA",
 });
 // =======================
+// export async function POST(req) {
+//   try {
+//     await connectDB();
+
+//     const formData = await req.formData();
+
+//     const file = formData.get("file");
+//     const meetingId = formData.get("meetingId");
+//     const userId = formData.get("userId");
+//     console.log("Received upload request:", { meetingId, userId, fileName: file?.name });
+//     if (!file) {
+//       return NextResponse.json(
+//         { success: false, message: "No file uploaded" },
+//         { status: 400 }
+//       );
+//     }
+
+//     // 📁 convert file
+//     const bytes = await file.arrayBuffer();
+//     const buffer = Buffer.from(bytes);
+//   // 🔥 Cloudinary upload (video)
+//     const uploadResult = await new Promise((resolve, reject) => {
+//       cloudinary.uploader.upload_stream(
+//         {
+//           resource_type: "video",
+//           folder: "recordings",
+//         },
+//         (error, result) => {
+//           if (error) reject(error);
+//           else resolve(result);
+//         }
+//       ).end(buffer);
+//     });
+//       const newRecording = await RecordingModel.create({
+//       meetingId,
+//       userId,
+//       videoUrl: uploadResult.secure_url,
+//       publicId: uploadResult.public_id, // 🔥 delete ke liye important
+//     });
+//     // // 📁 file save
+//     // const fileName = `recording-${Date.now()}.webm`;
+//     // const filePath = path.join(
+//     //   process.cwd(),
+//     //   "public/recordings",
+//     //   fileName
+//     // );
+
+//     // 👉 folder create (agar na ho)
+//     // fs.mkdirSync(path.join(process.cwd(), "public/recordings"), {
+//     //   recursive: true,
+//     // });
+
+//     // fs.writeFileSync(filePath, buffer);
+
+//     // const videoUrl = `/recordings/${fileName}`;
+
+    
+
+//     return NextResponse.json({
+//       success: true,
+//       data: newRecording,
+//     });
+//   } catch (error) {
+//     return NextResponse.json(
+//       { success: false, error: error.message },
+//       { status: 500 }
+//     );
+//   }
+// }
+
 export async function POST(req) {
   try {
     await connectDB();
 
-    const formData = await req.formData();
+    const body = await req.json();
 
-    const file = formData.get("file");
-    const meetingId = formData.get("meetingId");
-    const userId = formData.get("userId");
+    const { meetingId, userId, videoUrl, publicId } = body;
 
-    if (!file) {
+    // ✅ validation
+    if (!meetingId || !userId || !videoUrl) {
       return NextResponse.json(
-        { success: false, message: "No file uploaded" },
+        { success: false, message: "Missing fields" },
         { status: 400 }
       );
     }
 
-    // 📁 convert file
-    const bytes = await file.arrayBuffer();
-    const buffer = Buffer.from(bytes);
-  // 🔥 Cloudinary upload (video)
-    const uploadResult = await new Promise((resolve, reject) => {
-      cloudinary.uploader.upload_stream(
-        {
-          resource_type: "video",
-          folder: "recordings",
-        },
-        (error, result) => {
-          if (error) reject(error);
-          else resolve(result);
-        }
-      ).end(buffer);
-    });
-      const newRecording = await RecordingModel.create({
+    // ✅ save in DB
+    const newRecording = await RecordingModel.create({
       meetingId,
       userId,
-      videoUrl: uploadResult.secure_url,
-      publicId: uploadResult.public_id, // 🔥 delete ke liye important
+      videoUrl,
+      publicId,
     });
-    // // 📁 file save
-    // const fileName = `recording-${Date.now()}.webm`;
-    // const filePath = path.join(
-    //   process.cwd(),
-    //   "public/recordings",
-    //   fileName
-    // );
-
-    // 👉 folder create (agar na ho)
-    // fs.mkdirSync(path.join(process.cwd(), "public/recordings"), {
-    //   recursive: true,
-    // });
-
-    // fs.writeFileSync(filePath, buffer);
-
-    // const videoUrl = `/recordings/${fileName}`;
-
-    
 
     return NextResponse.json({
       success: true,

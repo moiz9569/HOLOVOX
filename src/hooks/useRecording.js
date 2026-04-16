@@ -56,7 +56,8 @@
 
 import { useState, useRef } from "react";
 
-export const useRecording = () => {
+export const useRecording = (roomId, userId) => {
+  // console.log("useRecording initialized with:", { roomId, userId });
   const [isRecording, setIsRecording] = useState(false);
   const [videoURL, setVideoURL] = useState(null); // 🔥 preview ke liye
 
@@ -68,6 +69,7 @@ export const useRecording = () => {
   // 🎥 START RECORDING
   // =========================
   const startRecording = async () => {
+    console.log("Starting recording...");
     try {
       const stream = await navigator.mediaDevices.getDisplayMedia({
         video: true,
@@ -76,7 +78,11 @@ export const useRecording = () => {
 
       recordingStreamRef.current = stream;
 
-      const mediaRecorder = new MediaRecorder(stream);
+      // const mediaRecorder = new MediaRecorder(stream);
+      const mediaRecorder = new MediaRecorder(stream, {
+    mimeType: "video/webm; codecs=vp9",
+    videoBitsPerSecond: 1500000, // 🔥 reduce size
+    });
       mediaRecorderRef.current = mediaRecorder;
 
       recordedChunksRef.current = [];
@@ -98,6 +104,7 @@ export const useRecording = () => {
   // ⛔ STOP RECORDING
   // =========================
   const stopRecording = async () => {
+    console.log("Stopping recording...");
     const mediaRecorder = mediaRecorderRef.current;
     if (!mediaRecorder) return;
 
@@ -125,16 +132,37 @@ export const useRecording = () => {
         // =========================
         // ☁️ UPLOAD TO BACKEND
         // =========================
-        const formData = new FormData();
-        formData.append("file", blob, `recording-${Date.now()}.webm`);
 
-        const res = await fetch("/api/upload-recording", {
-          method: "POST",
-          body: formData,
-        });
 
-        const data = await res.json();
-        console.log("Uploaded URL:", data.url);
+        // 🚀 DIRECT CLOUDINARY UPLOAD (FAST)
+const formData = new FormData();
+formData.append("file", blob);
+formData.append("upload_preset", "holovox_recording");
+
+const cloudRes = await fetch(
+  "https://api.cloudinary.com/v1_1/dfzattnt8/video/upload",
+  {
+    method: "POST",
+    body: formData,
+  }
+);
+
+const cloudData = await cloudRes.json();
+
+console.log("Cloud URL:", cloudData);
+// 💾 SAVE TO DB (LIGHTWEIGHT)
+await fetch("/api/user/upload-recording", {
+  method: "POST",
+  headers: {
+    "Content-Type": "application/json",
+  },
+  body: JSON.stringify({
+    meetingId: roomId,
+    userId: userId,
+    videoUrl: cloudData.secure_url,
+    publicId: cloudData.public_id,
+  }),
+});
 
         // =========================
         // 🧹 CLEANUP
