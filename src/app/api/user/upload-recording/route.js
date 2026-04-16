@@ -4,15 +4,7 @@
 import { NextResponse } from "next/server";
 import connectDB from "../../../../../lib/db";
 import RecordingModel from "@/app/models/Recording.model";
-import cloudinary from "cloudinary";
 
-
-// Cloudinary config
-cloudinary.v2.config({
-  cloud_name: "dfzattnt8",
-  api_key: "329133647243299",
-  api_secret: "XNz_V8eNvJVF-56u768ExGErlbA",
-});
 // =======================
 // export async function POST(req) {
 //   try {
@@ -126,16 +118,6 @@ export async function GET(req) {
 
     const { searchParams } = new URL(req.url);
     const userId = searchParams.get("userId");
-    // let recordings;
-    // if(userId){
-    //      recordings = await RecordingModel.find({userId}).sort({
-    //       createdAt: -1,
-    //     }).lean();
-    // }else{
-    //       recordings = await RecordingModel.find({}).sort({
-    //       createdAt: -1,
-    //     }).lean();
-    // }
     const recordings = await RecordingModel.find(
       userId ? { userId } : {}
     )
