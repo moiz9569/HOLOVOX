@@ -36,7 +36,7 @@ const Sidebar = () => {
     { label: "Home", icon: Home, path: "/home" },
     { label: "Meetings", icon: Users, path: "/home/meetings" },
     { label: "Recordings", icon: MessageSquare, path: "/home/recording" },
-    { label: "Summaries", icon: Activity, path: "/home/summaries" },
+    // { label: "Summaries", icon: Activity, path: "/home/summaries" },
     { label: "Notes", icon: GrDocumentNotes, path: "/home/notes" },
     // { label: "Docs", icon: SiGoogledocs, path: "/home/docs" },
     { label: "Contact US", icon: IoMdContacts, path: "/home/contactus" },

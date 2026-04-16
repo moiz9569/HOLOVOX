@@ -17,8 +17,8 @@ const NotesSchema = new mongoose.Schema(
     },
 
     Notes: {
-     type: [String], // array of strings
-    default: [],
+     type: String, // array of strings
+    required : true// default to empty array,
 },
     disable : {
         type: Boolean,

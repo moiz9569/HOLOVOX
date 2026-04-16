@@ -57,6 +57,14 @@
   color: #888;
 }
 
+body {
+  font-family: 'Creata', sans-serif;
+}
+
+* {
+  font-family: 'Creata', sans-serif;
+}
+
 @font-face {
   font-family: 'Creata';
   src: url('/fonts/Creata-Thin.otf') format('opentype');

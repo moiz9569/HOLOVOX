@@ -10,7 +10,7 @@ const Step = () => {
     <div className="min-h-screen flex items-center justify-center px-4">
       <div className="items-center shadow-[0_10px_25px_rgba(233,22,75,0.3)] justify-center text-center w-full max-w-5xl bg-white rounded-3xl p-8 md:p-12 flex flex-col gap-6">
         <motion.h1
-          className="font-creata text-gray-800 text-4xl md:text-6xl lg:text-8xl font-medium tracking-tight"
+          className="font-creata text-gray-800 text-4xl md:text-6xl lg:text-6xl font-medium tracking-tight"
           initial={{ opacity: 0.5, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.8, delay: 0.2 }}

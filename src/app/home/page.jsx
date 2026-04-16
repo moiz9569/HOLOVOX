@@ -6,26 +6,17 @@ import { v4 as uuidv4 } from "uuid";
 import { useState, useEffect } from "react";
 import { getTokenData } from "../content/data";
 import { Podcast } from "lucide-react";
+import { AnimatePresence, motion } from "framer-motion";
 
 const HomeDashboard = () => {
   const router = useRouter();
   const [loading, setLoading] = useState(true);
   const [decodedUser, setDecodedUser] = useState([]);
   const [meetingId, setMeetingId] = useState("");
+  const [showFeatures, setShowFeatures] = useState(false);
+  const [showOptions, setShowOptions] = useState(false);
 
   useEffect(() => {
-    // const fetchUser = async () => {
-    //   try {
-    //     setLoading(true);
-    //     const user = await getTokenData();
-    //     console.log("Decoded User:", user);
-    //     setDecodedUser(user || {});
-    //   } catch (error) {
-    //     console.error("Error fetching user data:", error);
-    //   } finally {
-    //     setLoading(false);
-    //   }
-    // };
     getTokenData()
       .then((user) => {
         console.log("Decoded User:", user);
@@ -51,9 +42,12 @@ const HomeDashboard = () => {
     alert("Meeting ID copied!");
   };
 
-  const goToPodcastLanding = () => {
-    router.push("/podcast");
-  };
+  useEffect(() => {
+    const handleClickOutside = () => setShowFeatures(false);
+    document.addEventListener("click", handleClickOutside);
+    return () => document.removeEventListener("click", handleClickOutside);
+  }, []);
+
   const user = {
     name: decodedUser?.name,
     email: decodedUser?.email,
@@ -91,24 +85,120 @@ const HomeDashboard = () => {
           <p className="text-sm text-black">Enter meeting ID</p>
         </div>
 
-        <div
-          onClick={goToPodcastLanding}
-          className="cursor-pointer p-6 rounded-2xl bg-[#E51A54] hover:scale-105 transition"
-        >
-          <Podcast className="mb-4 text-white" />
-          <h3 className="font-semibold text-lg text-white">Podcast Mode</h3>
-          <p className="text-sm opacity-80 text-white">
-            Immersive 3D experience
-          </p>
+        <div className="cursor-pointer p-6 rounded-2xl bg-[#E51A54] text-white hover:scale-105 transition">
+          <Calendar className="mb-4" />
+          <h3 className="font-semibold text-white text-lg">Schedule</h3>
+          <p className="text-sm text-white">Plan your meetings</p>
         </div>
 
-        {/* Schedule */}
-        <div className="cursor-pointer p-6 rounded-2xl bg-white text-black hover:scale-105 transition">
-          <Calendar className="mb-4" />
-          <h3 className="font-semibold text-lg">Schedule</h3>
-          <p className="text-sm text-black">Plan your meetings</p>
+        {/* <div className="relative"> */}
+          {/* Main Card */}
+        <div className="relative">
+  <div
+    onClick={() => setShowOptions(!showOptions)}
+    className="cursor-pointer p-6 rounded-2xl bg-white hover:scale-105 transition"
+  >
+    <Podcast className="mb-4 text-black" />
+    <h3 className="font-semibold text-lg text-black">
+      View More Features
+    </h3>
+    <p className="text-sm opacity-80 text-black">
+      Explore immersive modes
+    </p>
+  </div>
+
+  {/* DROPDOWN */}
+  {showOptions && (
+    <div className="absolute top-full left-0 mt-3 w-full bg-white rounded-xl shadow-lg border border-gray-200 z-50 overflow-hidden">
+      <button
+        onClick={() => {
+          router.push("/holo-at-me");
+          setShowOptions(false);
+        }}
+        className="w-full cursor-pointer text-left px-4 py-3 hover:bg-[#E51A54]/10 transition"
+      >
+        Holo at me
+      </button>
+
+      <button
+        onClick={() => {
+          router.push("/podcast");
+          setShowOptions(false);
+        }}
+        className="w-full cursor-pointer text-left px-4 py-3 hover:bg-[#E51A54]/10 transition"
+      >
+        Podcast
+      </button>
+
+      <button
+        onClick={() => {
+          router.push("/watch-podcast");
+          setShowOptions(false);
+        }}
+        className="w-full cursor-pointer text-left px-4 py-3 hover:bg-[#E51A54]/10 transition"
+      >
+        Watch Podcast
+      </button>
+    </div>
+  )}
+</div>
+
+          {/* Dropdown */}
+          <AnimatePresence>
+            {showFeatures && (
+              <motion.div
+                initial={{ opacity: 0, y: 10, scale: 0.95 }}
+                animate={{ opacity: 1, y: 0, scale: 1 }}
+                exit={{ opacity: 0, y: 10, scale: 0.95 }}
+                transition={{ duration: 0.2 }}
+                className="absolute left-0 mt-3 w-full bg-white rounded-2xl shadow-xl border border-gray-200 overflow-hidden z-50"
+              >
+                {/* Option 1 */}
+                <button
+                  onClick={() => {
+                    router.push("/holo");
+                    setShowFeatures(false);
+                  }}
+                  className="w-full text-left px-5 py-3 hover:bg-[#E51A54]/10 transition"
+                >
+                  <p className="font-medium text-black">Holo at me</p>
+                  <p className="text-xs text-gray-500">
+                    Experience holographic presence
+                  </p>
+                </button>
+
+                {/* Option 2 */}
+                <button
+                  onClick={() => {
+                    router.push("/podcast");
+                    setShowFeatures(false);
+                  }}
+                  className="w-full text-left px-5 py-3 hover:bg-[#E51A54]/10 transition border-t"
+                >
+                  <p className="font-medium text-black">Podcast</p>
+                  <p className="text-xs text-gray-500">
+                    Start your immersive podcast
+                  </p>
+                </button>
+
+                {/* Option 3 */}
+                <button
+                  onClick={() => {
+                    router.push("/watch-podcast");
+                    setShowFeatures(false);
+                  }}
+                  className="w-full text-left px-5 py-3 hover:bg-[#E51A54]/10 transition border-t"
+                >
+                  <p className="font-medium text-black">Watch Podcast</p>
+                  <p className="text-xs text-gray-500">
+                    Watch live or recorded shows
+                  </p>
+                </button>
+              </motion.div>
+            )}
+          </AnimatePresence>
         </div>
-      </div>
+      {/* </div> */}
 
       {/* Main Section */}
       <div className="grid lg:grid-cols-3 gap-6">

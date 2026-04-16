@@ -13,38 +13,23 @@ export async function POST(req) {
 
     const { meetingId, userId, note } = body;
     console.log("Create Note Payload:", { meetingId, userId, note });
-     if (!meetingId || !userId || !note || note.length === 0) {
+     if (!meetingId || !userId || !note ) {
       return NextResponse.json(
         { success: false, message: "Missing fields" },
         { status: 400 }
       );
     }
-     // 🔥 clean empty notes
-    const cleanNotes = Array.isArray(note)
-      ? note.filter((n) => n && n.trim() !== "")
-      : [note];
-
-    // 🔥 check existing doc
-    let existing = await NotesModel.findOne({ meetingId, userId });
-
-    if (existing) {
-      // 👉 already exists → push note
-      existing.Notes.push(...cleanNotes);
-      await existing.save();
-
-      return NextResponse.json({ success: true, data: existing });
-    } else {
-      // 👉 first time → create new doc
+     
       const notes = await NotesModel.create({
         meetingId,
         userId,
-        Notes: cleanNotes,
+        Notes: note,
       });
       console.log("New Notes Document Created:", notes);
       return NextResponse.json({ success: true, data: notes });
     }
 
-  } catch (error) {
+   catch (error) {
     return NextResponse.json(
       { success: false, error: error.message },
       { status: 500 }
@@ -60,10 +45,16 @@ export async function GET(req) {
 
     const { searchParams } = new URL(req.url);
     const userId = searchParams.get("userId");
-
-    const notes = await NotesModel.find({ userId }).sort({
+    const meetingId = searchParams.get("meetingId");
+    if (!userId || !meetingId) {
+  return NextResponse.json(
+    { success: false, message: "userId and meetingId required" },
+    { status: 400 }
+  );
+}
+    const notes = await NotesModel.find({ meetingId, userId }).sort({
       createdAt: -1,
-    });
+    }).lean();
 
     return NextResponse.json({ success: true, data: notes });
   } catch (error) {
@@ -82,7 +73,7 @@ export async function PUT(req) {
     await connectDB();
     const body = await req.json();
 
-    const { noteId, index, newText } = body;
+    const { noteId, newText } = body;
 
     const noteDoc = await NotesModel.findById(noteId);
 
@@ -94,7 +85,7 @@ export async function PUT(req) {
     }
 
     // 🔥 update specific index
-    noteDoc.Notes[index] = newText;
+    noteDoc.Notes = newText;
 
     await noteDoc.save();
 
@@ -115,7 +106,7 @@ export async function DELETE(req) {
     await connectDB();
     const body = await req.json();
 
-    const { noteId, index } = body;
+    const { noteId} = body;
 
     const noteDoc = await NotesModel.findById(noteId);
 
