@@ -240,31 +240,31 @@
 import React, { useState, useEffect } from "react";
 import {
   Menu,
-  Search,
-  Bell,
-  User,
-  ChevronDown,
   Video,
-  Users,
-  Calendar,
-  Settings,
-  LogOut,
   Mail,
+  Loader2
 } from "lucide-react";
-import { AnimatePresence, motion } from "framer-motion";
+import { motion } from "framer-motion";
 import { v4 as uuidv4 } from "uuid";
 import { useRouter } from "next/navigation";
 import { getTokenData } from "@/app/content/data";
 
-// ✅ Separate Modal Component
 const MeetingModal = ({ onClose }) => {
   const [joinCode, setJoinCode] = useState("");
+  const [isLoading, setIsLoading] = useState(false);
   const router = useRouter();
 
-  const joinMeeting = () => {
-    if (!joinCode.trim()) return alert("Enter meeting code!");
-    router.push(`/meeting-room/${joinCode}?role=guest`);
-    onClose(); // close modal after join
+  const joinMeeting = async () => {
+    if (!joinCode.trim()) return;
+    console.log("Joining meeting with ID:", joinCode);
+    setIsLoading(true);
+
+
+    // ⏳ Fake delay (3–4 seconds)
+    setTimeout(() => {
+      router.push(`/meeting-room/${joinCode}?role=guest`);
+      onClose();
+    }, 3000);
   };
 
   return (
@@ -274,18 +274,24 @@ const MeetingModal = ({ onClose }) => {
         animate={{ scale: 1, opacity: 1 }}
         className="bg-gray-200 p-8 rounded-2xl w-full max-w-md relative"
       >
+        {/* Close */}
         <button
           onClick={onClose}
-          className="absolute cursor-pointer top-4 right-4 text-gray-400 hover:text-red-400"
+          disabled={isLoading}
+          className="absolute top-4 right-4 text-gray-400 hover:text-[#E51A54] transition disabled:hover:text-gray-400 cursor-pointer"
         >
           ✕
         </button>
 
+        {/* Header */}
         <div className="text-center mb-6">
           <h2 className="text-2xl font-bold text-gray-800">Join Meeting</h2>
-          <p className="text-gray-600 text-sm">Enter Meeting ID to continue</p>
+          <p className="text-gray-600 text-sm">
+            Enter Meeting ID to continue
+          </p>
         </div>
 
+        {/* Input */}
         <div className="relative mb-4">
           <Mail className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400" />
           <input
@@ -293,15 +299,29 @@ const MeetingModal = ({ onClose }) => {
             value={joinCode}
             onChange={(e) => setJoinCode(e.target.value)}
             placeholder="Enter meeting ID"
-            className="w-full pl-10 pr-4 py-3 bg-gray-100 border border-[#E51A54] rounded-xl text-gray-800"
+            className="w-full pl-10 pr-4 py-3 bg-gray-100 border border-[#E51A54] rounded-xl text-gray-800 focus:outline-none focus:ring-2 focus:ring-[#E51A54]"
           />
         </div>
 
+        {/* Button */}
         <button
           onClick={joinMeeting}
-          className="w-full cursor-pointer py-3 bg-[#E9164B] rounded-xl text-white font-semibold hover:bg-[#B30E3A]"
+          disabled={!joinCode.trim() || isLoading}
+          className={`w-full py-3 rounded-xl font-semibold flex items-center justify-center gap-2 transition
+            ${
+              !joinCode.trim() || isLoading
+                ? "bg-gray-400 cursor-not-allowed"
+                : "bg-[#E51A54] cursor-pointer hover:bg-[#B30E3A] text-white"
+            }`}
         >
-          Join Meeting
+          {isLoading ? (
+            <>
+              <Loader2 className="w-5 h-5 animate-spin" />
+              Joining...
+            </>
+          ) : (
+            "Join Meeting"
+          )}
         </button>
       </motion.div>
     </div>
@@ -310,10 +330,7 @@ const MeetingModal = ({ onClose }) => {
 
 const Header = () => {
   const router = useRouter();
-
-  const [searchQuery, setSearchQuery] = useState("");
   const [showUserMenu, setShowUserMenu] = useState(false);
-  const [showNotifications, setShowNotifications] = useState(false);
   const [showModal, setShowModal] = useState(false);
 
   const [decodedUser, setDecodedUser] = useState([]);

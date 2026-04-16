@@ -17,6 +17,7 @@ export default function MeetingPage() {
       localStorage.getItem("meeting_user_id") || crypto.randomUUID();
     localStorage.setItem("meeting_user_id", userId);
     const tokenUrl = "/api/token";
+    console.log("Fetching token with:", { roomId, userId, isHost });
     fetch(tokenUrl, {
       method: "POST",
       headers: { "Content-Type": "application/json" },
@@ -26,7 +27,7 @@ export default function MeetingPage() {
       .then((data) => setToken(data.token))
       .catch((err) => console.error("Token fetch failed", err));
   }, [roomId, isHost]);
-  
+
   if (!token) {
     return (
       <div className="h-screen w-screen bg-black flex items-center justify-center text-white">
@@ -63,13 +64,6 @@ export default function MeetingPage() {
     </LiveKitRoom>
   );
 }
-
-
-
-
-
-
-
 
 // "use client";
 // import { useEffect, useState } from "react";

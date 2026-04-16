@@ -279,6 +279,15 @@ export default function SignUpForm({ isOpen, onClose, openLogin, openOTP }) {
     setIsLoading(false);
   };
 
+  const isFormValid =
+    name.trim() &&
+    email.trim() &&
+    password.trim() &&
+    confirmPassword.trim() &&
+    password === confirmPassword;
+
+  const isPasswordMatch = password === confirmPassword;
+
   return (
     <>
       <AnimatePresence>
@@ -416,6 +425,11 @@ export default function SignUpForm({ isOpen, onClose, openLogin, openOTP }) {
                       </button>
                     </div>
                   </div>
+                     {confirmPassword && !isPasswordMatch && (
+                      <p className="text-red-500 text-xs mt-1">
+                        Passwords do not match
+                      </p>
+                    )}
 
                   {/* Profile Pic */}
                   <h1 className="font-exo-2 text-black">
@@ -435,9 +449,15 @@ export default function SignUpForm({ isOpen, onClose, openLogin, openOTP }) {
                   <motion.button
                     type="button"
                     onClick={handleSignup}
-                    whileHover={{ scale: isLoading ? 1 : 1.02 }}
-                    whileTap={{ scale: isLoading ? 1 : 0.98 }}
-                    className="w-full cursor-pointer mt-3 py-3 rounded-2xl bg-[#E51A54] text-white font-semibold text-lg"
+                    disabled={!isFormValid || isLoading}
+                    whileHover={{ scale: !isFormValid || isLoading ? 1 : 1.02 }}
+                    whileTap={{ scale: !isFormValid || isLoading ? 1 : 0.98 }}
+                    className={`w-full mt-3 py-3 rounded-2xl font-semibold text-lg transition
+    ${
+      !isFormValid || isLoading
+        ? "bg-gray-400 text-white cursor-not-allowed"
+        : "bg-[#E51A54] text-white cursor-pointer hover:bg-[#E51A54]/90"
+    }`}
                   >
                     {isLoading ? "Sending OTP..." : "Sign Up"}
                   </motion.button>
