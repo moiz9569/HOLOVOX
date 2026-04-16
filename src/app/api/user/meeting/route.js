@@ -2,7 +2,7 @@ import { NextResponse } from "next/server";
 import connectDB from "../../../../../lib/db";
 import MeetingModel from "@/app/models/Meeting.model";
 
-export async function POST(){
+export async function POST(request){
 try {
     const {hostId,name,email,meetingId}= await request.json();
   console.log("Create Meeting Payload:", {hostId,name,email,meetingId});
@@ -87,7 +87,7 @@ export async function PUT(req) {
         $push: {
           participants: {
             userId,
-                name,
+            name,
             email,
             role: "participant",
           },

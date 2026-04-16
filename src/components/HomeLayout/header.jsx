@@ -253,18 +253,77 @@ const MeetingModal = ({ onClose }) => {
   const [joinCode, setJoinCode] = useState("");
   const [isLoading, setIsLoading] = useState(false);
   const router = useRouter();
+ const [decodedUser, setDecodedUser] = useState([]);
 
+  useEffect(() => {
+    const fetchUser = async () => {
+      try {
+        // setLoading(true);
+        const user = await getTokenData();
+        // console.log("Decoded User:", user);
+        setDecodedUser(user || {});
+      } catch (error) {
+        console.error("Error fetching user data:", error);
+      } finally {
+        setIsLoading(false);
+      }
+    };
+
+    fetchUser();
+  }, []);
   const joinMeeting = async () => {
     if (!joinCode.trim()) return;
     console.log("Joining meeting with ID:", joinCode);
     setIsLoading(true);
+    // console.log("Creating meeting with ID:", roomId);
+    console.log("Creating meeting with userID:", decodedUser?.id);
+    //  await fetch("/api/user/meeting", {
+    //   method: "PUT",
+    //   headers: {
+    //     "Content-Type": "application/json",
+    //   },
+    //   body: JSON.stringify({
+    //     hostId: decodedUser?.id,
+    //     name: decodedUser?.name,
+    //     email: decodedUser?.email,
+    //     meetingId: joinCode,
+    //   }),
+    // }).then((res) => res.json())
+    // .then((data) => router.push(`/meeting-room/${joinCode}?role=guest`))
+    // .catch((err) => console.error("Create Meeting Error:", err));
 
+try {
+  const res = await fetch("/api/user/meeting", {
+    method: "PUT",
+    headers: {
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify({
+      hostId: decodedUser?.id,
+      name: decodedUser?.name,
+      email: decodedUser?.email,
+      meetingId: joinCode,
+    }),
+  });
+
+  const data = await res.json();
+
+  if (!res.ok) {
+    throw new Error(data.message || "Something went wrong");
+  }
+
+  // ✅ success pe redirect
+  router.push(`/meeting-room/${joinCode}?role=guest`);
+
+} catch (err) {
+  console.error("Create Meeting Error:", err);
+}
 
     // ⏳ Fake delay (3–4 seconds)
-    setTimeout(() => {
-      router.push(`/meeting-room/${joinCode}?role=guest`);
-      onClose();
-    }, 3000);
+    // setTimeout(() => {
+    //   router.push(`/meeting-room/${joinCode}?role=guest`);
+    //   onClose();
+    // }, 3000);
   };
 
   return (
@@ -332,6 +391,7 @@ const Header = () => {
   const router = useRouter();
   const [showUserMenu, setShowUserMenu] = useState(false);
   const [showModal, setShowModal] = useState(false);
+  const [loading, setLoading] = useState(false);
 
   const [decodedUser, setDecodedUser] = useState([]);
 
@@ -358,10 +418,54 @@ const Header = () => {
     avatar: decodedUser?.image,
   };
 
-  const createMeeting = () => {
+  const createMeeting = async() => {
     const roomId = uuidv4().slice(0, 6);
+
     console.log("Creating meeting with ID:", roomId);
-    router.push(`/meeting-room/${roomId}?role=host`);
+    console.log("Creating meeting with userID:", decodedUser?.id);
+    //  await fetch("/api/user/meeting", {
+    //   method: "POST",
+    //   headers: {
+    //     "Content-Type": "application/json",
+    //   },
+    //   body: JSON.stringify({
+    //     hostId: decodedUser?.id,
+    //     name: decodedUser?.name,
+    //     email: decodedUser?.email,
+    //     meetingId: roomId,
+    //   }),
+    // }).then((res) => res.json())
+    // .then((data) => console.log("Create Meeting Response:", data))
+    // .catch((err) => console.error("Create Meeting Error:", err));
+    // console.log("Create Meeting Response:", data);
+    // router.push(`/meeting-room/${roomId}?role=host`);
+try {
+  const res = await fetch("/api/user/meeting", {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify({
+      hostId: decodedUser?.id,
+      name: decodedUser?.name,
+      email: decodedUser?.email,
+      meetingId: roomId,
+    }),
+  });
+
+  const data = await res.json();
+
+  if (!res.ok) {
+    throw new Error(data.message || "Something went wrong");
+  }
+
+  // ✅ success pe redirect
+router.push(`/meeting-room/${roomId}?role=host`)
+
+} catch (err) {
+  console.error("Create Meeting Error:", err);
+}
+    
   };
 
   return (
