@@ -47,16 +47,22 @@ export async function GET(req) {
     const { searchParams } = new URL(req.url);
     const userId = searchParams.get("userId");
     const meetingId = searchParams.get("meetingId");
-    if (!userId || !meetingId) {
+    if (!userId ) {
   return NextResponse.json(
     { success: false, message: "userId and meetingId required" },
     { status: 400 }
   );
 }
-    const notes = await NotesModel.find({ meetingId, userId }).sort({
+let notes;
+if(meetingId && userId){
+  notes = await NotesModel.find({ meetingId, userId }).sort({
       createdAt: -1,
     }).lean();
-
+}else{
+  notes = await NotesModel.find({ userId }).sort({
+      createdAt: -1,
+    }).lean();
+}
     return NextResponse.json({ success: true, data: notes });
   } catch (error) {
     return NextResponse.json(
