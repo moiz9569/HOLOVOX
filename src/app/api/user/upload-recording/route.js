@@ -2,7 +2,7 @@
 // 🚀 POST API (UPLOAD)
 
 import { NextResponse } from "next/server";
-import connectDB from "../../../../../lib/db";
+// import connectDB from "../../../../../lib/db";
 import RecordingModel from "@/app/models/Recording.model";
 
 // =======================
@@ -76,6 +76,7 @@ import RecordingModel from "@/app/models/Recording.model";
 //   }
 // }
 import cloudinary from "cloudinary";
+import { connectDB } from "../../../../../lib/db";
 
 
 // Cloudinary config

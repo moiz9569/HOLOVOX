@@ -89,10 +89,11 @@
 
 
 import { NextResponse } from "next/server";
-import connectDB from "../../../../../lib/db";
+// import connectDB from "../../../../../lib/db";
 import AuthModel from "@/app/models/User.model";
 import bcrypt from "bcryptjs";
 import jwt from "jsonwebtoken";
+import { connectDB } from "../../../../../lib/db";
 
 export async function POST(request) {
   try {

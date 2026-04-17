@@ -146,10 +146,11 @@
 
 
 
-import connectDB from "../../../../../lib/db";
+// import connectDB from "../../../../../lib/db";
 import AuthModel from "@/app/models/User.model";
 import { NextResponse } from "next/server";
 import nodemailer from "nodemailer";
+import { connectDB } from "../../../../../lib/db";
 
 // Create transporter (use real credentials in production)
 const transporter = nodemailer.createTransport({

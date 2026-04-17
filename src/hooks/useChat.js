@@ -47,6 +47,7 @@ export const useChat = (room, permissions) => {
       const encoder = new TextEncoder();
       const payload = encoder.encode(JSON.stringify(messageData));
       await room.localParticipant.publishData(payload);
+      console.log("Sent message:", messageData);
       setMessages((prev) => [
         ...prev,
         {

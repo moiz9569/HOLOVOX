@@ -1,6 +1,7 @@
 import { NextResponse } from "next/server";
-import connectDB from "../../../../../lib/db";
+// import connectDB from "../../../../../lib/db";
 import MeetingModel from "@/app/models/Meeting.model";
+import { connectDB } from "../../../../../lib/db";
 
 export async function POST(request){
 try {
