@@ -41,6 +41,22 @@ const MeetingSchema = new mongoose.Schema(
       ref: "HolovoxUser",
       required: true,
     },
+    meetingTitle: {
+      type: String,
+      default: "Untitled Meeting",
+    },
+    meetingDate : {
+      type: Date,
+      default: Date.now,
+    },  
+    time:{
+      type: String,
+      default: "00:00",
+    },
+    upcoming:{
+      type: Boolean,
+      default: false,
+    },
 
     participants: [ParticipantSchema], // host + clients
   },

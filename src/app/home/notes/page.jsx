@@ -1,5 +1,5 @@
 "use client";
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import {
   FileText,
   Star,
@@ -9,12 +9,55 @@ import {
   Folder,
   Plus,
 } from "lucide-react";
+import { getTokenData } from "@/app/content/data";
 
 const NotesPage = () => {
   const [mode, setMode] = useState("modern"); // modern | classic
   const [activeTab, setActiveTab] = useState("mynotes");
   const [activeSidebar, setActiveSidebar] = useState("all");
+  const [decodedUser, setDecodedUser] = useState([]);
 
+  const[notes,setNotes] = useState(null);
+   const fetchNotes = async (userId) => {
+    try{
+     const res = await fetch(`/api/user/notes?userId=${userId}`,{
+        method : "GET",
+        headers : {
+          "Content-Type" : "application/json",
+        },
+      })
+
+      let data = await res.json();
+     
+        console.log("Notes:", data);
+        
+      // const upcomingMeetings = data?.meetings?.filter(meeting => meeting.upcoming === true);
+      // setMeetingData(upcomingMeetings);
+      // console.log("Filtered Upcoming Meetings:", upcomingMeetings);
+    }catch(error){
+      console.log("Error fetching upcoming meetings:", error);
+    }
+            
+          }
+
+
+  useEffect(() => {
+    let userId;
+      getTokenData()
+        .then((user) => {
+          console.log("Decoded User:", user);
+          setDecodedUser(user || {});
+          userId = user?.id; // Extract userId from decoded user data
+          console.log("Extracted userId:", userId);
+          // setLoading(false);
+                  fetchNotes(userId);
+        })
+        .catch((error) => {
+          console.error("Error fetching user data:", error);
+          // setLoading(false);
+        });
+
+    }, []);
   const notesData = [
     {
       title: "Meeting Notes - UI Review",

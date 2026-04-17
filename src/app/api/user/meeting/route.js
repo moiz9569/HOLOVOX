@@ -5,8 +5,8 @@ import { connectDB } from "../../../../../lib/db";
 
 export async function POST(request){
 try {
-    const {hostId,name,email,meetingId}= await request.json();
-  console.log("Create Meeting Payload:", {hostId,name,email,meetingId});
+    const {hostId,name,email,meetingId,meetingTitle,date,time,upcoming}= await request.json();
+  console.log("Create Meeting Payload:", {hostId,name,email,meetingId,meetingTitle,time,upcoming});
 if(!hostId || !name || !email || !meetingId){
     return NextResponse.json({error : "Missing required fields"}, {status:400});
 }
@@ -14,6 +14,10 @@ await connectDB();
    const meeting = await MeetingModel.create({
       meetingId,
       hostId,
+      meetingTitle : meetingTitle || "Untitled Meeting",
+      meetingDate: date ? new Date(date) : new Date(),
+      time: time || "00:00",
+      upcoming: upcoming !== undefined ? upcoming : false,
       participants: [
         {
           name,
