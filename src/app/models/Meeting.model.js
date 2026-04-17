@@ -4,6 +4,7 @@ const ParticipantSchema = new mongoose.Schema({
   userId: {
     type: mongoose.Schema.Types.ObjectId,
     ref: "HolovoxUser",
+    index: true,
   },
   name: {
     type: String,
@@ -40,6 +41,7 @@ const MeetingSchema = new mongoose.Schema(
       type: mongoose.Schema.Types.ObjectId,
       ref: "HolovoxUser",
       required: true,
+        index: true,
     },
     meetingTitle: {
       type: String,
@@ -56,6 +58,7 @@ const MeetingSchema = new mongoose.Schema(
     upcoming:{
       type: Boolean,
       default: false,
+      index: true,
     },
 
     participants: [ParticipantSchema], // host + clients
@@ -64,7 +67,7 @@ const MeetingSchema = new mongoose.Schema(
     timestamps: true,
   }
 );
-
+MeetingSchema.index({ hostId : 1 ,upcoming: -1 });
 const MeetingModel =
   mongoose.models.Meeting || mongoose.model("Meeting", MeetingSchema);
 

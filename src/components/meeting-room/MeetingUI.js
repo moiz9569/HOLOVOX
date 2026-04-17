@@ -25,6 +25,7 @@ export default function MeetingUI({ isHost, roomId, router }) {
   const audioElementsRef = useRef([]);
   const [notification, setNotification] = useState(null);
   const [userId, setUserId] = useState(null);
+  const [userName, setUserName] = useState(null);
 
   const showNotification = (message, type = "info") => {
     setNotification({ message, type });
