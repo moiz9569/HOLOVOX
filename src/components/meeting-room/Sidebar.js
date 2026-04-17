@@ -763,6 +763,7 @@ export default function Sidebar({
                     setShowParticipants(true);
                     setShowChat(false);
                     setShowNotes(false);
+                    setShowFiles(false);
                   }}
                   className={`px-4 py-2 rounded-lg text-sm font-medium transition ${
                     showParticipants
@@ -777,6 +778,7 @@ export default function Sidebar({
                     setShowChat(true);
                     setShowNotes(false);
                     setShowParticipants(false);
+                    setShowFiles(false);
                   }}
                   className={`px-4 py-2 rounded-lg text-sm font-medium transition ${
                     showChat
@@ -792,6 +794,7 @@ export default function Sidebar({
                     setShowNotes(true);
                     setShowParticipants(false);
                     setShowChat(false);
+                    setShowFiles(false);
                   }}
                   className={`px-4 py-2 rounded-lg text-sm font-medium transition ${
                     showNotes
@@ -802,7 +805,7 @@ export default function Sidebar({
                   <FileText size={16} />
                 </button>
 
-                <button
+                {/* <button
                   onClick={() => {
                     setShowFiles(true);
                     setShowChat(false);
@@ -814,7 +817,7 @@ export default function Sidebar({
                   }`}
                 >
                   <Paperclip size={16} />
-                </button>
+                </button> */}
               </div>
 
               <button
@@ -822,6 +825,7 @@ export default function Sidebar({
                   setShowParticipants(false);
                   setShowChat(false);
                   setShowNotes(false);
+                  setShowFiles(false);
                 }}
                 className="p-2 cursor-pointer hover:bg-white/10 rounded-lg"
               >
@@ -1145,13 +1149,23 @@ export default function Sidebar({
                     type="file"
                     accept="image/*,.pdf"
                     hidden
-                    onChange={(e) => {
+                    // onChange={(e) => {
+                    //   const file = e.target.files[0];
+                    //   if (file) sendFile(file);
+                    //   console.log("Selected file:", file);
+                    // }
+                    onChange={async (e) => {
                       const file = e.target.files[0];
-                      if (file) sendFile(file);
-                    }}
+                      if (file) {
+                        console.log("Selected file:", file);
+                        await sendFile(file);
+                        e.target.value = ''; // Reset input
+                      }
+                    }
+                  }
                   />
                   <div className="p-4 bg-white/10 rounded-lg text-center cursor-pointer">
-                    Upload File
+                    Upload File <Paperclip size={16} />
                   </div>
                 </label>
 
