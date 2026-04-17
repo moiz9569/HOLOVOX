@@ -479,6 +479,7 @@ export default function Sidebar({
   showNotification,
   roomId,
   userId,
+  userName,
   showNotes,
   setShowNotes,
   notes,
@@ -503,6 +504,7 @@ export default function Sidebar({
   permissions,
   copyLink,
 }) {
+  console.log("Sidebar Props - remotePeers:", remotePeers);
   // State for managing which note is being edited
   const [editingNoteId, setEditingNoteId] = useState(null);
   const [editText, setEditText] = useState("");
@@ -536,12 +538,12 @@ export default function Sidebar({
         `/api/user/notes?userId=${userId}&meetingId=${roomId}`,
       );
       const data = await response.json();
-      console.log("Fetched notes from API:", data);
+      // console.log("Fetched notes from API:", data);
       const notesArray = data?.data || [];
 
       const improveData = notesArray.filter((item) => item.disable === false);
 
-      console.log("improveData", improveData);
+      // console.log("improveData", improveData);
       setApiNotes(improveData);
       console.log("API Notes set in state:", apiNotes);
     } catch (error) {
@@ -850,7 +852,7 @@ export default function Sidebar({
                     <div>
                       <p className="text-sm font-medium flex items-center gap-2">
                         You{" "}
-                        {isHost && (
+                        {isHost === "host" && (
                           <Crown size={12} className="text-amber-400" />
                         )}
                       </p>
@@ -876,21 +878,33 @@ export default function Sidebar({
                     <div className="flex items-center gap-3">
                       <div
                         className={`w-8 h-8 rounded-full flex items-center justify-center ${
-                          peer.isHost
+                          peer.isHost === "host"
                             ? "bg-linear-to-br from-amber-500 to-orange-600"
                             : "bg-white/10"
                         }`}
                       >
-                        {peer.isHost ? (
+                        {/* {peer.isHost === "host" ? (
                           <Crown size={14} />
                         ) : (
                           <UserIcon size={14} />
-                        )}
+                        )} */}
+
+                        {peer.image ? (
+    <img
+      src={peer.image}
+      alt={peer.name}
+      className="w-full h-full object-cover rounded-2xl"
+    />
+  ) : peer.isHost ? (
+    <Crown size={14} />
+  ) : (
+    <UserIcon size={14} />
+  )}
                       </div>
                       <div>
-                        <p className="text-sm font-medium flex items-center gap-2">
+                        <p className="text-sm font-medium flex items-center gap-1">
                           {participantNames[peer.id] || peer.name}
-                          {peer.isHost && (
+                          {peer.isHost === "host" && (
                             <Crown size={12} className="text-amber-400" />
                           )}
                         </p>

@@ -37,6 +37,7 @@ useEffect(() => {
   getTokenData().then((res)=>{
     console.log("Token Data in MeetingUI:", res.id);
     setUserId(res?.id);
+    setUserName(res?.name);
   })
 },[])
   // Subscribe to remote audio tracks
@@ -100,7 +101,7 @@ useEffect(() => {
   // Helper functions
   const copyLink = () => {
     navigator.clipboard.writeText(
-      `${window.location.origin}/meeting/${roomId}?role=guest`
+      `${window.location.origin}/meeting-room/${roomId}?role=guest`
     );
     showNotification("Invite link copied to clipboard!", "success");
   };
@@ -350,6 +351,7 @@ useEffect(() => {
         roomId={roomId}
         showNotification={showNotification}
         userId={userId}
+        userName={userName}
         showParticipants={meetingState.showParticipants}
         showChat={meetingState.showChat}
         setShowParticipants={meetingState.setShowParticipants}

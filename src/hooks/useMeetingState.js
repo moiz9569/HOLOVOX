@@ -93,17 +93,25 @@ export const useMeetingState = () => {
   // }, [remoteTracks]);
 
   const remotePeers = useMemo(() => {
+    // console.log("Participants:", localParticipant.localParticipant);
+      console.log("Participants:", participants);
     return participants
       .filter((p) => p.identity !== localParticipant.localParticipant?.identity)
       .map((p) => {
         const videoPub = Array.from(p.videoTrackPublications.values()).find(
           (pub) => pub.track
         );
+        const meta = p.metadata ? JSON.parse(p.metadata) : {};
+        console.log("Host:", meta.isHost);
+
+// console.log("Participant:", p.name, meta);
+// console.log("Image URL:", meta.image);
 
         return {
           id: p.identity,
           name: p.name || p.identity,
-          isHost: p.metadata?.includes("isHost"),
+          image: meta.image,
+          isHost: meta.isHost,
           stream: videoPub?.track?.mediaStream || null, // ✅ NO NEW STREAM
           isMuted: p.isMicrophoneEnabled === false,
           isVideoOff: !videoPub?.track,

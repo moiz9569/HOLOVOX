@@ -4,28 +4,54 @@ import { useParams, useSearchParams, useRouter } from "next/navigation";
 import { LiveKitRoom } from "@livekit/components-react";
 import "@livekit/components-styles/index.css";
 import MeetingUI from "@/components/meeting-room/MeetingUI";
+import { getTokenData } from "@/app/content/data";
 
 export default function MeetingPage() {
   const { id: roomId } = useParams();
   const searchParams = useSearchParams();
   const router = useRouter();
-  const isHost = searchParams.get("role") === "host";
+  const isHost = searchParams.get("role");
+  // console.log("role",searchParams.get("role"));
   const [token, setToken] = useState(null);
+  const [decodedUser, setDecodedUser] = useState(null);
+  // const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    const userId =
-      localStorage.getItem("meeting_user_id") || crypto.randomUUID();
-    localStorage.setItem("meeting_user_id", userId);
+    let userId, name , image;
+getTokenData()
+      .then((user) => {
+        console.log("Decoded User:", user);
+        setDecodedUser(user || {});
+        userId = user?.id ;
+        name = user?.name ;
+        image = user?.image || null;
+        console.log("Using userId:",user);
+        // console.log("Using name:",name);
+        console.log("Using userId:", userId, "and name:", name);
+        
+         localStorage.setItem("meeting_user_id", userId);
     const tokenUrl = "/api/token";
-    console.log("Fetching token with:", { roomId, userId, isHost });
+    console.log("Fetching token with:", { roomId, userId, isHost , name,image});
     fetch(tokenUrl, {
       method: "POST",
       headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ roomId, userId, isHost }),
-    })
+      body: JSON.stringify({ roomId, userId, isHost, name, image }),
+    })  
       .then((res) => res.json())
       .then((data) => setToken(data.token))
       .catch((err) => console.error("Token fetch failed", err));
+      })
+      .catch((error) => {
+        console.error("Error fetching user data:", error);
+        // setLoading(false);
+      });
+
+
+    // const userId = localStorage.getItem("meeting_user_id") || crypto.randomUUID();
+    // const userId = decodedUser?.id ;
+    // const name = decodedUser?.name || "Unknown User";
+    // console.log("Using userId:", userId, "and name:", name);
+    
   }, [roomId, isHost]);
 
   if (!token) {
