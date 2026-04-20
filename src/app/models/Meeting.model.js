@@ -5,6 +5,7 @@ const ParticipantSchema = new mongoose.Schema({
     type: mongoose.Schema.Types.ObjectId,
     ref: "HolovoxUser",
     index: true,
+    default: null,
   },
   name: {
     type: String,
@@ -16,10 +17,11 @@ const ParticipantSchema = new mongoose.Schema({
     required: true,
     lowercase: true,
     trim: true,
+    index: true,
   },
   role: {
     type: String,
-    enum: ["host", "participant"],
+    enum: ["host", "participant", "guest"],
     default: "participant",
   },
   joinedAt: {

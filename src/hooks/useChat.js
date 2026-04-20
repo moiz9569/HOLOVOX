@@ -10,6 +10,8 @@ export const useChat = (room, permissions) => {
     if (!room) return;
 
     const handleDataReceived = (payload, participant) => {
+      console.log("working..");
+      console.log("Data received from", participant.name, ":", payload);
       try {
         const message = JSON.parse(new TextDecoder().decode(payload));
         setMessages((prev) => [
@@ -17,7 +19,7 @@ export const useChat = (room, permissions) => {
           {
             id: Date.now(),
             text: message.text,
-            sender: participant.identity,
+            sender: participant.name,
             timestamp: new Date(),
           },
         ]);

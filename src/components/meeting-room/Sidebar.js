@@ -504,7 +504,7 @@ export default function Sidebar({
   permissions,
   copyLink,
 }) {
-  console.log("Sidebar Props - remotePeers:", remotePeers);
+  // console.log("Sidebar Props - remotePeers:", remotePeers);
   // State for managing which note is being edited
   const [editingNoteId, setEditingNoteId] = useState(null);
   const [editText, setEditText] = useState("");

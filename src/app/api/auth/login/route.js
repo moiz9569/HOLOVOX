@@ -105,7 +105,7 @@ export async function POST(request) {
     await connectDB();
 
     // Check if user exists
-    const user = await AuthModel.findOne({ email: email.toLowerCase() });
+    const user = await AuthModel.findOne({ email: email.toLowerCase() }).lean();
     if (!user) {
       return NextResponse.json(
         { error: "User not found" },

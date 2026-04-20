@@ -94,7 +94,7 @@ export const useMeetingState = () => {
 
   const remotePeers = useMemo(() => {
     // console.log("Participants:", localParticipant.localParticipant);
-      console.log("Participants:", participants);
+      // console.log("Participants:", participants);
     return participants
       .filter((p) => p.identity !== localParticipant.localParticipant?.identity)
       .map((p) => {
@@ -102,7 +102,7 @@ export const useMeetingState = () => {
           (pub) => pub.track
         );
         const meta = p.metadata ? JSON.parse(p.metadata) : {};
-        console.log("Host:", meta.isHost);
+        // console.log("Host:", meta.isHost);
 
 // console.log("Participant:", p.name, meta);
 // console.log("Image URL:", meta.image);

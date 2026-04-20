@@ -2,7 +2,7 @@ import { NextResponse } from "next/server";
 // import connectDB from "../../../../../lib/db";
 import MeetingModel from "@/app/models/Meeting.model";
 import { connectDB } from "../../../../../lib/db";
-
+import { v4 as uuidv4 } from "uuid"
 export async function POST(request){
 try {
     const {hostId,name,email,meetingId,meetingTitle,date,time,upcoming}= await request.json();
@@ -85,16 +85,22 @@ export async function PUT(req) {
     const body = await req.json();
 
     const { userId,meetingId, name, email } = body;
+    if(!meetingId || !name || !email){
+        return NextResponse.json({
+            success: false,
+            message: "Missing required fields",
+          });
+    }
 
     const meeting = await MeetingModel.findOneAndUpdate(
       { meetingId },
       {
         $push: {
           participants: {
-            userId,
+            userId : userId || uuidv4(),
             name,
             email,
-            role: "participant",
+            role: userId ? "participant" : "guest",
           },
         },
       },
