@@ -1,6 +1,6 @@
 "use client";
 import React, { useState } from "react";
-import { Calendar, Clock, Video, Users, Plus, Copy } from "lucide-react";
+import { Calendar, Video, Users, Copy } from "lucide-react";
 import { useRouter } from "next/navigation";
 import { v4 as uuidv4 } from "uuid";
 
@@ -65,9 +65,9 @@ const MeetingsPage = () => {
           <Calendar className="mb-3 text-[#E9164B]" />
           <h3 className="font-semibold">Schedule Meeting</h3>
           <p className="text-sm text-gray-600 mb-4">Plan a meeting for later</p>
-          <button className="px-4 cursor-pointer py-2 bg-[#E9164B] text-white rounded-lg text-sm">
+          {/* <button className="px-4 cursor-pointer py-2 bg-[#E9164B] text-white rounded-lg text-sm">
             Schedule
-          </button>
+          </button> */}
         </div>
 
         {/* Instant */}
@@ -131,9 +131,9 @@ const MeetingsPage = () => {
                   </p>
                 </div>
 
-                <button className="px-4 py-2 bg-[#E9164B] cursor-pointer rounded-lg text-sm">
+                {/* <button className="px-4 py-2 bg-[#E9164B] cursor-pointer rounded-lg text-sm">
                   Join
-                </button>
+                </button> */}
               </div>
             ))}
           </div>
