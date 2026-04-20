@@ -330,7 +330,7 @@ export const Navbar = () => {
               <Button
                 onClick={() => {
                   setIsLoginOpen(true);
-                  setIsMobileMenuOpen(false);
+                  setIsMobileMenuOpen(true);
                 }}
                 // onClick={() => router.push("/connect")}
                 className="bg-[#E51A54] cursor-pointer hover:bg-[#E51A54]/80 text-white"
