@@ -21,12 +21,6 @@ const MessageSchema = new mongoose.Schema(
       required: true,
     },
 
-    // 🧾 message type
-    type: {
-      type: String,
-      enum: ["text", "image", "gif", "file"],
-      required: true,
-    },
 
     // 📦 actual content (text ya URL)
     content: {

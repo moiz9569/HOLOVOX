@@ -26,6 +26,7 @@ export default function MeetingUI({ isHost, roomId, router }) {
   const [notification, setNotification] = useState(null);
   const [userId, setUserId] = useState(null);
   const [userName, setUserName] = useState(null);
+  const [isUserLoaded, setIsUserLoaded] = useState(false);
 
   const showNotification = (message, type = "info") => {
     setNotification({ message, type });
@@ -38,6 +39,7 @@ useEffect(() => {
     console.log("Token Data in MeetingUI:", res.id);
     setUserId(res?.id);
     setUserName(res?.name);
+    setIsUserLoaded(true);
   })
 },[])
   // Subscribe to remote audio tracks
@@ -91,7 +93,9 @@ useEffect(() => {
     isHost,
     showNotification
   );
-  const chat = useChat(meetingState.room, permissions);
+
+  const chat = useChat(meetingState.room, permissions, roomId, userId, userName);
+
   const whiteboard = useWhiteboard(
     meetingState.showWhiteboard,
     meetingState.whiteboardColor
