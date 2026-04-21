@@ -240,6 +240,24 @@ useEffect(() => {
     }
   };
 
+  const isSidebarOpen =
+    meetingState.showParticipants ||
+    meetingState.showChat ||
+    meetingState.showNotes;
+
+  const toggleSidebarPanel = () => {
+    if (isSidebarOpen) {
+      meetingState.setShowParticipants(false);
+      meetingState.setShowChat(false);
+      meetingState.setShowNotes(false);
+      return;
+    }
+
+    meetingState.setShowParticipants(true);
+    meetingState.setShowChat(false);
+    meetingState.setShowNotes(false);
+  };
+
   return (
     <div className="h-screen w-full flex overflow-hidden bg-slate-700 text-white">
       <Notification notification={notification} />
@@ -268,6 +286,8 @@ useEffect(() => {
           roomId={roomId}
           isFullscreen={meetingState.isFullscreen}
           toggleFullscreen={meetingState.toggleFullscreen}
+          isSidebarOpen={isSidebarOpen}
+          onToggleSidebar={toggleSidebarPanel}
         />
 
         <VideoArea
