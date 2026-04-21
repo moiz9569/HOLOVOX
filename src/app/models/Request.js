@@ -18,7 +18,7 @@ const RequestSchema = new mongoose.Schema({
   },
 }, { timestamps: true });
 
-
+RequestSchema.index({ sender: 1, receiver: 1 }, { unique: true }); // prevent duplicate requests
 const RequestModel =
   mongoose.models.Request || mongoose.model("Request", RequestSchema);
 
