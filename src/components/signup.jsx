@@ -315,7 +315,7 @@ export default function SignUpForm({ isOpen, onClose, openLogin, openOTP }) {
             className="relative w-full max-w-md mx-auto my-8"
           >
             <div
-              className="relative bg-linear-to-r bg-[#EAEAF4] rounded-3xl border border-white/10 shadow-2xl overflow-hidden"
+              className="relative h-[600px] bg-linear-to-r bg-[#EAEAF4] rounded-3xl border border-white/10 shadow-2xl overflow-hidden"
               style={{
                 boxShadow: `
                   0 0 40px rgba(255, 215, 0, 0.08),
@@ -443,6 +443,22 @@ export default function SignUpForm({ isOpen, onClose, openLogin, openOTP }) {
                       onChange={(e) => setProfilePic(e.target.files[0])}
                       className="w-full pl-12 pr-4 py-3 rounded-2xl bg-white/40 border border-[#E51A54] text-black placeholder-gray-700 font-exo-2 focus:outline-none focus:border-[#E51A54] focus:ring-1 focus:ring-[#E51A54] disabled:opacity-50 disabled:cursor-not-allowed"
                     />
+                  </div>
+
+                  {/* Role */}
+                  <h1 className="font-exo-2 text-black">
+                    Select Your Role
+                  </h1>
+                  <div className="relative">
+                    <select
+                      value={role}
+                      onChange={(e) => setRole(e.target.value)}
+                      className="w-full pl-4 pr-4 py-3 rounded-2xl bg-white/40 border border-[#E51A54] text-black font-exo-2 focus:outline-none focus:border-[#E51A54] focus:ring-1 focus:ring-[#E51A54] disabled:opacity-50 disabled:cursor-not-allowed"
+                    >
+                      <option value="user">User</option>
+                      <option value="doctor">Doctor</option>
+                      <option value="lawyer">Lawyer</option>
+                    </select>
                   </div>
 
                   {/* SIGN UP BUTTON */}

@@ -10,6 +10,9 @@ import { AnimatePresence, motion } from "framer-motion";
 import { showErrorToast, showSuccessToast } from "../../../lib/toast";
 // import { showSuccessToast, showErrorToast } from "../../lib/toast";
 import MarketplaceModal from "@/components/MarketplaceModal";
+import DoctorCategoryModal from "@/components/DoctorCategoryModal";
+import CardiologistsModal from "@/components/CardiologistsModal";
+import DoctorProfileModal from "@/components/DoctorProfileModal";
 
 const HomeDashboard = () => {
   const router = useRouter();
@@ -19,6 +22,9 @@ const HomeDashboard = () => {
   const [showFeatures, setShowFeatures] = useState(false);
   const [showOptions, setShowOptions] = useState(false);
   const [showMarketplace, setShowMarketplace] = useState(false);
+  const [showDoctorModal, setShowDoctorModal] = useState(false);
+  const [showCardiologistsModal, setShowCardiologistsModal] = useState(false);
+  const [showDoctorProfileModal, setShowDoctorProfileModal] = useState(false);
 
   const [meetingData, setMeetingData] = useState(null);
   const fetchUpcomingMeetings = async () => {
@@ -150,7 +156,7 @@ const HomeDashboard = () => {
   };
 
   return (
-    <div className="min-h-screen text-black p-6">
+    <div className="min-h-screen text-gray-800 p-6">
       {/* Header */}
       <div className="mb-8">
         <h1 className="text-2xl font-bold">Welcome back, {user.name}</h1>
@@ -168,17 +174,60 @@ const HomeDashboard = () => {
         >
           <Video className="text-white" />
           <h3 className="font-semibold text-base text-white sm:text-blue-600 md:text-green-600 lg:text-black xl:text-white">New Meeting</h3>
-          <p className="text-sm opacity-80 text-white">
+          <p className="text-sm mt-1 opacity-80 text-white">
             Start an instant meeting
           </p>
         </div>
 
         {/* Join Meeting */}
-        <div className="cursor-pointer h-32 xl:h-28 p-6 rounded-2xl bg-white text-black hover:scale-105 transition">
+        {/* <div className="cursor-pointer h-32 xl:h-28 p-6 rounded-2xl bg-white text-black hover:scale-105 transition">
           <Users className="" />
           <h3 className="font-semibold text-base">Join Meeting</h3>
           <p className="text-sm text-black">Enter meeting ID</p>
+        </div> */}
+          <div onClick={()=>setShowMarketplace(true)} className="cursor-pointer h-32 xl:h-28 p-6 rounded-2xl bg-white text-black hover:scale-105 transition">
+          <Users className="" />
+          <h3 className="font-semibold text-base">Market Place</h3>
+          <p className="text-sm mt-1 text-black">Pick a Category</p>
         </div>
+         {showMarketplace && (
+      <MarketplaceModal
+        onClose={(type) => {
+          setShowMarketplace(false);
+
+          if (type === "doctor") {
+            setShowDoctorModal(true);
+          }
+        }}
+      />
+    )}
+
+    {showDoctorModal && (
+      <DoctorCategoryModal
+        onClose={(type) => {
+          setShowDoctorModal(false);
+           if (type === "cardiologist") {
+            setShowCardiologistsModal(true);
+          }
+        }}
+      />
+    )}
+
+    {showCardiologistsModal && (
+      <CardiologistsModal
+        onClose={() => setShowCardiologistsModal(false)}
+        onViewProfile={() => {
+          setShowCardiologistsModal(false);
+          setShowDoctorProfileModal(true);
+        }}
+      />
+    )}
+
+    {showDoctorProfileModal && (
+      <DoctorProfileModal
+        onClose={() => setShowDoctorProfileModal(false)}
+      />
+    )}
 
         <div
           onClick={() => setShowCalendar(true)}
@@ -186,7 +235,7 @@ const HomeDashboard = () => {
         >
           <Calendar className="text-black md:text-white" />
           <h3 className="font-semibold text-black md:text-white text-base">Schedule</h3>
-          <p className="text-sm text-black md:text-white">Plan your meetings</p>
+          <p className="text-sm mt-1 text-black md:text-white">Plan your meetings</p>
         </div>
         {showCalendar && (
           <div className="fixed inset-0 bg-black/40 flex items-center justify-center z-50">
@@ -265,7 +314,7 @@ const HomeDashboard = () => {
                     <h3 className="text-xl font-bold text-[#E51A54]">
                       Schedule Meeting
                     </h3>
-                    <p className="text-sm text-gray-500">
+                    <p className="text-sm mt-1 text-gray-500">
                       Add your meeting details below
                     </p>
                   </div>
@@ -361,12 +410,7 @@ const HomeDashboard = () => {
           )}
         </div>
 
-         <div onClick={()=>setShowMarketplace(true)} className="cursor-pointer h-32 xl:h-28 p-6 rounded-2xl bg-white text-black hover:scale-105 transition">
-          <Users className="" />
-          <h3 className="font-semibold text-base">Market Place</h3>
-          <p className="text-sm text-black">Pick a Category</p>
-        </div>
-        {showMarketplace && <MarketplaceModal onClose={()=>setShowMarketplace(false)} /> }
+       
 
         {/* Dropdown */}
         <AnimatePresence>

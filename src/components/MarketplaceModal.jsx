@@ -4,14 +4,11 @@ import { useState } from "react";
 import {
   Stethoscope,
   Scale,
-  GraduationCap,
   MoreHorizontal,
 } from "lucide-react";
-import DoctorCategoryModal from "./DoctorCategoryModal";
 
 export default function MarketplaceModal({ onClose }) {
   const [selectedCategory, setSelectedCategory] = useState(null);
-  const [showDoctorModal, setShowDoctorModal] = useState(false);
 
   const categories = [
     {
@@ -24,11 +21,11 @@ export default function MarketplaceModal({ onClose }) {
       desc: "Get legal advice from expert",
       icon: Scale,
     },
-    {
-      title: "Teacher",
-      desc: "Learn from experienced teacher",
-      icon: GraduationCap,
-    },
+    // {
+    //   title: "Teacher",
+    //   desc: "Learn from experienced teacher",
+    //   icon: GraduationCap,
+    // },
     {
       title: "Other",
       desc: "Explore more professional services",
@@ -36,12 +33,15 @@ export default function MarketplaceModal({ onClose }) {
     },
   ];
 
-  const handleSubmit = () => {
-    if (!selectedCategory) return;
-    console.log("Selected:", selectedCategory);
-    onClose();
-    setShowDoctorModal(true);
-  };
+const handleSubmit = () => {
+  if (!selectedCategory) return;
+
+  if (selectedCategory === "Doctor") {
+    onClose("doctor"); // pass info to parent
+  } else {
+    onClose(); // normal close
+  }
+};
 
   return (
     <>
@@ -70,7 +70,7 @@ export default function MarketplaceModal({ onClose }) {
         </div>
 
         {/* Grid */}
-        <div className="grid grid-cols-2 gap-5 mb-6">
+        <div className="flex flex-wrap justify-center gap-5 mb-6">
           {categories.map((item, index) => {
             const Icon = item.icon;
             const isSelected = selectedCategory === item.title;
@@ -80,7 +80,7 @@ export default function MarketplaceModal({ onClose }) {
                 key={index}
                 onClick={() => setSelectedCategory(item.title)}
                 className={`
-                  rounded-2xl p-5 flex flex-col items-center text-center cursor-pointer transition
+                  rounded-2xl p-5 w-40 flex flex-col items-center text-center cursor-pointer transition
                   ${
                     isSelected
                       ? "bg-[#E51A54] text-white shadow-lg scale-105"
@@ -129,7 +129,6 @@ export default function MarketplaceModal({ onClose }) {
         </button>
       </motion.div>
     </div>
-    {showDoctorModal && <DoctorCategoryModal onClose={()=>setShowDoctorModal(false)} />}
     </>
   );
 }

@@ -1,6 +1,7 @@
 "use client";
 import { motion } from "framer-motion";
 import { HeartPulse, Brain, Sparkles } from "lucide-react";
+import { useState } from "react";
 
 export default function DoctorCategoryModal({ onClose }) {
   const categories = [
@@ -29,6 +30,17 @@ export default function DoctorCategoryModal({ onClose }) {
       color: "text-yellow-500",
     },
   ];
+
+  const [selectedCategory, setSelectedCategory] = useState(null);
+  const handleSubmit = () => {
+    if (!selectedCategory) return;
+
+    if (selectedCategory === "Cardiologist") {
+      onClose("cardiologist"); // pass info to parent
+    } else {
+      onClose(); // normal close
+    }
+  };
 
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40">
@@ -59,10 +71,20 @@ export default function DoctorCategoryModal({ onClose }) {
         <div className="grid grid-cols-2 gap-4">
           {categories.map((item, index) => {
             const Icon = item.icon;
+            const isSelected = selectedCategory === item.title;
+
             return (
               <div
                 key={index}
-                className="bg-[#EDEDED] rounded-2xl p-4 flex items-center gap-3 hover:shadow-md transition cursor-pointer"
+                onClick={() => setSelectedCategory(item.title)}
+                className={`
+                  rounded-2xl p-5 w-40 flex flex-col items-center text-center cursor-pointer transition
+                  ${
+                    isSelected
+                      ? "bg-[#E51A54] text-white shadow-lg scale-105"
+                      : "bg-[#EDEDED] hover:shadow-md"
+                  }
+                `}
               >
                 {/* Icon */}
                 <div
@@ -76,18 +98,30 @@ export default function DoctorCategoryModal({ onClose }) {
                   <h3 className="text-sm font-medium text-gray-800">
                     {item.title}
                   </h3>
-                  <p className="text-[10px] text-gray-500">
-                    {item.desc}
-                  </p>
+                  <p className="text-[10px] text-gray-500">{item.desc}</p>
                 </div>
               </div>
             );
           })}
 
           {/* Empty cards (as shown in design) */}
-          <div className="bg-[#EDEDED] rounded-2xl h-20" />
-          <div className="bg-[#EDEDED] rounded-2xl h-20" />
+          {/* <div className="bg-[#EDEDED] rounded-2xl h-20" />
+          <div className="bg-[#EDEDED] rounded-2xl h-20" /> */}
         </div>
+        <button
+          onClick={handleSubmit}
+          disabled={!selectedCategory}
+          className={`
+            w-full py-3 mt-3 rounded-xl font-semibold transition
+            ${
+              selectedCategory
+                ? "bg-[#E51A54] text-white hover:bg-[#c91548] cursor-pointer"
+                : "bg-gray-300 text-gray-500 cursor-not-allowed"
+            }
+          `}
+        >
+          Continue
+        </button>
       </motion.div>
     </div>
   );
