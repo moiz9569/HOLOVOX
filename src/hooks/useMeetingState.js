@@ -57,6 +57,22 @@ export const useMeetingState = () => {
   const localStream = useMemo(() => {
     return localVideoTrack?.publication?.track?.mediaStream || null;
   }, [localVideoTrack]);
+
+
+    //////////////////////////new///////////////////////////////
+  // Find the local screen share track
+  const localScreenShareTrack = tracks.find(
+    (t) =>
+      t.participant.identity === localParticipant.localParticipant?.identity &&
+      t.source === Track.Source.ScreenShare
+  );
+
+  // Create a memoized stream from it
+  const screenShareStream = useMemo(() => {
+    return localScreenShareTrack?.publication?.track?.mediaStream || null;
+  }, [localScreenShareTrack]);
+  //////////////////////////new///////////////////////////////
+
   const remoteTracks = tracks.filter(
     (t) =>
       t.participant.identity !== localParticipant.localParticipant?.identity &&
@@ -147,12 +163,24 @@ export const useMeetingState = () => {
   //     ? localStream
   //     : remoteStreams.get(activeStreamId);
   // }, [activeStreamId, localStream, remoteStreams]);
+  
+  
   const activeStream = useMemo(() => {
-    if (activeStreamId === "local") return localStream;
+    // if (activeStreamId === "local") return localStream;
 
+    // const peer = remotePeers.find((p) => p.id === activeStreamId);
+    // return peer?.stream || null;
+
+    // 1. Screen sharing has top priority
+    if (isScreenSharing) {
+      return screenShareStream || localStream;
+    }
+    // 2. Otherwise, show the selected camera stream
+    if (activeStreamId === "local") return localStream;
     const peer = remotePeers.find((p) => p.id === activeStreamId);
     return peer?.stream || null;
-  }, [activeStreamId, localStream, remotePeers]);
+
+  }, [isScreenSharing, screenShareStream, activeStreamId, localStream, remotePeers]);
 
   // const remotePeers = participants
   //   .filter((p) => p.identity !== localParticipant.localParticipant?.identity)
@@ -312,6 +340,7 @@ export const useMeetingState = () => {
     participantCount,
     localParticipant,
     room,
+    screenShareStream,
 
     // Functions
     toggleFullscreen,
