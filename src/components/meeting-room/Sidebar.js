@@ -747,17 +747,34 @@ export default function Sidebar({
 
   const [activeTab, setActiveTab] = useState("participants");
 
+  const closeSidebar = () => {
+    setShowParticipants(false);
+    setShowChat(false);
+    setShowNotes(false);
+    setShowFiles(false);
+  };
+
   return (
     <AnimatePresence>
       {(showParticipants || showChat || showNotes || showFiles) && (
-        <motion.div
-          initial={{ width: 0, opacity: 0 }}
-          animate={{ width: 320, opacity: 1 }}
-          exit={{ width: 0, opacity: 0 }}
-          transition={{ duration: 0.3 }}
-          className="bg-black/40 backdrop-blur-xl border-l border-white/10 flex flex-col relative "
-        >
-          <div className="p-6 border-b border-white/10">
+        <>
+          <motion.button
+            type="button"
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            onClick={closeSidebar}
+            className="sm:hidden fixed inset-0 z-30 bg-black/45 backdrop-blur-[1px]"
+            aria-label="Close sidebar"
+          />
+          <motion.div
+            initial={{ x: "100%", opacity: 0 }}
+            animate={{ x: 0, opacity: 1 }}
+            exit={{ x: "100%", opacity: 0 }}
+            transition={{ duration: 0.25, ease: "easeOut" }}
+            className="fixed sm:relative top-0 right-0 z-40 h-full w-[88vw] max-w-[360px] sm:w-80 bg-black/40 backdrop-blur-xl border-l border-white/10 flex flex-col"
+          >
+          <div className="p-4 sm:p-6 border-b border-white/10">
             <div className="flex items-center justify-between mb-4">
               <div className="flex gap-2">
                 <button
@@ -823,12 +840,7 @@ export default function Sidebar({
               </div>
 
               <button
-                onClick={() => {
-                  setShowParticipants(false);
-                  setShowChat(false);
-                  setShowNotes(false);
-                  setShowFiles(false);
-                }}
+                onClick={closeSidebar}
                 className="p-2 cursor-pointer hover:bg-white/10 rounded-lg"
               >
                 <X size={18} />
@@ -841,7 +853,7 @@ export default function Sidebar({
             )}
           </div>
 
-          <div className="flex-1 overflow-y-auto p-6 scrollbar-thin scrollbar-thumb-white/20">
+          <div className="flex-1 overflow-y-auto p-4 sm:p-6 scrollbar-thin scrollbar-thumb-white/20">
             {showParticipants && (
               <div className="space-y-3">
                 <div className="flex items-center justify-between p-3 bg-white/5 rounded-lg">
@@ -1212,7 +1224,7 @@ export default function Sidebar({
             )}
           </div>
 
-          <div className="p-6 border-t border-white/10">
+          <div className="p-4 sm:p-6 border-t border-white/10">
             <button
               onClick={copyLink}
               className="w-full cursor-pointer hover:bg-[#E62064] bg-[#E62064]/90 py-3 rounded-xl text-sm font-semibold transition flex items-center justify-center gap-2"
@@ -1221,6 +1233,7 @@ export default function Sidebar({
             </button>
           </div>
         </motion.div>
+        </>
       )}
     </AnimatePresence>
   );
