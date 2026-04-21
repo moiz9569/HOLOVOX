@@ -54,35 +54,49 @@
 // };
 
 
+
 import { useState, useRef } from "react";
 
 export const useRecording = (roomId, userId) => {
-  // console.log("useRecording initialized with:", { roomId, userId });
   const [isRecording, setIsRecording] = useState(false);
-  const [videoURL, setVideoURL] = useState(null); // 🔥 preview ke liye
+  const [videoURL, setVideoURL] = useState(null);
 
   const mediaRecorderRef = useRef(null);
   const recordedChunksRef = useRef([]);
   const recordingStreamRef = useRef(null);
 
-  // =========================
-  // 🎥 START RECORDING
-  // =========================
   const startRecording = async () => {
     console.log("Starting recording...");
     try {
-      const stream = await navigator.mediaDevices.getDisplayMedia({
+      // 1. Get screen video (and optional system audio)
+      const screenStream = await navigator.mediaDevices.getDisplayMedia({
         video: true,
-        audio: true,
+        audio: true, // This captures system audio (e.g., other participants speaking)
       });
 
-      recordingStreamRef.current = stream;
+      // 2. Get microphone audio separately
+      const micStream = await navigator.mediaDevices.getUserMedia({
+        audio: true,
+        video: false,
+      });
 
-      // const mediaRecorder = new MediaRecorder(stream);
-      const mediaRecorder = new MediaRecorder(stream, {
-    mimeType: "video/webm; codecs=vp9",
-    videoBitsPerSecond: 1500000, // 🔥 reduce size
-    });
+      // 3. Combine screen video track + microphone audio track
+      const screenVideoTrack = screenStream.getVideoTracks()[0];
+      const micAudioTrack = micStream.getAudioTracks()[0];
+      
+      // Optional: also include system audio if available
+      const systemAudioTrack = screenStream.getAudioTracks()[0];
+      
+      const tracks = [screenVideoTrack, micAudioTrack];
+      if (systemAudioTrack) tracks.push(systemAudioTrack);
+      
+      const combinedStream = new MediaStream(tracks);
+      recordingStreamRef.current = combinedStream;
+
+      const mediaRecorder = new MediaRecorder(combinedStream, {
+        mimeType: "video/webm; codecs=vp9",
+        videoBitsPerSecond: 1500000,
+      });
       mediaRecorderRef.current = mediaRecorder;
 
       recordedChunksRef.current = [];
@@ -93,6 +107,13 @@ export const useRecording = (roomId, userId) => {
         }
       };
 
+      // Stop microphone tracks when screen sharing stops
+      screenVideoTrack.onended = () => {
+        if (isRecording) {
+          stopRecording();
+        }
+      };
+
       mediaRecorder.start();
       setIsRecording(true);
     } catch (error) {
@@ -100,9 +121,6 @@ export const useRecording = (roomId, userId) => {
     }
   };
 
-  // =========================
-  // ⛔ STOP RECORDING
-  // =========================
   const stopRecording = async () => {
     console.log("Stopping recording...");
     const mediaRecorder = mediaRecorderRef.current;
@@ -117,58 +135,46 @@ export const useRecording = (roomId, userId) => {
         });
 
         const url = URL.createObjectURL(blob);
-
-        // ✅ Preview (screen pe show)
         setVideoURL(url);
 
-        // =========================
-        // 📥 DOWNLOAD
-        // =========================
+        // Download
         const a = document.createElement("a");
         a.href = url;
         a.download = `holovox-meeting-${Date.now()}.webm`;
         a.click();
 
-        // =========================
-        // ☁️ UPLOAD TO BACKEND
-        // =========================
+        // Upload to Cloudinary
+        const formData = new FormData();
+        formData.append("file", blob);
+        formData.append("upload_preset", "holovox_recording");
 
+        const cloudRes = await fetch(
+          "https://api.cloudinary.com/v1_1/dfzattnt8/video/upload",
+          {
+            method: "POST",
+            body: formData,
+          }
+        );
 
-        // 🚀 DIRECT CLOUDINARY UPLOAD (FAST)
-const formData = new FormData();
-formData.append("file", blob);
-formData.append("upload_preset", "holovox_recording");
+        const cloudData = await cloudRes.json();
+        console.log("Cloud URL:", cloudData);
 
-const cloudRes = await fetch(
-  "https://api.cloudinary.com/v1_1/dfzattnt8/video/upload",
-  {
-    method: "POST",
-    body: formData,
-  }
-);
+        // Save to DB
+        await fetch("/api/user/upload-recording", {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({
+            meetingId: roomId,
+            userId: userId,
+            videoUrl: cloudData.secure_url,
+            publicId: cloudData.public_id,
+          }),
+        });
 
-const cloudData = await cloudRes.json();
-
-console.log("Cloud URL:", cloudData);
-// 💾 SAVE TO DB (LIGHTWEIGHT)
-await fetch("/api/user/upload-recording", {
-  method: "POST",
-  headers: {
-    "Content-Type": "application/json",
-  },
-  body: JSON.stringify({
-    meetingId: roomId,
-    userId: userId,
-    videoUrl: cloudData.secure_url,
-    publicId: cloudData.public_id,
-  }),
-});
-
-        // =========================
-        // 🧹 CLEANUP
-        // =========================
+        // Cleanup
         recordedChunksRef.current = [];
-
         if (recordingStreamRef.current) {
           recordingStreamRef.current
             .getTracks()
@@ -186,6 +192,146 @@ await fetch("/api/user/upload-recording", {
     isRecording,
     startRecording,
     stopRecording,
-    videoURL, // 🔥 UI me use hoga
+    videoURL,
   };
 };
+
+
+// import { useState, useRef } from "react";
+
+// export const useRecording = (roomId, userId) => {
+//   // console.log("useRecording initialized with:", { roomId, userId });
+//   const [isRecording, setIsRecording] = useState(false);
+//   const [videoURL, setVideoURL] = useState(null); // 🔥 preview ke liye
+
+//   const mediaRecorderRef = useRef(null);
+//   const recordedChunksRef = useRef([]);
+//   const recordingStreamRef = useRef(null);
+
+//   // =========================
+//   // 🎥 START RECORDING
+//   // =========================
+//   const startRecording = async () => {
+//     console.log("Starting recording...");
+//     try {
+//       const stream = await navigator.mediaDevices.getDisplayMedia({
+//         video: true,
+//         audio: true,
+//       });
+
+//       recordingStreamRef.current = stream;
+
+//       // const mediaRecorder = new MediaRecorder(stream);
+//       const mediaRecorder = new MediaRecorder(stream, {
+//     mimeType: "video/webm; codecs=vp9",
+//     videoBitsPerSecond: 1500000, // 🔥 reduce size
+//     });
+//       mediaRecorderRef.current = mediaRecorder;
+
+//       recordedChunksRef.current = [];
+
+//       mediaRecorder.ondataavailable = (event) => {
+//         if (event.data.size > 0) {
+//           recordedChunksRef.current.push(event.data);
+//         }
+//       };
+
+//       mediaRecorder.start();
+//       setIsRecording(true);
+//     } catch (error) {
+//       console.error("Recording error:", error);
+//     }
+//   };
+
+//   // =========================
+//   // ⛔ STOP RECORDING
+//   // =========================
+//   const stopRecording = async () => {
+//     console.log("Stopping recording...");
+//     const mediaRecorder = mediaRecorderRef.current;
+//     if (!mediaRecorder) return;
+
+//     mediaRecorder.stop();
+
+//     mediaRecorder.onstop = async () => {
+//       try {
+//         const blob = new Blob(recordedChunksRef.current, {
+//           type: "video/webm",
+//         });
+
+//         const url = URL.createObjectURL(blob);
+
+//         // ✅ Preview (screen pe show)
+//         setVideoURL(url);
+
+//         // =========================
+//         // 📥 DOWNLOAD
+//         // =========================
+//         const a = document.createElement("a");
+//         a.href = url;
+//         a.download = `holovox-meeting-${Date.now()}.webm`;
+//         a.click();
+
+//         // =========================
+//         // ☁️ UPLOAD TO BACKEND
+//         // =========================
+
+
+//         // 🚀 DIRECT CLOUDINARY UPLOAD (FAST)
+// const formData = new FormData();
+// formData.append("file", blob);
+// formData.append("upload_preset", "holovox_recording");
+
+// const cloudRes = await fetch(
+//   "https://api.cloudinary.com/v1_1/dfzattnt8/video/upload",
+//   {
+//     method: "POST",
+//     body: formData,
+//   }
+// );
+
+// const cloudData = await cloudRes.json();
+
+// console.log("Cloud URL:", cloudData);
+// // 💾 SAVE TO DB (LIGHTWEIGHT)
+// await fetch("/api/user/upload-recording", {
+//   method: "POST",
+//   headers: {
+//     "Content-Type": "application/json",
+//   },
+//   body: JSON.stringify({
+//     meetingId: roomId,
+//     userId: userId,
+//     videoUrl: cloudData.secure_url,
+//     publicId: cloudData.public_id,
+//   }),
+// });
+
+//         // =========================
+//         // 🧹 CLEANUP
+//         // =========================
+//         recordedChunksRef.current = [];
+
+//         if (recordingStreamRef.current) {
+//           recordingStreamRef.current
+//             .getTracks()
+//             .forEach((track) => track.stop());
+//         }
+//       } catch (error) {
+//         console.error("Stop recording error:", error);
+//       }
+//     };
+
+//     setIsRecording(false);
+//   };
+
+//   return {
+//     isRecording,
+//     startRecording,
+//     stopRecording,
+//     videoURL, // 🔥 UI me use hoga
+//   };
+// };
+
+
+
