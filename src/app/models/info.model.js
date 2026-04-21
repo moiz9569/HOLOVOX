@@ -2,6 +2,17 @@
 import mongoose from "mongoose";
 
 const BasicInfoSchema = new mongoose.Schema({
+    userId : {
+        type: mongoose.Schema.Types.ObjectId,
+            ref: "HolovoxUser",
+            index: true,
+        default: null,
+    },
+    role : {
+        type: String,
+        enum : ["doctor","lawyer","other"],
+        required: true
+    },
     FullName : {
       type: String, // ⚡ IMPORTANT: string rakho (tumhara meetingId string hai)
         required: true,
@@ -9,7 +20,7 @@ const BasicInfoSchema = new mongoose.Schema({
     },
     ProfilePicture : {
         type: String, // ⚡ IMPORTANT: string rakho (tumhara meetingId string hai)
-        default: "" // Default to empty string if no image is provided
+       required: true
     },
     PhoneNumber : {
         type: String, // array of strings
@@ -21,8 +32,7 @@ const BasicInfoSchema = new mongoose.Schema({
     },
     Gender :{
         type: String,
-        enum
-        : ["Male", "        Female", "Other"],
+        enum: ["Male", "Female", "Other"],
         default: "Other"
     }
 });
@@ -40,38 +50,53 @@ const ProfessionalInfoSchema = new mongoose.Schema(
     Specialization : {
         type: String,
         required: true,
-        enum: ["Criminal Law", "Civil Law", "Corporate Law", "Family Law", "Intellectual Property Law", "Labor and Employment Law", "Tax Law", "Environmental Law", "Human Rights Law", "International Law", "Other"],
+        enum: ["Orthopedic","Dentist","Pediatrician","Neurologist","Dermatologist","Cardiologist ","General Physician ","Criminal Law", "Civil Law", "Corporate Law", "Family Law", "Intellectual Property Law", "Labor and Employment Law", "Tax Law", "Environmental Law", "Human Rights Law", "International Law", "Other"],
         default: "Other"
     },
     YearsOfExperience : {
         type: Number,
         required: true,
         min: 0,
-    }},
+    },
+    MedicalLicenseNumber : {
+        type : String,
+        default : ""
+    },
+    Hospital_ClinicName  : {
+        type : String,
+        default : ""
+    }
+},
   {
     timestamps: true, // createdAt = message time
   }
 );
 
+const DegreeSchema = new mongoose.Schema({
+  DegreeObtained: {
+    type: String,
+    required: true,
+  },
+  UniversityName: {
+    type: String,
+    required: true,
+  },
+  GraduationYear: {
+    type: Number,
+    required: true,
+    min: 1900,
+    max: new Date().getFullYear(),
+  },
+});
 const EducationInfoSchema = new mongoose.Schema({
     LawSchoolAttended : {
         type: String,   
         required: true,
     },  
-    DegreeObtained : {
-        type: String,
-        required: true,
-    },
-    UniversityName : {
-        type: String,
-        required: true,
-    },
-    GraduationYear : {
-        type: Number,
-        required: true,
-        min: 1900,
-        max: new Date().getFullYear(),
-    }
+    Degree: {
+    type: [DegreeSchema],   // 👈 ARRAY OF OBJECTS (correct way)
+    required: true,
+  },   
 });
 const AvailabilityInfoSchema = new mongoose.Schema({
     AvailableDays : {
@@ -87,11 +112,30 @@ const AvailabilityInfoSchema = new mongoose.Schema({
         type: Number,
         required: true,
         min: 0,
+    },
+    about : {
+        type:String,
+        required : true
     }
+
 });
 
-// ⚡ FAST loading (chat history)
-// InfoSchema.index({ meetingId: 1, userId : 1 ,createdAt: -1 });
+
+const InfoSchema = new mongoose.Schema(
+  {
+    basicInfo: BasicInfoSchema,
+    professionalInfo: ProfessionalInfoSchema,
+    educationInfo: EducationInfoSchema,
+    availabilityInfo: AvailabilityInfoSchema,
+  },
+  {
+    timestamps: true,
+  }
+);
+
+// ⚡ Indexing for speed
+InfoSchema.index({ "basicInfo.userId": 1 });
+
 
 const InfoModel =
   mongoose.models.Info || mongoose.model("Info", InfoSchema);

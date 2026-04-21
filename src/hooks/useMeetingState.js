@@ -57,6 +57,22 @@ export const useMeetingState = () => {
   const localStream = useMemo(() => {
     return localVideoTrack?.publication?.track?.mediaStream || null;
   }, [localVideoTrack]);
+
+  //////////////////////////new///////////////////////////////
+  // Find the local screen share track
+  const localScreenShareTrack = tracks.find(
+    (t) =>
+      t.participant.identity === localParticipant.localParticipant?.identity &&
+      t.source === Track.Source.ScreenShare
+  );
+
+  // Create a memoized stream from it
+  const screenShareStream = useMemo(() => {
+    return localScreenShareTrack?.publication?.track?.mediaStream || null;
+  }, [localScreenShareTrack]);
+  //////////////////////////new///////////////////////////////
+
+
   const remoteTracks = tracks.filter(
     (t) =>
       t.participant.identity !== localParticipant.localParticipant?.identity &&
@@ -94,7 +110,7 @@ export const useMeetingState = () => {
 
   const remotePeers = useMemo(() => {
     // console.log("Participants:", localParticipant.localParticipant);
-      // console.log("Participants:", participants);
+    // console.log("Participants:", participants);
     return participants
       .filter((p) => p.identity !== localParticipant.localParticipant?.identity)
       .map((p) => {
@@ -104,8 +120,8 @@ export const useMeetingState = () => {
         const meta = p.metadata ? JSON.parse(p.metadata) : {};
         // console.log("Host:", meta.isHost);
 
-// console.log("Participant:", p.name, meta);
-// console.log("Image URL:", meta.image);
+        // console.log("Participant:", p.name, meta);
+        // console.log("Image URL:", meta.image);
 
         return {
           id: p.identity,
@@ -148,11 +164,19 @@ export const useMeetingState = () => {
   //     : remoteStreams.get(activeStreamId);
   // }, [activeStreamId, localStream, remoteStreams]);
   const activeStream = useMemo(() => {
+    // if (activeStreamId === "local") return localStream;
+    // const peer = remotePeers.find((p) => p.id === activeStreamId);
+    // return peer?.stream || null;
+    // 1. Screen sharing has top priority
+    if (isScreenSharing) {
+      return screenShareStream || localStream;
+    }
+    // 2. Otherwise, show the selected camera stream
     if (activeStreamId === "local") return localStream;
-
     const peer = remotePeers.find((p) => p.id === activeStreamId);
     return peer?.stream || null;
-  }, [activeStreamId, localStream, remotePeers]);
+
+  }, [isScreenSharing, screenShareStream, activeStreamId, localStream, remotePeers]);
 
   // const remotePeers = participants
   //   .filter((p) => p.identity !== localParticipant.localParticipant?.identity)
@@ -248,11 +272,11 @@ export const useMeetingState = () => {
   const addNote = () => {
     setNotes([...notes, { id: Date.now(), text: "" }]);
   };
-  
+
   const updateNote = (id, newText) => {
     setNotes(notes.map(note => note.id === id ? { ...note, text: newText } : note));
   };
-  
+
   const deleteNote = (id) => {
     setNotes(notes.filter(note => note.id !== id));
   };
@@ -312,6 +336,7 @@ export const useMeetingState = () => {
     participantCount,
     localParticipant,
     room,
+    screenShareStream,
 
     // Functions
     toggleFullscreen,
