@@ -238,12 +238,7 @@
 
 "use client";
 import React, { useState, useEffect } from "react";
-import {
-  Menu,
-  Video,
-  Mail,
-  Loader2
-} from "lucide-react";
+import { Menu, Video, Mail, Loader2 } from "lucide-react";
 import { motion } from "framer-motion";
 import { v4 as uuidv4 } from "uuid";
 import { useRouter } from "next/navigation";
@@ -253,7 +248,7 @@ const MeetingModal = ({ onClose }) => {
   const [joinCode, setJoinCode] = useState("");
   const [isLoading, setIsLoading] = useState(false);
   const router = useRouter();
- const [decodedUser, setDecodedUser] = useState([]);
+  const [decodedUser, setDecodedUser] = useState([]);
 
   useEffect(() => {
     const fetchUser = async () => {
@@ -277,53 +272,31 @@ const MeetingModal = ({ onClose }) => {
     setIsLoading(true);
     // console.log("Creating meeting with ID:", roomId);
     console.log("Creating meeting with userID:", decodedUser?.id);
-    //  await fetch("/api/user/meeting", {
-    //   method: "PUT",
-    //   headers: {
-    //     "Content-Type": "application/json",
-    //   },
-    //   body: JSON.stringify({
-    //     hostId: decodedUser?.id,
-    //     name: decodedUser?.name,
-    //     email: decodedUser?.email,
-    //     meetingId: joinCode,
-    //   }),
-    // }).then((res) => res.json())
-    // .then((data) => router.push(`/meeting-room/${joinCode}?role=guest`))
-    // .catch((err) => console.error("Create Meeting Error:", err));
+    try {
+      const res = await fetch("/api/user/meeting", {
+        method: "PUT",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          hostId: decodedUser?.id,
+          name: decodedUser?.name,
+          email: decodedUser?.email,
+          meetingId: joinCode,
+        }),
+      });
 
-try {
-  const res = await fetch("/api/user/meeting", {
-    method: "PUT",
-    headers: {
-      "Content-Type": "application/json",
-    },
-    body: JSON.stringify({
-      hostId: decodedUser?.id,
-      name: decodedUser?.name,
-      email: decodedUser?.email,
-      meetingId: joinCode,
-    }),
-  });
+      const data = await res.json();
 
-  const data = await res.json();
+      if (!res.ok) {
+        throw new Error(data.message || "Something went wrong");
+      }
 
-  if (!res.ok) {
-    throw new Error(data.message || "Something went wrong");
-  }
-
-  // ✅ success pe redirect
-  router.push(`/meeting-room/${joinCode}?role=guest`);
-
-} catch (err) {
-  console.error("Create Meeting Error:", err);
-}
-
-    // ⏳ Fake delay (3–4 seconds)
-    // setTimeout(() => {
-    //   router.push(`/meeting-room/${joinCode}?role=guest`);
-    //   onClose();
-    // }, 3000);
+      // ✅ success pe redirect
+      router.push(`/meeting-room/${joinCode}?role=guest`);
+    } catch (err) {
+      console.error("Create Meeting Error:", err);
+    }
   };
 
   return (
@@ -331,7 +304,7 @@ try {
       <motion.div
         initial={{ scale: 0.8, opacity: 0 }}
         animate={{ scale: 1, opacity: 1 }}
-        className="bg-gray-200 p-8 rounded-2xl w-full max-w-md relative"
+        className="bg-gray-200 p-8 rounded-2xl w-[85%] sm:w-full max-w-md relative"
       >
         {/* Close */}
         <button
@@ -345,9 +318,7 @@ try {
         {/* Header */}
         <div className="text-center mb-6">
           <h2 className="text-2xl font-bold text-gray-800">Join Meeting</h2>
-          <p className="text-gray-600 text-sm">
-            Enter Meeting ID to continue
-          </p>
+          <p className="text-gray-600 text-sm">Enter Meeting ID to continue</p>
         </div>
 
         {/* Input */}
@@ -387,7 +358,7 @@ try {
   );
 };
 
-const Header = () => {
+const Header = ({ toggleSidebar }) => {
   const router = useRouter();
   const [showUserMenu, setShowUserMenu] = useState(false);
   const [showModal, setShowModal] = useState(false);
@@ -418,54 +389,36 @@ const Header = () => {
     avatar: decodedUser?.image,
   };
 
-  const createMeeting = async() => {
+  const createMeeting = async () => {
     const roomId = uuidv4().slice(0, 6);
 
     console.log("Creating meeting with ID:", roomId);
     console.log("Creating meeting with userID:", decodedUser?.id);
-    //  await fetch("/api/user/meeting", {
-    //   method: "POST",
-    //   headers: {
-    //     "Content-Type": "application/json",
-    //   },
-    //   body: JSON.stringify({
-    //     hostId: decodedUser?.id,
-    //     name: decodedUser?.name,
-    //     email: decodedUser?.email,
-    //     meetingId: roomId,
-    //   }),
-    // }).then((res) => res.json())
-    // .then((data) => console.log("Create Meeting Response:", data))
-    // .catch((err) => console.error("Create Meeting Error:", err));
-    // console.log("Create Meeting Response:", data);
-    // router.push(`/meeting-room/${roomId}?role=host`);
-try {
-  const res = await fetch("/api/user/meeting", {
-    method: "POST",
-    headers: {
-      "Content-Type": "application/json",
-    },
-    body: JSON.stringify({
-      hostId: decodedUser?.id,
-      name: decodedUser?.name,
-      email: decodedUser?.email,
-      meetingId: roomId,
-    }),
-  });
+    try {
+      const res = await fetch("/api/user/meeting", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          hostId: decodedUser?.id,
+          name: decodedUser?.name,
+          email: decodedUser?.email,
+          meetingId: roomId,
+        }),
+      });
 
-  const data = await res.json();
+      const data = await res.json();
 
-  if (!res.ok) {
-    throw new Error(data.message || "Something went wrong");
-  }
+      if (!res.ok) {
+        throw new Error(data.message || "Something went wrong");
+      }
 
-  // ✅ success pe redirect
-router.push(`/meeting-room/${roomId}?role=host`)
-
-} catch (err) {
-  console.error("Create Meeting Error:", err);
-}
-    
+      // ✅ success pe redirect
+      router.push(`/meeting-room/${roomId}?role=host`);
+    } catch (err) {
+      console.error("Create Meeting Error:", err);
+    }
   };
 
   return (
@@ -473,7 +426,10 @@ router.push(`/meeting-room/${roomId}?role=host`)
       <div className="flex items-center justify-between h-full px-6">
         {/* LEFT */}
         <div className="flex items-center gap-4">
-          <button className="lg:hidden p-2 rounded-lg hover:bg-gray-100">
+          <button
+            onClick={toggleSidebar}
+            className="lg:hidden cursor-pointer p-2 rounded-lg text-gray-600 hover:bg-gray-100"
+          >
             <Menu className="w-5 h-5" />
           </button>
 
@@ -482,12 +438,12 @@ router.push(`/meeting-room/${roomId}?role=host`)
             <img
               src="/holo-new-logo.png"
               alt="HoloVox"
-              className="h-12 object-contain"
+              className="h-12 -ml-4 sm:ml-0 object-contain"
             />
             <img
               src="/holo-logo-2.png"
               alt="HoloVox"
-              className="-ml-2 h-10 object-contain"
+              className="-ml-2 h-10 hidden sm:block object-contain"
             />
           </div>
         </div>
@@ -497,7 +453,7 @@ router.push(`/meeting-room/${roomId}?role=host`)
           {/* Create */}
           <button
             onClick={createMeeting}
-            className="hidden cursor-pointer md:flex items-center gap-2 px-4 h-10 border border-[#E51A54] text-[#E51A54] rounded-lg text-sm hover:bg-[#E51A54] hover:text-white transition"
+            className="cursor-pointer flex items-center gap-2 px-4 h-10 border border-[#E51A54] text-[#E51A54] rounded-lg text-sm hover:bg-[#E51A54] hover:text-white transition"
           >
             <Video className="w-4 h-4" />
             Create
@@ -506,47 +462,14 @@ router.push(`/meeting-room/${roomId}?role=host`)
           {/* Join */}
           <button
             onClick={() => setShowModal(true)}
-            className="hidden cursor-pointer md:flex items-center gap-2 px-4 h-10 bg-[#E51A54] text-white rounded-lg text-sm"
+            className="cursor-pointer flex items-center gap-2 px-4 h-10 bg-[#E51A54] text-white rounded-lg text-sm"
           >
             <Video className="w-4 h-4" />
             Join
           </button>
 
-          {/* Notifications */}
-          {/* <div className="relative">
-            <button
-              onClick={() => setShowNotifications(!showNotifications)}
-              className="p-2 rounded-lg hover:bg-gray-100"
-            >
-              <Bell className="w-5 h-5 text-[#E9164B]" />
-            </button>
-
-            <AnimatePresence>
-              {showNotifications && (
-                <motion.div
-                  initial={{ opacity: 0, y: 10 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  exit={{ opacity: 0, y: 10 }}
-                  className="absolute right-0 mt-2 w-72 bg-[#111133] rounded-xl p-4"
-                >
-                  <p className="text-sm text-white/60">No new notifications</p>
-                </motion.div>
-              )}
-            </AnimatePresence>
-          </div> */}
-
           {/* USER */}
           <div className="relative">
-            {/* <button
-              onClick={() => setShowUserMenu(!showUserMenu)}
-              className="flex rounded-2xl items-center gap-2"
-            >
-              <img
-                src={userData.avatar}
-                className="w-8 h-8 rounded-lg object-cover"
-              />
-              <ChevronDown className="w-4 h-4 text-black" />
-            </button> */}
             <div className="flex items-center gap-3">
               <button
                 onClick={() => setShowUserMenu(!showUserMenu)}
@@ -559,35 +482,6 @@ router.push(`/meeting-room/${roomId}?role=host`)
                 />
               </button>
             </div>
-
-            {/* <AnimatePresence>
-              {showUserMenu && (
-                <motion.div
-                  initial={{ opacity: 0 }}
-                  animate={{ opacity: 1 }}
-                  exit={{ opacity: 0 }}
-                  className="absolute right-0 mt-2 w-48 bg-[#111133] rounded-xl"
-                >
-                  <button
-                    onClick={() => router.push("/profile")}
-                    className="w-full p-3 text-left hover:bg-white/5 flex gap-2"
-                  >
-                    <User className="w-4 h-4" /> Profile
-                  </button>
-
-                  <button
-                    onClick={() => router.push("/settings")}
-                    className="w-full p-3 text-left hover:bg-white/5 flex gap-2"
-                  >
-                    <Settings className="w-4 h-4" /> Settings
-                  </button>
-
-                  <button className="w-full p-3 text-left hover:bg-white/5 flex gap-2 border-t border-white/10">
-                    <LogOut className="w-4 h-4" /> Logout
-                  </button>
-                </motion.div>
-              )}
-            </AnimatePresence> */}
           </div>
         </div>
       </div>

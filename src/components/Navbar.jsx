@@ -245,150 +245,131 @@ export const Navbar = () => {
   const [isOtpOpen, setIsOtpOpen] = useState(false);
   const [otpUserData, setOtpUserData] = useState(null);
 
-  // useEffect(() => {
-  //   const handleScroll = () => {
-  //     setIsScrolled(window.scrollY > 50);
-  //   };
-  //   window.addEventListener("scroll", handleScroll);
-  //   return () => window.removeEventListener("scroll", handleScroll);
-  // }, []);
   useEffect(() => {
     const handleScroll = () => {
       const main = document.getElementById("main-scroll");
       if (!main) return;
-
-      if (main.scrollTop > 50) {
-        setIsScrolled(true);
-      } else {
-        setIsScrolled(false);
-      }
+      setIsScrolled(main.scrollTop > 50);
     };
 
     const main = document.getElementById("main-scroll");
-
-    if (main) {
-      main.addEventListener("scroll", handleScroll);
-    }
-
-    // 🔥 ALSO trigger once initially
+    main?.addEventListener("scroll", handleScroll);
     handleScroll();
 
-    return () => {
-      if (main) {
-        main.removeEventListener("scroll", handleScroll);
-      }
-    };
+    return () => main?.removeEventListener("scroll", handleScroll);
   }, []);
 
   return (
     <>
+      {/* NAVBAR */}
       <motion.nav
-        className={`top-0 left-0 right-0 z-50 transition-all duration-300 ${
+        className={`fixed top-0 left-0 right-0 z-50 transition-all duration-300 ${
           isScrolled
             ? "bg-[#0f0f0f]/80 backdrop-blur-xl border-b border-white/10"
             : "bg-transparent"
         }`}
-        initial={{ y: -100 }}
+        initial={{ y: -80 }}
         animate={{ y: 0 }}
-        transition={{ duration: 0.5 }}
       >
-        <div className="container px-4">
-          <div className="flex items-center space-x-2 justify-between h-16 md:h-20">
-            {/* Logo */}
+        <div className="max-w-7xl mx-auto px-4">
+          <div className="flex space-x-4 items-center justify-between h-16 md:h-20">
+
+            {/* LOGO */}
             <a href="/" className="flex items-center gap-2">
               <img
                 src="/holo-new-logo.png"
                 alt="HoloVox"
-                className="h-8 md:h-14"
+                className="h-9 md:h-12 object-contain"
               />
-              <span className="font-creata -ml-2 text-2xl font-semibold text-white hidden sm:block">
+              <span className="font-creata text-xl md:text-2xl font-semibold text-white block">
                 HOLOVOX
               </span>
             </a>
 
-            {/* Desktop Nav */}
+            {/* DESKTOP NAV */}
             <div className="hidden md:flex items-center gap-8">
               {navLinks.map((link) => (
                 <a
                   key={link.label}
                   href={link.href}
-                  className="text-sm text-white font-semibold hover:text-foreground transition-colors"
+                  className="text-sm text-white font-medium hover:text-[#E51A54] transition"
                 >
                   {link.label}
                 </a>
               ))}
             </div>
 
-            {/* CTA */}
-            <div className="hidden md:flex items-center gap-4">
-              {/* <Button
-                variant="ghost"
-                className="text-muted-foreground hover:text-foreground"
-              >
-                Sign In
-              </Button> */}
+            {/* DESKTOP BUTTON */}
+            <div className="hidden md:flex items-center">
               <Button
-                onClick={() => {
-                  setIsLoginOpen(true);
-                  setIsMobileMenuOpen(true);
-                }}
-                // onClick={() => router.push("/connect")}
-                className="bg-[#E51A54] cursor-pointer hover:bg-[#E51A54]/80 text-white"
+                onClick={() => setIsLoginOpen(true)}
+                className="bg-[#E51A54] cursor-pointer hover:bg-[#c91548] text-white px-6 py-2 rounded-lg"
               >
                 Get Started
               </Button>
             </div>
 
-            {/* Mobile Menu Button */}
+            {/* MOBILE BUTTON */}
             <button
-              className="md:hidden p-2 text-foreground"
+              className="md:hidden p-2 cursor-pointer text-white"
               onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
             >
-              {isMobileMenuOpen ? <X /> : <Menu />}
+              {isMobileMenuOpen ? <X size={24} /> : <Menu size={24} />}
             </button>
           </div>
         </div>
       </motion.nav>
 
+      {/* MOBILE MENU */}
       <AnimatePresence>
         {isMobileMenuOpen && (
           <motion.div
-            key="mobile-menu"
-            className="fixed inset-0 z-40 bg-background/95 backdrop-blur-xl md:hidden pt-20"
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            exit={{ opacity: 0 }}
+            className="fixed inset-0 z-40 bg-black/95 backdrop-blur-xl md:hidden pt-20"
+            initial={{ x: "100%" }}
+            animate={{ x: 0 }}
+            exit={{ x: "100%" }}
+            transition={{ duration: 0.3 }}
           >
-            <div className="container px-4 py-8">
-              <div className="flex flex-col gap-6">
-                {navLinks.map((link) => (
-                  <a
-                    key={link.label}
-                    href={link.href}
-                    className="text-2xl font-creata text-foreground"
-                    onClick={() => setIsMobileMenuOpen(false)}
-                  >
-                    {link.label}
-                  </a>
-                ))}
-              </div>
+            <div className="px-6 py-8 flex flex-col gap-8">
+
+              {navLinks.map((link) => (
+                <a
+                  key={link.label}
+                  href={link.href}
+                  onClick={() => setIsMobileMenuOpen(false)}
+                  className="text-2xl font-semibold text-white hover:text-[#E51A54]"
+                >
+                  {link.label}
+                </a>
+              ))}
+
+              <Button
+                onClick={() => {
+                  setIsLoginOpen(true);
+                  setIsMobileMenuOpen(false); // ✅ FIXED
+                }}
+                className="bg-[#E51A54] cursor-pointer hover:bg-[#c91548] text-white mt-4"
+              >
+                Get Started
+              </Button>
             </div>
           </motion.div>
         )}
       </AnimatePresence>
+
+      {/* MODALS */}
       <LoginForm
         isOpen={isLoginOpen}
         onClose={() => setIsLoginOpen(false)}
-        // openSignup={() => setIsSignupOpen(true)}
         openSignup={() => {
           setIsLoginOpen(false);
           setIsSignupOpen(true);
         }}
       />
+
       <SignUpForm
         isOpen={isSignupOpen}
         onClose={() => setIsSignupOpen(false)}
-        // openLogin={() => setIsLoginOpen(true)}
         openLogin={() => {
           setIsSignupOpen(false);
           setIsLoginOpen(true);
@@ -404,10 +385,8 @@ export const Navbar = () => {
         isOpen={isOtpOpen}
         onClose={() => setIsOtpOpen(false)}
         userData={otpUserData}
-        email={otpUserData?.email} // Pass email separately
+        email={otpUserData?.email}
         onVerificationSuccess={(data) => {
-          // Handle successful verification
-          // console.log("User created:", data);
           localStorage.setItem("token", data?.token);
           router.push("/home");
         }}

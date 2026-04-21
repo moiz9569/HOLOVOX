@@ -9,6 +9,8 @@ import { Podcast } from "lucide-react";
 import { AnimatePresence, motion } from "framer-motion";
 import { showErrorToast, showSuccessToast } from "../../../lib/toast";
 // import { showSuccessToast, showErrorToast } from "../../lib/toast";
+import MarketplaceModal from "@/components/MarketplaceModal";
+
 const HomeDashboard = () => {
   const router = useRouter();
   const [loading, setLoading] = useState(true);
@@ -16,6 +18,7 @@ const HomeDashboard = () => {
   const [meetingId, setMeetingId] = useState("");
   const [showFeatures, setShowFeatures] = useState(false);
   const [showOptions, setShowOptions] = useState(false);
+  const [showMarketplace, setShowMarketplace] = useState(false);
 
   const [meetingData, setMeetingData] = useState(null);
   const fetchUpcomingMeetings = async () => {
@@ -146,25 +149,6 @@ const HomeDashboard = () => {
     });
   };
 
-  const getMeetingStatus = (meeting) => {
-    const meetingDateTime = new Date(
-      `${meeting.meetingDate.split("T")[0]} ${meeting.time}`,
-    );
-
-    const now = new Date();
-
-    const diff = now - meetingDateTime; // ms difference
-    const oneHour = 60 * 60 * 1000;
-
-    if (diff < 0) {
-      return "upcoming";
-    } else if (diff >= 0 && diff <= oneHour) {
-      return "join";
-    } else {
-      return "passes";
-    }
-  };
-
   return (
     <div className="min-h-screen text-black p-6">
       {/* Header */}
@@ -176,21 +160,21 @@ const HomeDashboard = () => {
       </div>
 
       {/* Top Cards */}
-      <div className="grid md:grid-cols-4 gap-6 mb-8">
+      <div className="grid grid-cols-2 md:grid-cols-4 gap-6 mb-8">
         {/* Create Meeting */}
         <div
           onClick={createMeeting}
-          className="cursor-pointer h-28 p-6 rounded-2xl bg-[#E51A54] hover:scale-105 transition"
+          className="cursor-pointer h-32 xl:h-28 p-6 rounded-2xl bg-[#E51A54] hover:scale-105 transition"
         >
           <Video className="text-white" />
-          <h3 className="font-semibold text-base text-white">New Meeting</h3>
+          <h3 className="font-semibold text-base text-white sm:text-blue-600 md:text-green-600 lg:text-black xl:text-white">New Meeting</h3>
           <p className="text-sm opacity-80 text-white">
             Start an instant meeting
           </p>
         </div>
 
         {/* Join Meeting */}
-        <div className="cursor-pointer h-28 p-6 rounded-2xl bg-white text-black hover:scale-105 transition">
+        <div className="cursor-pointer h-32 xl:h-28 p-6 rounded-2xl bg-white text-black hover:scale-105 transition">
           <Users className="" />
           <h3 className="font-semibold text-base">Join Meeting</h3>
           <p className="text-sm text-black">Enter meeting ID</p>
@@ -198,11 +182,11 @@ const HomeDashboard = () => {
 
         <div
           onClick={() => setShowCalendar(true)}
-          className="cursor-pointer h-28 p-6 rounded-2xl bg-[#E51A54] text-white hover:scale-105 transition"
+          className="cursor-pointer h-32 xl:h-28 p-6 rounded-2xl bg-white md:bg-[#E51A54] text-white hover:scale-105 transition"
         >
-          <Calendar className="" />
-          <h3 className="font-semibold text-white text-base">Schedule</h3>
-          <p className="text-sm text-white">Plan your meetings</p>
+          <Calendar className="text-black md:text-white" />
+          <h3 className="font-semibold text-black md:text-white text-base">Schedule</h3>
+          <p className="text-sm text-black md:text-white">Plan your meetings</p>
         </div>
         {showCalendar && (
           <div className="fixed inset-0 bg-black/40 flex items-center justify-center z-50">
@@ -220,7 +204,7 @@ const HomeDashboard = () => {
 
               {/* Calendar + Time */}
               {!showForm && (
-                <div className="bg-white p-6 rounded-2xl shadow-xl border border-gray-100 flex flex-col gap-4">
+                <div className="bg-white p-6 flex flex-col gap-4">
                   {/* Heading */}
                   <div className="text-center">
                     <h3 className="text-xl font-bold text-[#E51A54]">
@@ -236,7 +220,7 @@ const HomeDashboard = () => {
                     <label className="text-sm text-gray-600">Date</label>
                     <input
                       type="date"
-                      className="w-full border border-gray-200 focus:border-[#E51A54] focus:ring-2 focus:ring-[#E51A54]/20 p-3 rounded-xl outline-none transition"
+                      className="w-full text-black border border-gray-200 focus:border-[#E51A54] focus:ring-2 focus:ring-[#E51A54]/20 p-3 rounded-xl outline-none transition"
                       onChange={(e) => setSelectedDate(e.target.value)}
                     />
                   </div>
@@ -246,7 +230,7 @@ const HomeDashboard = () => {
                     <label className="text-sm text-gray-600">Time</label>
                     <input
                       type="time"
-                      className="w-full border border-gray-200 focus:border-[#E51A54] focus:ring-2 focus:ring-[#E51A54]/20 p-3 rounded-xl outline-none transition"
+                      className="w-full text-black border border-gray-200 focus:border-[#E51A54] focus:ring-2 focus:ring-[#E51A54]/20 p-3 rounded-xl outline-none transition"
                       onChange={(e) =>
                         setFormData({
                           ...formData,
@@ -274,7 +258,7 @@ const HomeDashboard = () => {
               {showForm && (
                 <form
                   onSubmit={(e) => scheduleMeeting(e)}
-                  className="flex flex-col gap-4 bg-white p-6 rounded-2xl shadow-xl border border-gray-100"
+                  className="flex flex-col gap-4 bg-white p-6"
                 >
                   {/* Heading */}
                   <div className="text-center">
@@ -315,9 +299,9 @@ const HomeDashboard = () => {
                   {/* Button */}
                   <button
                     type="submit"
-                    className="bg-[#E51A54] hover:bg-[#c91548] text-white p-3 rounded-xl font-semibold transition transform hover:scale-[1.02] active:scale-[0.98] shadow-md"
+                    className="bg-[#E51A54] cursor-pointer hover:bg-[#c91548] text-white p-3 rounded-xl font-semibold transition transform hover:scale-[1.02] active:scale-[0.98] shadow-md"
                   >
-                    Schedule Meeting 🚀
+                    Schedule Meeting
                   </button>
                 </form>
               )}
@@ -330,13 +314,13 @@ const HomeDashboard = () => {
         <div className="relative">
           <div
             onClick={() => setShowOptions(!showOptions)}
-            className="cursor-pointer h-28 p-6 rounded-2xl bg-white hover:scale-105 transition"
+            className="cursor-pointer h-32 xl:h-28 p-6 rounded-2xl bg-[#E51A54] md:bg-white hover:scale-105 transition"
           >
-            <Podcast className=" text-black" />
-            <h3 className="font-semibold text-base text-black">
+            <Podcast className="text-white md:text-black" />
+            <h3 className="font-semibold text-base lg:text-sm xl:text-base text-white md:text-black">
               View More Features
             </h3>
-            <p className="text-xs opacity-80 text-black">
+            <p className="text-xs opacity-80 text-white md:text-black">
               Explore immersive modes
             </p>
           </div>
@@ -376,6 +360,13 @@ const HomeDashboard = () => {
             </div>
           )}
         </div>
+
+         <div onClick={()=>setShowMarketplace(true)} className="cursor-pointer h-32 xl:h-28 p-6 rounded-2xl bg-white text-black hover:scale-105 transition">
+          <Users className="" />
+          <h3 className="font-semibold text-base">Market Place</h3>
+          <p className="text-sm text-black">Pick a Category</p>
+        </div>
+        {showMarketplace && <MarketplaceModal onClose={()=>setShowMarketplace(false)} /> }
 
         {/* Dropdown */}
         <AnimatePresence>
@@ -435,9 +426,9 @@ const HomeDashboard = () => {
       {/* </div> */}
 
       {/* Main Section */}
-      <div className="grid lg:grid-cols-3 gap-6 -mt-2">
+      <div className="grid md:grid-cols-3 gap-6 -mt-2">
         {/* Profile Card */}
-        <div className="bg-white text-black rounded-2xl p-6 border border-white/10">
+        <div className="bg-white h-80 text-black rounded-2xl p-6 border border-white/10">
           <div className="flex flex-col items-center text-center">
             <img
               src={user.avatar}
@@ -490,10 +481,10 @@ const HomeDashboard = () => {
             </div>
           </div>
         </div> */}
-        <div className="lg:col-span-2 bg-white rounded-2xl p-6">
+        <div className="md:col-span-2 bg-white h-80 rounded-2xl p-6">
           <h3 className="text-lg font-semibold mb-4">Upcoming Meetings</h3>
 
-          <div className="space-y-4">
+          <div className="space-y-4 overflow-scroll *:scrollbar-hide h-[calc(100%-3.5rem)]">
             {meetingData?.length > 0 ? (
               meetingData.map((meeting) => {
                 // 🔥 STATUS LOGIC (A to Z)
@@ -550,13 +541,13 @@ const HomeDashboard = () => {
 
                     {/* Bottom Row */}
                     <div className="flex items-center justify-between">
-                      <div className="text-sm text-gray-500">
-                        📅 {new Date(meeting.meetingDate).toDateString()}
-                      </div>
+                      {/* <div className="text-sm text-gray-500">
+                        {new Date(meeting.meetingDate).toDateString()}
+                      </div> */}
 
                       {/* JOIN BUTTON (only if active) */}
                       {status === "join" && (
-                        <button className="px-4 py-2 bg-[#E51A54] text-white rounded-lg text-sm hover:scale-105 transition">
+                        <button className="px-4 cursor-pointer py-2 bg-[#E51A54] text-white rounded-lg text-sm hover:scale-105 transition">
                           Join
                         </button>
                       )}
