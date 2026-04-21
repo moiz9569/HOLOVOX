@@ -49,17 +49,20 @@ export default function ControlBar({
   setShowChat,
   messages,
 }) {
+  const iconButtonBase =
+    "w-10 h-10 sm:w-12 sm:h-12 rounded-xl flex items-center justify-center transition shrink-0";
+
   return (
     <motion.div
       initial={{ y: 100 }}
       animate={{ y: showControls ? 0 : 100 }}
       transition={{ duration: 0.3 }}
-      className="absolute bottom-6 left-1/2 -translate-x-1/2 z-50"
+      className="absolute bottom-3 sm:bottom-6 left-1/2 -translate-x-1/2 z-50 w-[calc(100%-1rem)] sm:w-auto"
     >
-      <div className="flex items-center gap-3 bg-black/60 backdrop-blur-xl px-6 py-3 rounded-2xl border border-white/10 shadow-2xl">
+      <div className="flex flex-wrap sm:flex-nowrap items-center justify-center gap-2 sm:gap-3 max-w-full bg-black/60 backdrop-blur-xl px-3 sm:px-6 py-2.5 sm:py-3 rounded-2xl border border-white/10 shadow-2xl">
         <button
           onClick={toggleAudio}
-          className={`w-12 h-12 rounded-xl flex items-center justify-center transition ${
+          className={`${iconButtonBase} ${
             isMuted
               ? "bg-red-600 hover:bg-red-700"
               : "bg-white/10 hover:bg-white/20"
@@ -70,14 +73,24 @@ export default function ControlBar({
 
         <button
           onClick={isRecording ? stopRecording : startRecording}
-          className={`px-4 py-2 rounded-lg ${isRecording ? "bg-red-600" : "bg-gray-700"}`}
+          className={`h-10 px-3 sm:px-4 rounded-lg text-xs sm:text-sm shrink-0 ${isRecording ? "bg-red-600" : "bg-gray-700"}`}
         >
-          {isRecording ? "Stop Recording" : "Start Recording"}
+          {isRecording ? (
+            <>
+              <span className="sm:hidden">Stop</span>
+              <span className="hidden sm:inline">Stop Recording</span>
+            </>
+          ) : (
+            <>
+              <span className="sm:hidden">Record</span>
+              <span className="hidden sm:inline">Start Recording</span>
+            </>
+          )}
         </button>
 
         <button
           onClick={toggleVideo}
-          className={`w-12 h-12 rounded-xl flex items-center justify-center transition ${
+          className={`${iconButtonBase} ${
             isVideoOff
               ? "bg-red-600 hover:bg-red-700"
               : "bg-white/10 hover:bg-white/20"
@@ -88,7 +101,7 @@ export default function ControlBar({
 
         <button
           onClick={toggleScreenShare}
-          className={`w-12 h-12 rounded-xl flex items-center justify-center transition ${
+          className={`${iconButtonBase} ${
             isScreenSharing
               ? "bg-green-600 hover:bg-green-700"
               : "bg-white/10 hover:bg-white/20"
@@ -101,7 +114,7 @@ export default function ControlBar({
         <div className="relative">
           <button
             onClick={() => setShowReactions(!showReactions)}
-            className="w-12 h-12 rounded-xl bg-white/10 hover:bg-white/20 flex items-center justify-center"
+            className={`${iconButtonBase} bg-white/10 hover:bg-white/20`}
           >
             <Smile size={20} />
           </button>
@@ -142,7 +155,7 @@ export default function ControlBar({
               showNotification("Whiteboard is disabled by host", "error");
             }
           }}
-          className="w-12 h-12 rounded-xl bg-white/10 hover:bg-white/20 flex items-center justify-center"
+          className={`${iconButtonBase} bg-white/10 hover:bg-white/20`}
         >
           <Paintbrush size={20} />
         </button>
@@ -150,7 +163,7 @@ export default function ControlBar({
         {/* Settings button */}
         <button
           onClick={() => setShowSettings(true)}
-          className="w-12 h-12 rounded-xl bg-white/10 hover:bg-white/20 flex items-center justify-center"
+          className={`${iconButtonBase} bg-white/10 hover:bg-white/20`}
         >
           <Settings size={20} />
         </button>
@@ -159,7 +172,7 @@ export default function ControlBar({
         {isHost && (
           <button
             onClick={() => setShowSecurity(true)}
-            className="w-12 h-12 rounded-xl bg-white/10 hover:bg-white/20 flex items-center justify-center"
+            className={`${iconButtonBase} bg-white/10 hover:bg-white/20`}
           >
             <Shield size={20} />
           </button>
@@ -168,7 +181,7 @@ export default function ControlBar({
         {/* Leave / End meeting */}
         <button
           onClick={isHost ? endMeeting : leaveMeeting}
-          className={`w-14 h-14 rounded-xl flex items-center justify-center transition shadow-lg ${
+          className={`w-12 h-12 sm:w-14 sm:h-14 rounded-xl flex items-center justify-center transition shadow-lg shrink-0 ${
             isHost
               ? "bg-red-600 hover:bg-red-700"
               : "bg-orange-600 hover:bg-orange-700"
@@ -180,7 +193,7 @@ export default function ControlBar({
         {/* Participants toggle */}
         <button
           onClick={() => setShowParticipants(!showParticipants)}
-          className={`w-12 h-12 rounded-xl flex items-center justify-center transition relative ${
+          className={`${iconButtonBase} relative ${
             showParticipants ? "bg-cyan-600" : "bg-white/10 hover:bg-white/20"
           }`}
         >
@@ -195,7 +208,7 @@ export default function ControlBar({
         {/* Chat toggle */}
         <button
           onClick={() => setShowChat(!showChat)}
-          className={`w-12 h-12 rounded-xl flex items-center justify-center transition relative ${
+          className={`${iconButtonBase} relative ${
             showChat ? "bg-cyan-600" : "bg-white/10 hover:bg-white/20"
           }`}
         >

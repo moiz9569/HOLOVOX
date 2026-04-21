@@ -86,6 +86,24 @@ export default function PodcastMeetingUI({ isHost, roomId }) {
     }
   };
 
+  const isSidebarOpen =
+    meetingState.showParticipants ||
+    meetingState.showChat ||
+    meetingState.showNotes;
+
+  const toggleSidebarPanel = () => {
+    if (isSidebarOpen) {
+      meetingState.setShowParticipants(false);
+      meetingState.setShowChat(false);
+      meetingState.setShowNotes(false);
+      return;
+    }
+
+    meetingState.setShowParticipants(true);
+    meetingState.setShowChat(false);
+    meetingState.setShowNotes(false);
+  };
+
   const podcastInviteLink = `${window.location.origin}/podcast/${roomId}?role=guest`;
 
   return (
@@ -114,6 +132,8 @@ export default function PodcastMeetingUI({ isHost, roomId }) {
           roomId={roomId}
           isFullscreen={meetingState.isFullscreen}
           toggleFullscreen={meetingState.toggleFullscreen}
+          isSidebarOpen={isSidebarOpen}
+          onToggleSidebar={toggleSidebarPanel}
         />
 
         <div className="flex-1 relative">
