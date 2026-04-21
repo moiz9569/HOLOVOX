@@ -1,7 +1,7 @@
 import { NextResponse } from "next/server";
 import cloudinary from "cloudinary";
-import { connectDB } from "../../../../../lib/db";
 import PersonalMessageModel from "@/app/models/RequestMessages.model";
+import { connectDB } from "../../../../../../lib/db";
 
 
 // Cloudinary config
