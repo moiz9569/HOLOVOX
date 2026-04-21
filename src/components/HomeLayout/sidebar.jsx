@@ -38,6 +38,7 @@ const Sidebar = ({ isOpen, setIsOpen }) => {
     { label: "Recordings", icon: MessageSquare, path: "/home/recording" },
     // { label: "Summaries", icon: Activity, path: "/home/summaries" },
     { label: "Notes", icon: GrDocumentNotes, path: "/home/notes" },
+    { label: "Chat", icon: MessageSquare, path: "/home/chat" },
     // { label: "Docs", icon: SiGoogledocs, path: "/home/docs" },
     { label: "Contact US", icon: IoMdContacts, path: "/home/contactus" },
   ];
