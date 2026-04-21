@@ -85,7 +85,7 @@ export async function PUT(req) {
     const body = await req.json();
 
     const { userId,meetingId, name, email } = body;
-    if(!meetingId || !name || !email){
+    if(!meetingId || !name ){
         return NextResponse.json({
             success: false,
             message: "Missing required fields",
@@ -99,7 +99,7 @@ export async function PUT(req) {
           participants: {
             userId : userId || uuidv4(),
             name,
-            email,
+            email : email || "",
             role: userId ? "participant" : "guest",
           },
         },
