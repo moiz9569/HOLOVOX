@@ -10,6 +10,7 @@ export default function VideoArea({
   mainVideoRef,
   showWhiteboard,
   WhiteboardComponent,
+  localStream,
 }) {
   return (
     <div className="flex-1 relative bg-black overflow-hidden">
@@ -60,7 +61,7 @@ export default function VideoArea({
               autoPlay
               playsInline
               className="w-full h-full object-cover"
-              style={activeStreamId === "local" ? { transform: "scaleX(-1)" } : undefined}
+              style={activeStreamId === "local" && activeStream === localStream ? { transform: "scaleX(-1)" } : undefined}
 //               ref={(el) => {
 //                 // if (el && activeStream) el.srcObject = activeStream;
 //                if (el) {

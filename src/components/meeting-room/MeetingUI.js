@@ -277,6 +277,7 @@ useEffect(() => {
           activeStreamId={meetingState.activeStreamId}
           mainVideoRef={meetingState.mainVideoRef}
           showWhiteboard={meetingState.showWhiteboard}
+          localStream={meetingState.localStream}
           WhiteboardComponent={
             <WhiteboardComponent
               showWhiteboard={meetingState.showWhiteboard}
