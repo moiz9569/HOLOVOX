@@ -5,8 +5,10 @@ import { motion } from "framer-motion";
 import { useRouter } from "next/navigation";
 import { getTokenData } from "@/app/content/data";
 import { showErrorToast } from "../../lib/toast";
+import { Video } from "lucide-react";
+import Image from "next/image";
 
-const JoinMeetingModal = ({ isOpen,onClose }) => {
+const JoinMeetingModal = ({ isOpen,onClose, }) => {
   if (!isOpen) return null;
 //   console.log("JoinMeetingModal rendered with isOpen:", isOpen);
 //   console.log("onClose function:", onClose);
@@ -78,83 +80,99 @@ const joinMeeting = async (e) => {
   }
 };
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/60">
-      <motion.div
-        initial={{ scale: 0.8, opacity: 0 }}
-        animate={{ scale: 1, opacity: 1 }}
-        className="bg-gray-200 p-8 rounded-2xl w-full max-w-md relative"
-      >
-        {/* Close */}
-        <button
-          onClick={onClose}
-          disabled={isLoading}
-          className="absolute top-4 right-4 text-gray-400 hover:text-[#E51A54] transition disabled:hover:text-gray-400 cursor-pointer"
-        >
-          ✕
-        </button>
+   <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 backdrop-blur-sm px-4">
+  <motion.div
+    initial={{ scale: 0.8, opacity: 0, y: 40 }}
+    animate={{ scale: 1, opacity: 1, y: 0 }}
+    transition={{ duration: 0.3 }}
+    className="w-full max-w-md bg-[#EAEAF4] rounded-3xl shadow-2xl p-6 sm:p-8 relative"
+  >
+    {/* Close Button */}
+    <button
+      onClick={onClose}
+      disabled={isLoading}
+      className="absolute top-4 right-4 text-gray-400 hover:text-[#E51A54] transition cursor-pointer"
+    >
+      ✕
+    </button>
 
-        {/* Header */}
-        <div className="text-center mb-6">
-          <h2 className="text-2xl font-bold text-gray-800">Join Meeting</h2>
-          <p className="text-gray-600 text-sm">Enter details to continue</p>
-        </div>
-
-        <div className="relative mb-4">
-          <User className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400" />
-          <input
-            type="text"
-            value={guestName}
-            onChange={(e) => setGuestName(e.target.value)}
-            placeholder="Your name"
-            className="w-full pl-10 pr-4 py-3 bg-gray-100 border border-[#E51A54] rounded-xl text-gray-800 focus:outline-none focus:ring-2 focus:ring-[#E51A54]"
-          />
-        </div>
-
-        <div className="relative mb-4">
-          <Mail className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400" />
-          <input
-            type="email"
-            value={guestEmail}
-            onChange={(e) => setGuestEmail(e.target.value)}
-            placeholder="Email (optional)"
-            className="w-full pl-10 pr-4 py-3 bg-gray-100 border border-[#E51A54] rounded-xl text-gray-800 focus:outline-none focus:ring-2 focus:ring-[#E51A54]"
-          />
-        </div>
-
-        <div className="relative mb-4">
-          <Mail className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400" />
-          <input
-            type="text"
-            value={joinCode}
-            onChange={(e) => setJoinCode(e.target.value)}
-            placeholder="Enter meeting ID"
-            className="w-full pl-10 pr-4 py-3 bg-gray-100 border border-[#E51A54] rounded-xl text-gray-800 focus:outline-none focus:ring-2 focus:ring-[#E51A54]"
-          />
-        </div>
-
-        {/* Button */}
-        <button
-        type="button"
-          onClick={joinMeeting}
-          disabled={!joinCode.trim() || !guestName.trim() || isLoading}
-          className={`w-full py-3 rounded-xl font-semibold flex items-center justify-center gap-2 transition
-            ${
-              !joinCode.trim() || !guestName.trim() || isLoading
-                ? "bg-gray-400 cursor-not-allowed"
-                : "bg-[#E51A54] cursor-pointer hover:bg-[#B30E3A] text-white"
-            }`}
-        >
-          {isLoading ? (
-            <>
-              <Loader2 className="w-5 h-5 animate-spin" />
-              Joining...
-            </>
-          ) : (
-            "Join Meeting"
-          )}
-        </button>
-      </motion.div>
+    {/* Top Icon */}
+    <div className="flex justify-center">
+      {/* <div className="w-16 h-16 flex items-center justify-center rounded-full bg-[#E51A54]/10"> */}
+         <img src="/holo-new-logo.png" className="w-32 h-20" alt="Join Meeting" />
+      {/* </div> */}
+     
     </div>
+
+    {/* Header */}
+    <div className="text-center mb-6">
+      <h2 className="text-2xl sm:text-3xl font-bold text-gray-800">
+        Join Meeting
+      </h2>
+      <p className="text-gray-500 text-sm mt-1">
+        Enter your details to continue
+      </p>
+    </div>
+
+    {/* Name Input */}
+    <div className="relative mb-4">
+      <User className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400 w-5 h-5" />
+      <input
+        type="text"
+        value={guestName}
+        onChange={(e) => setGuestName(e.target.value)}
+        placeholder="Your name"
+        className="w-full pl-11 pr-4 py-3 rounded-xl border border-gray-200 bg-white text-gray-800 focus:outline-none focus:ring-2 focus:ring-[#E51A54] focus:border-transparent transition"
+      />
+    </div>
+
+    {/* Email Input */}
+    <div className="relative mb-4">
+      <Mail className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400 w-5 h-5" />
+      <input
+        type="email"
+        value={guestEmail}
+        onChange={(e) => setGuestEmail(e.target.value)}
+        placeholder="Email (optional)"
+        className="w-full pl-11 pr-4 py-3 rounded-xl border border-gray-200 bg-white text-gray-800 focus:outline-none focus:ring-2 focus:ring-[#E51A54] focus:border-transparent transition"
+      />
+    </div>
+
+    {/* Meeting ID */}
+    <div className="relative mb-6">
+      <Video className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400 w-5 h-5" />
+      <input
+        type="text"
+        value={joinCode}
+        onChange={(e) => setJoinCode(e.target.value)}
+        placeholder="Enter meeting ID"
+        className="w-full pl-11 pr-4 py-3 rounded-xl border border-gray-200 bg-white text-gray-800 focus:outline-none focus:ring-2 focus:ring-[#E51A54] focus:border-transparent transition"
+      />
+    </div>
+
+    {/* Button */}
+    <button
+      type="button"
+      onClick={joinMeeting}
+      disabled={!joinCode.trim() || !guestName.trim() || isLoading}
+      className={`w-full py-3 rounded-xl font-semibold flex items-center justify-center gap-2 transition-all duration-200
+        ${
+          !joinCode.trim() || !guestName.trim() || isLoading
+            ? "bg-gray-300 text-gray-500 cursor-not-allowed"
+            : "bg-[#E51A54] cursor-pointer hover:bg-[#c91442] text-white shadow-md hover:shadow-lg"
+        }`}
+    >
+      {isLoading ? (
+        <>
+          <Loader2 className="w-5 h-5 animate-spin" />
+          Joining...
+        </>
+      ) : (
+        "Join Meeting"
+      )}
+    </button>
+  </motion.div>
+</div>
   );
 };
 

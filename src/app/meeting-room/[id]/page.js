@@ -225,7 +225,7 @@ useEffect(() => {
       // 🔴 CASE 3: BOTH MISSING → MODAL
       setIsUnauthorized(true);
       setOpenModal(true);
-      showErrorToast("No access data found");
+      // showErrorToast("No access data found");
     } catch (error) {
       console.error("Init error:", error);
       setIsUnauthorized(true);
