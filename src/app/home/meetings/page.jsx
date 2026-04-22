@@ -950,14 +950,14 @@ export default function MeetingsPage() {
                     </div>
                   </div>
 
-                  <button
+                  {/* <button
                     onClick={() => handleJoinMeeting(meeting)}
                     disabled={isJoiningId === meeting._id}
                     className="px-4 py-2 bg-[#E9164B] rounded-lg text-sm text-white disabled:opacity-70 disabled:cursor-not-allowed inline-flex items-center gap-2"
                   >
                     {isJoiningId === meeting._id && <Loader2 className="w-4 h-4 animate-spin" />}
                     Open
-                  </button>
+                  </button> */}
                 </div>
               ))
             )}
