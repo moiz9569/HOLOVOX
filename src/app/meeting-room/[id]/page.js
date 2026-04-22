@@ -241,6 +241,7 @@ useEffect(() => {
       <JoinMeetingModal
         isOpen={openModal}
         onClose={() => setOpenModal(false)}
+        roomId={roomId}
       />
     </>
   );

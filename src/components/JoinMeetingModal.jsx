@@ -6,12 +6,14 @@ import { useRouter } from "next/navigation";
 import { getTokenData } from "@/app/content/data";
 import { showErrorToast } from "../../lib/toast";
 import { Video } from "lucide-react";
-import Image from "next/image";
-
-const JoinMeetingModal = ({ isOpen,onClose, }) => {
+import { useParams } from "next/navigation";
+import { useSearchParams } from "next/navigation";
+const JoinMeetingModal = ({ isOpen,onClose,roomId }) => {
   if (!isOpen) return null;
-//   console.log("JoinMeetingModal rendered with isOpen:", isOpen);
-//   console.log("onClose function:", onClose);
+  const searchParams = useSearchParams();
+  console.log("JoinMeetingModal rendered with isOpen:", isOpen);
+  console.log("onClose function:", onClose);
+   console.log("Params data:", roomId);
   const [joinCode, setJoinCode] = useState("");
   const [guestName, setGuestName] = useState("");
   const [guestEmail, setGuestEmail] = useState("");
@@ -20,18 +22,18 @@ const JoinMeetingModal = ({ isOpen,onClose, }) => {
   const [decodedUser, setDecodedUser] = useState({});
 const joinMeeting = async (e) => {
   e?.preventDefault();
+  
 
-  const meetingCode = joinCode.trim();
+//   const meetingCode = joinCode.trim();
   const name = guestName.trim();
   const email = guestEmail.trim();
 
   console.log("Attempting to join meeting with:", {
-    meetingCode,
     name,
     email,
   });
 
-  if (!meetingCode) return;
+//   if (!name || !email) return;
 
   if (!name) {
     showErrorToast("Name is required");
@@ -49,7 +51,7 @@ const joinMeeting = async (e) => {
       body: JSON.stringify({
         name,
         email,
-        meetingId: meetingCode,
+        meetingId: roomId,
       }),
     });
 
@@ -63,14 +65,14 @@ const joinMeeting = async (e) => {
     }
 
     localStorage.setItem(
-      `meeting_guest_profile_${meetingCode}`,
+      `meeting_guest_profile_${roomId}`,
       JSON.stringify({ name, email })
     );
-    localStorage.setItem("meeting_data", meetingCode + "_" + name);
+    localStorage.setItem("meeting_data", roomId + "_" + name);
     onClose();
     window.location.reload();
 
-    router.push(`/meeting-room/${meetingCode}?role=guest`);
+    router.push(`/meeting-room/${roomId}?role=guest`);
     console.log("Navigation to meeting room successful");
   } catch (err) {
     console.error("Join Meeting Error:", err);
@@ -139,7 +141,7 @@ const joinMeeting = async (e) => {
     </div>
 
     {/* Meeting ID */}
-    <div className="relative mb-6">
+    {/* <div className="relative mb-6">
       <Video className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400 w-5 h-5" />
       <input
         type="text"
@@ -148,16 +150,16 @@ const joinMeeting = async (e) => {
         placeholder="Enter meeting ID"
         className="w-full pl-11 pr-4 py-3 rounded-xl border border-gray-200 bg-white text-gray-800 focus:outline-none focus:ring-2 focus:ring-[#E51A54] focus:border-transparent transition"
       />
-    </div>
+    </div> */}
 
     {/* Button */}
     <button
       type="button"
       onClick={joinMeeting}
-      disabled={!joinCode.trim() || !guestName.trim() || isLoading}
+      disabled={ !guestName.trim() || isLoading}
       className={`w-full py-3 rounded-xl font-semibold flex items-center justify-center gap-2 transition-all duration-200
         ${
-          !joinCode.trim() || !guestName.trim() || isLoading
+           !guestName.trim() || isLoading
             ? "bg-gray-300 text-gray-500 cursor-not-allowed"
             : "bg-[#E51A54] cursor-pointer hover:bg-[#c91442] text-white shadow-md hover:shadow-lg"
         }`}
