@@ -81,7 +81,7 @@ export async function PUT(req) {
     const body = await req.json();
 
     const { noteId, newText } = body;
-
+    console.log("Update Note Payload:", { noteId, newText });
     const noteDoc = await NotesModel.findById(noteId);
 
     if (!noteDoc) {
