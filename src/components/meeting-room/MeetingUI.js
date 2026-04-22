@@ -229,14 +229,14 @@ export default function MeetingUI({ isHost, roomId, router }) {
       showNotification("Ending meeting for everyone...", "info");
       setTimeout(async () => {
         await meetingState.room.disconnect();
-        router.push("/home");
+        router.push("/");
       }, 1000);
     }
   };
 
   const leaveMeeting = async () => {
     await meetingState.room.disconnect();
-    router.push("/home");
+    router.push("/");
   };
 
   const removeParticipant = (peerId) => {

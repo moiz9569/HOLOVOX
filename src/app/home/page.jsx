@@ -896,44 +896,67 @@ const HomeDashboard = () => {
       }
     }
   };
-  const fetchUpcomingMeetings = async () => {
+const fetchUpcomingMeetings = async (user) => {
+  try {
+    const res = await fetch("/api/user/meeting");
+    const data = await res.json();
+
+    const email = (user?.email || "").toLowerCase();
+
+    const filtered = (data?.meetings || [])
+      .filter((meeting) => {
+        if (!meeting.upcoming) return false;
+
+        return Array.isArray(meeting.participants)
+          ? meeting.participants.some(
+              (p) => (p?.email || "").toLowerCase() === email
+            )
+          : false;
+      })
+      .sort(
+        (a, b) => new Date(a.meetingDate) - new Date(b.meetingDate)
+      )
+      .slice(0, 2);
+
+    setMeetingData(filtered);
+
+    console.log("FINAL FILTERED:", filtered);
+  } catch (error) {
+    console.log("Error:", error);
+  }
+};
+
+  // useEffect(() => {
+  //   getTokenData()
+  //     .then((user) => {
+  //       console.log("Decoded User:", user);
+
+  //       setDecodedUser(user || {});
+  //       setLoading(false);
+  //     })
+  //     .catch((error) => {
+  //       console.error("Error fetching user data:", error);
+  //       setLoading(false);
+  //     });
+  //   fetchUpcomingMeetings();
+  //   // fetchUser();
+  // }, []);
+  useEffect(() => {
+  const init = async () => {
     try {
-      const res = await fetch("/api/user/meeting", {
-        method: "GET",
-        headers: {
-          "Content-Type": "application/json",
-        },
-      });
+      const user = await getTokenData();
 
-      let data = await res.json();
+      setDecodedUser(user || {});
 
-      console.log("Upcoming Meetings:", data.meetings);
-
-      const upcomingMeetings = data?.meetings?.filter(
-        (meeting) => meeting.upcoming === true,
-      );
-      setMeetingData(upcomingMeetings);
-      console.log("Filtered Upcoming Meetings:", upcomingMeetings);
-    } catch (error) {
-      console.log("Error fetching upcoming meetings:", error);
+      // 🔥 call AFTER user is available
+      fetchUpcomingMeetings(user);
+    } catch (err) {
+      console.log(err);
     }
   };
 
-  useEffect(() => {
-    getTokenData()
-      .then((user) => {
-        console.log("Decoded User:", user);
-
-        setDecodedUser(user || {});
-        setLoading(false);
-      })
-      .catch((error) => {
-        console.error("Error fetching user data:", error);
-        setLoading(false);
-      });
-    fetchUpcomingMeetings();
-    // fetchUser();
-  }, []);
+  init();
+}, []);
 
   useEffect(() => {
   if (!loading && decodedUser) {
@@ -1463,9 +1486,9 @@ const HomeDashboard = () => {
           </div>
         </div> */}
         <div className="md:col-span-2 bg-white h-80 rounded-2xl p-6">
-          <h3 className="text-lg font-semibold mb-4">Upcoming Meetings</h3>
+          <h3 className="text-lg font-semibold mb-4">Meetings</h3>
 
-          <div className="space-y-4 overflow-scroll *:scrollbar-hide h-[calc(100%-3.5rem)]">
+          <div className="space-y-4 ">
             {meetingData?.length > 0 ? (
               meetingData.map((meeting) => {
                 // 🔥 STATUS LOGIC (A to Z)
@@ -1537,7 +1560,7 @@ const HomeDashboard = () => {
                 );
               })
             ) : (
-              <p className="text-gray-500 text-sm">
+              <p className="text-gray-500 flex justify-center items-center  text-xl mt-20">
                 No upcoming meetings found
               </p>
             )}

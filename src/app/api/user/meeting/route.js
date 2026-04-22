@@ -85,6 +85,7 @@ export async function PUT(req) {
     const body = await req.json();
 
     const { userId,meetingId, name, email } = body;
+    console.log("Join Meeting Payload:", { userId, meetingId, name, email });
     if(!meetingId || !name ){
         return NextResponse.json({
             success: false,
@@ -97,9 +98,9 @@ export async function PUT(req) {
       {
         $push: {
           participants: {
-            userId : userId || uuidv4(),
+            userId : userId ,
             name,
-            email :  email || `${name.replace(/\s+/g, "").toLowerCase()}@example.com`,
+            email :  email || " ",
             role: userId ? "participant" : "guest",
           },
         },
