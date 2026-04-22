@@ -3,7 +3,7 @@ import React from "react";
 import { Video, Users, Calendar, Clock, Copy } from "lucide-react";
 import { useRouter } from "next/navigation";
 import { v4 as uuidv4 } from "uuid";
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import { getTokenData } from "../content/data";
 import { Podcast } from "lucide-react";
 import { AnimatePresence, motion } from "framer-motion";
@@ -11,26 +11,100 @@ import { showErrorToast, showSuccessToast } from "../../../lib/toast";
 // import { showSuccessToast, showErrorToast } from "../../lib/toast";
 import MarketplaceModal from "@/components/MarketplaceModal";
 import DoctorCategoryModal from "@/components/DoctorCategoryModal";
-import CardiologistsModal from "@/components/CardiologistsModal";
+import ProviderListModal from "@/components/ProviderListModal";
 import DoctorProfileModal from "@/components/DoctorProfileModal";
 import LawyerProfileForm from "@/components/LawyerForm";
 import DoctorProfileForm from "@/components/DoctorForm";
 
+const DOCTOR_CATEGORIES = [
+  "General Physician",
+  "Cardiologist",
+  "Dermatologist",
+  "Neurologist",
+  "Dentist",
+  "Orthopedic",
+];
+
+const LAWYER_CATEGORIES = [
+  "Criminal Law",
+  "Family Law",
+  "Corporate Law",
+  "Civil Law",
+  "Cyber Crime",
+  "Property Law",
+];
+
 const HomeDashboard = () => {
   const router = useRouter();
+  const providersRequestIdRef = useRef(0);
   const [loading, setLoading] = useState(true);
   const [decodedUser, setDecodedUser] = useState([]);
   const [meetingId, setMeetingId] = useState("");
   const [showFeatures, setShowFeatures] = useState(false);
   const [showOptions, setShowOptions] = useState(false);
   const [showMarketplace, setShowMarketplace] = useState(false);
-  const [showDoctorModal, setShowDoctorModal] = useState(false);
-  const [showCardiologistsModal, setShowCardiologistsModal] = useState(false);
+  const [showCategoryModal, setShowCategoryModal] = useState(false);
+  const [showProvidersModal, setShowProvidersModal] = useState(false);
   const [showDoctorProfileModal, setShowDoctorProfileModal] = useState(false);
   const [showLawyerForm, setShowLawyerForm] = useState(false);
-const [showDoctorForm, setShowDoctorForm] = useState(false);
+  const [showDoctorForm, setShowDoctorForm] = useState(false);
+  const [selectedMarketplaceType, setSelectedMarketplaceType] = useState("");
+  const [selectedCategory, setSelectedCategory] = useState("");
+  const [selectedProvider, setSelectedProvider] = useState(null);
+  const [providers, setProviders] = useState([]);
+  const [providersLoading, setProvidersLoading] = useState(false);
+  const [providersError, setProvidersError] = useState("");
 
   const [meetingData, setMeetingData] = useState(null);
+
+  const getCurrentCategories = () => {
+    if (selectedMarketplaceType === "doctor") {
+      return DOCTOR_CATEGORIES;
+    }
+
+    if (selectedMarketplaceType === "lawyer") {
+      return LAWYER_CATEGORIES;
+    }
+
+    return [];
+  };
+
+  const fetchProvidersByCategory = async (role, category) => {
+    const requestId = ++providersRequestIdRef.current;
+    setProvidersLoading(true);
+    setProvidersError("");
+    setProviders([]);
+
+    try {
+      const params = new URLSearchParams({
+        role,
+        category,
+      });
+
+      const res = await fetch(`/api/providers/search?${params.toString()}`);
+      const data = await res.json();
+
+      if (requestId !== providersRequestIdRef.current) {
+        return;
+      }
+
+      if (!res.ok || !data.success) {
+        throw new Error(data.message || "Failed to load providers");
+      }
+
+      setProviders(data.data || []);
+    } catch (error) {
+      if (requestId !== providersRequestIdRef.current) {
+        return;
+      }
+
+      setProvidersError(error.message || "Failed to load providers");
+    } finally {
+      if (requestId === providersRequestIdRef.current) {
+        setProvidersLoading(false);
+      }
+    }
+  };
   const fetchUpcomingMeetings = async () => {
     try {
       const res = await fetch("/api/user/meeting", {
@@ -215,32 +289,62 @@ const [showDoctorForm, setShowDoctorForm] = useState(false);
         </div>
          {showMarketplace && (
       <MarketplaceModal
-        onClose={(type) => {
+        onClose={() => setShowMarketplace(false)}
+        onContinue={(type) => {
           setShowMarketplace(false);
 
-          if (type === "doctor") {
-            setShowDoctorModal(true);
+          if (type === "doctor" || type === "lawyer") {
+            setSelectedMarketplaceType(type);
+            setSelectedCategory("");
+            setShowCategoryModal(true);
           }
         }}
       />
     )}
 
-    {showDoctorModal && (
+    {showCategoryModal && (
       <DoctorCategoryModal
-        onClose={(type) => {
-          setShowDoctorModal(false);
-           if (type === "cardiologist") {
-            setShowCardiologistsModal(true);
-          }
+        role={selectedMarketplaceType}
+        title={`Select ${selectedMarketplaceType === "lawyer" ? "Lawyer" : "Doctor"} Category`}
+        subtitle={`Choose a specialization to find the right ${selectedMarketplaceType === "lawyer" ? "lawyer" : "doctor"}`}
+        categories={getCurrentCategories().map((title) => ({
+          title,
+          desc: "Tap to explore available experts",
+        }))}
+        onClose={() => {
+          setShowCategoryModal(false);
+          setSelectedMarketplaceType("");
+        }}
+        onContinue={(category) => {
+          setSelectedCategory(category);
+          setShowCategoryModal(false);
+          setShowProvidersModal(true);
+          fetchProvidersByCategory(selectedMarketplaceType, category);
         }}
       />
     )}
 
-    {showCardiologistsModal && (
-      <CardiologistsModal
-        onClose={() => setShowCardiologistsModal(false)}
-        onViewProfile={() => {
-          setShowCardiologistsModal(false);
+    {showProvidersModal && (
+      <ProviderListModal
+        title={selectedCategory || "Providers"}
+        roleLabel={selectedMarketplaceType === "lawyer" ? "lawyers" : "doctors"}
+        providers={providers}
+        isLoading={providersLoading}
+        error={providersError}
+        onBack={() => {
+          setShowProvidersModal(false);
+          setShowCategoryModal(true);
+        }}
+        onClose={() => {
+          setShowProvidersModal(false);
+          setSelectedMarketplaceType("");
+          setSelectedCategory("");
+          setProviders([]);
+          setProvidersError("");
+        }}
+        onViewProfile={(provider) => {
+          setSelectedProvider(provider);
+          setShowProvidersModal(false);
           setShowDoctorProfileModal(true);
         }}
       />
@@ -248,7 +352,11 @@ const [showDoctorForm, setShowDoctorForm] = useState(false);
 
     {showDoctorProfileModal && (
       <DoctorProfileModal
-        onClose={() => setShowDoctorProfileModal(false)}
+        provider={selectedProvider}
+        onClose={() => {
+          setShowDoctorProfileModal(false);
+          setShowProvidersModal(true);
+        }}
       />
     )}
 

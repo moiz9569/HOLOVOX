@@ -54,7 +54,7 @@ const Sidebar = ({ isOpen, setIsOpen }) => {
     : -300,
 }}
   className={`
-    fixed lg:static inset-y-0 left-0 z-20
+    fixed lg:static inset-y-0 left-0 z-20 lg:z-0
     w-64 sm:w-72 lg:w-64
     bg-white border-r border-[#E51A54]
     transition-all duration-300

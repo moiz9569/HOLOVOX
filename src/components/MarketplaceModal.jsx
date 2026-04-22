@@ -7,7 +7,7 @@ import {
   MoreHorizontal,
 } from "lucide-react";
 
-export default function MarketplaceModal({ onClose }) {
+export default function MarketplaceModal({ onClose, onContinue }) {
   const [selectedCategory, setSelectedCategory] = useState(null);
 
   const categories = [
@@ -33,23 +33,19 @@ export default function MarketplaceModal({ onClose }) {
     },
   ];
 
-const handleSubmit = () => {
-  if (!selectedCategory) return;
+  const handleSubmit = () => {
+    if (!selectedCategory) return;
 
-  if (selectedCategory === "Doctor") {
-    onClose("doctor"); // pass info to parent
-  } else {
-    onClose(); // normal close
-  }
-};
+    onContinue?.(selectedCategory.toLowerCase());
+  };
 
   return (
     <>
-    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40">
+    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40 p-3 sm:p-4">
       <motion.div
         initial={{ scale: 0.9, opacity: 0 }}
         animate={{ scale: 1, opacity: 1 }}
-        className="bg-[#F5F5F5] rounded-3xl p-8 w-full max-w-md shadow-xl relative"
+        className="bg-[#F5F5F5] rounded-3xl p-5 sm:p-8 w-full max-w-md shadow-xl relative"
       >
         {/* Close */}
         <button
@@ -70,7 +66,7 @@ const handleSubmit = () => {
         </div>
 
         {/* Grid */}
-        <div className="flex flex-wrap justify-center gap-5 mb-6">
+        <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 sm:gap-5 mb-6">
           {categories.map((item, index) => {
             const Icon = item.icon;
             const isSelected = selectedCategory === item.title;
@@ -80,7 +76,7 @@ const handleSubmit = () => {
                 key={index}
                 onClick={() => setSelectedCategory(item.title)}
                 className={`
-                  rounded-2xl p-5 w-40 flex flex-col items-center text-center cursor-pointer transition
+                  rounded-2xl p-4 sm:p-5 w-full flex flex-col items-center text-center cursor-pointer transition
                   ${
                     isSelected
                       ? "bg-[#E51A54] text-white shadow-lg scale-105"

@@ -363,6 +363,7 @@ const Header = ({ toggleSidebar }) => {
   const [showUserMenu, setShowUserMenu] = useState(false);
   const [showModal, setShowModal] = useState(false);
   const [loading, setLoading] = useState(false);
+  const [createLoading, setCreateLoading] = useState(false);
 
   const [decodedUser, setDecodedUser] = useState([]);
 
@@ -394,6 +395,9 @@ const Header = ({ toggleSidebar }) => {
 
     console.log("Creating meeting with ID:", roomId);
     console.log("Creating meeting with userID:", decodedUser?.id);
+    
+    setCreateLoading(true);
+    
     try {
       const res = await fetch("/api/user/meeting", {
         method: "POST",
@@ -418,6 +422,8 @@ const Header = ({ toggleSidebar }) => {
       router.push(`/meeting-room/${roomId}?role=host`);
     } catch (err) {
       console.error("Create Meeting Error:", err);
+      // Reset loader after 6 seconds on error
+      setTimeout(() => setCreateLoading(false), 6000);
     }
   };
 
@@ -453,10 +459,30 @@ const Header = ({ toggleSidebar }) => {
           {/* Create */}
           <button
             onClick={createMeeting}
-            className="cursor-pointer flex items-center gap-2 px-4 h-10 border border-[#E51A54] text-[#E51A54] rounded-lg text-sm hover:bg-[#E51A54] hover:text-white transition"
+            disabled={createLoading}
+            className={`cursor-pointer flex items-center gap-2 px-4 h-10 rounded-lg text-sm transition ${
+              createLoading
+                ? "bg-[#E51A54] text-white border border-[#E51A54]"
+                : "border border-[#E51A54] text-[#E51A54] hover:bg-[#E51A54] hover:text-white"
+            }`}
           >
-            <Video className="w-4 h-4" />
-            Create
+            {createLoading ? (
+              <>
+                <motion.div
+                  animate={{ rotate: 360 }}
+                  transition={{ duration: 1, repeat: Infinity, ease: "linear" }}
+                  className="w-4 h-4"
+                >
+                  <Video className="w-4 h-4" />
+                </motion.div>
+                Creating...
+              </>
+            ) : (
+              <>
+                <Video className="w-4 h-4" />
+                Create
+              </>
+            )}
           </button>
 
           {/* Join */}
