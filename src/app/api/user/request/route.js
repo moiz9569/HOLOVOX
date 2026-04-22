@@ -1,15 +1,17 @@
 import RequestModel from "@/app/models/Request";
 import { NextResponse } from "next/server";
+import { connectDB } from "../../../../../lib/db";
 
 export async function POST(req) {
   try {
     await connectDB();
-    const { senderId, receiverId } = await req.json();
-
+    const { senderId, receiverId,role } = await req.json();
+    console.log("Received request data:", { senderId, receiverId, role });
     // check if already exists
     const existing = await RequestModel.findOne({
       sender: senderId,
       receiver: receiverId,
+      
     }).lean();
 
     if (existing) {
@@ -19,6 +21,7 @@ export async function POST(req) {
     const request = await RequestModel.create({
       sender: senderId,
       receiver: receiverId,
+      role : role || "user",
     });
 
     return NextResponse.json(request);
@@ -32,10 +35,26 @@ export async function GET(req) {
     await connectDB();
     const { searchParams } = new URL(req.url);
     const userId = searchParams.get("userId");
-    const requests = await RequestModel.find({
-      receiver: userId,
-    })
-    .lean();
+    const role = searchParams.get("role") ;
+    console.log("Fetching requests for userId:", userId, "with role:", role);
+    // const query = sent ? { sender: userId } : { receiver: userId };
+    // const requests = await RequestModel.find(query)
+    //   .populate('sender', 'name email image')
+    //   .populate('receiver', 'name email image')
+    //   .sort({ createdAt: -1 })
+    //   .lean();
+let requests;
+    if (role === "doctor" || role === "lawyer") {
+      requests = await RequestModel.find({ receiver: userId })
+      .sort({ createdAt: -1 })
+      .lean();
+
+    }else{
+      requests = await RequestModel.find({ sender: userId })
+      .sort({ createdAt: -1 })
+      .lean();
+    }
+    console.log("Fetched requests:", requests);
     return NextResponse.json(requests);
   } catch (error) {
     return NextResponse.json(

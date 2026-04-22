@@ -3,12 +3,17 @@ import mongoose from "mongoose";
 const RequestSchema = new mongoose.Schema({
   sender: {
     type: mongoose.Schema.Types.ObjectId,
-    ref: "User",
+    ref: "HolovoxUser",
     required: true,
   },
   receiver: {
     type: mongoose.Schema.Types.ObjectId,
-    ref: "User",
+    ref: "HolovoxUser",
+    required: true,
+  },
+  role : {
+    type: String,
+    enum: ["doctor", "lawyer", "user"],
     required: true,
   },
   status: {

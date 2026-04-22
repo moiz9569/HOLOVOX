@@ -1,13 +1,47 @@
-import React from "react";
+import React, { useState } from "react";
 import { MapPin, Star, Video } from "lucide-react";
-import { showSuccessToast } from "../../lib/toast";
+import { showSuccessToast, showErrorToast } from "../../lib/toast";
+import { getTokenData } from "@/app/content/data";
 
 const DoctorProfileModal = ({ onClose, provider }) => {
+  const [loading, setLoading] = useState(false);
+
   if (!provider) return null;
 
-  function handleClick() {
-    showSuccessToast("Request sent successfully!");
-    onClose();
+  async function handleClick() {
+    try {
+      setLoading(true);
+      const user = await getTokenData();
+      if (!user) {
+        showErrorToast("Please login first");
+        return;
+      }
+      console.log("Current user:", user);
+      console.log("Current Provider:", provider);
+      const response = await fetch("/api/user/request", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          senderId: user.id,
+          receiverId: provider._id || provider.id,
+          role: user?.role || "user",
+        }),
+      });
+
+      const data = await response.json();
+
+      if (response.ok) {
+        showSuccessToast("Request sent successfully!");
+        onClose();
+      } else {
+        showErrorToast(data.message || "Failed to send request");
+      }
+    } catch (error) {
+      console.error("Error sending request:", error);
+      showErrorToast("Failed to send request");
+    } finally {
+      setLoading(false);
+    }
   }
 
   const workingHours = provider.availableSlot || "Not specified";
@@ -23,11 +57,13 @@ const DoctorProfileModal = ({ onClose, provider }) => {
   return (
     <div className="fixed inset-0 bg-black/40 flex items-center justify-center z-[9999] p-3 sm:p-4">
       <div className="bg-gray-100 w-full max-w-5xl max-h-[92vh] overflow-y-auto rounded-2xl p-4 sm:p-6 relative shadow-xl z-50 flex flex-col lg:flex-row gap-4 sm:gap-6">
-
         {/* LEFT IMAGE */}
         <div className="w-full lg:w-[250px] h-[220px] lg:h-[300px] border-4 border-blue-500 rounded-lg overflow-hidden shrink-0">
           <img
-            src={provider.image || "https://via.placeholder.com/400x400?text=Profile"}
+            src={
+              provider.image ||
+              "https://via.placeholder.com/400x400?text=Profile"
+            }
             alt={provider.name}
             className="w-full h-full object-cover"
           />
@@ -44,7 +80,8 @@ const DoctorProfileModal = ({ onClose, provider }) => {
           </div>
 
           <p className="text-sm text-gray-600 mt-1">
-            {provider.specialization || "Specialist"} • {provider.experience || 0} Years Exp.
+            {provider.specialization || "Specialist"} •{" "}
+            {provider.experience || 0} Years Exp.
           </p>
 
           {/* Rating */}
@@ -89,7 +126,9 @@ const DoctorProfileModal = ({ onClose, provider }) => {
           <div className="mt-5 bg-gray-300 rounded-lg p-4 grid grid-cols-3 text-center">
             <div>
               <p className="text-xs text-gray-600">Consultation Fee</p>
-              <p className="font-semibold">Rs. {provider.consultationFee || 0}</p>
+              <p className="font-semibold">
+                Rs. {provider.consultationFee || 0}
+              </p>
             </div>
             <div>
               <p className="text-xs text-gray-600">Experience</p>
@@ -133,9 +172,13 @@ const DoctorProfileModal = ({ onClose, provider }) => {
           </div>
 
           {/* Button */}
-          <button onClick={handleClick} className="mt-4 bg-red-500 hover:bg-red-600 text-white py-3 rounded-xl flex items-center justify-center gap-2">
+          <button
+            onClick={handleClick}
+            disabled={loading}
+            className="mt-4 bg-red-500 hover:bg-red-600 disabled:bg-red-300 text-white py-3 rounded-xl flex items-center justify-center gap-2 transition"
+          >
             <Video size={18} />
-            Request
+            {loading ? "Sending..." : "Request"}
           </button>
         </div>
 
