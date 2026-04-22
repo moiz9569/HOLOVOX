@@ -2,7 +2,7 @@ import { jwtDecode } from "jwt-decode";
 
 export const getTokenData= async()=>{
 const token = localStorage.getItem("token")
-// console.log("Retrieved Token:", token);
+console.log("Retrieved Token:", token);
 // if(!token){
 //   showErrorToast('you are not authorized person')
 // }

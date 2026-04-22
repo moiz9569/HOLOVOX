@@ -8,80 +8,75 @@ import { showErrorToast } from "../../lib/toast";
 
 const JoinMeetingModal = ({ isOpen,onClose }) => {
   if (!isOpen) return null;
-  console.log("JoinMeetingModal rendered with isOpen:", isOpen);
-  console.log("onClose function:", onClose);
+//   console.log("JoinMeetingModal rendered with isOpen:", isOpen);
+//   console.log("onClose function:", onClose);
   const [joinCode, setJoinCode] = useState("");
   const [guestName, setGuestName] = useState("");
   const [guestEmail, setGuestEmail] = useState("");
   const [isLoading, setIsLoading] = useState(false);
   const router = useRouter();
   const [decodedUser, setDecodedUser] = useState({});
+const joinMeeting = async (e) => {
+  e?.preventDefault();
 
-//   useEffect(() => {
-//     const fetchUser = async () => {
-//       try {
-//         const user = await getTokenData();
-//         const safeUser = user || {};
-//         setDecodedUser(safeUser);
-//         setGuestName(safeUser?.name || "");
-//         setGuestEmail(safeUser?.email || "");
-//       } catch (error) {
-//         console.error("Error fetching user data:", error);
-//       } finally {
-//         setIsLoading(false);
-//       }
-//     };
+  const meetingCode = joinCode.trim();
+  const name = guestName.trim();
+  const email = guestEmail.trim();
 
-//     fetchUser();
-//   }, []);
-
-  const joinMeeting = async () => {
-    const meetingCode = joinCode.trim();
-    const name = guestName.trim();
-    const email = guestEmail.trim();
-
-    if (!meetingCode) return;
-    if (!name) {
-      showErrorToast("Name is required");
-      return;
-    }
-
-    setIsLoading(true);
-
-try {
-  const res = await fetch("/api/user/meeting", {
-    method: "PUT",
-    headers: {
-      "Content-Type": "application/json",
-    },
-    body: JSON.stringify({
-      name,
-      email,
-      meetingId: meetingCode,
-    }),
+  console.log("Attempting to join meeting with:", {
+    meetingCode,
+    name,
+    email,
   });
 
-  const data = await res.json();
+  if (!meetingCode) return;
 
-  if (!res.ok) {
-    throw new Error(data.message || "Something went wrong");
+  if (!name) {
+    showErrorToast("Name is required");
+    return;
   }
 
-  localStorage.setItem(
-    `meeting_guest_profile_${meetingCode}`,
-    JSON.stringify({ name, email })
-  );
+  setIsLoading(true);
 
-  router.push(`/meeting-room/${meetingCode}?role=guest`);
+  try {
+    const res = await fetch("/api/user/meeting", {
+      method: "PUT",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({
+        name,
+        email,
+        meetingId: meetingCode,
+      }),
+    });
 
-} catch (err) {
-  console.error("Join Meeting Error:", err);
-  showErrorToast(err?.message || "Failed to join meeting");
-} finally {
-  setIsLoading(false);
-}
-  };
+    console.log("Response status:", res.status);
 
+    const data = await res.json();
+    console.log("API Response:", data);
+
+    if (!res.ok) {
+      throw new Error(data.message || "Something went wrong");
+    }
+
+    localStorage.setItem(
+      `meeting_guest_profile_${meetingCode}`,
+      JSON.stringify({ name, email })
+    );
+    localStorage.setItem("meeting_data", meetingCode + "_" + name);
+    onClose();
+    window.location.reload();
+
+    router.push(`/meeting-room/${meetingCode}?role=guest`);
+    console.log("Navigation to meeting room successful");
+  } catch (err) {
+    console.error("Join Meeting Error:", err);
+    showErrorToast(err?.message || "Failed to join meeting");
+  } finally {
+    setIsLoading(false);
+  }
+};
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/60">
       <motion.div
@@ -139,6 +134,7 @@ try {
 
         {/* Button */}
         <button
+        type="button"
           onClick={joinMeeting}
           disabled={!joinCode.trim() || !guestName.trim() || isLoading}
           className={`w-full py-3 rounded-xl font-semibold flex items-center justify-center gap-2 transition

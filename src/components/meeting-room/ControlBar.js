@@ -52,6 +52,14 @@ export default function ControlBar({
   const iconButtonBase =
     "w-10 h-10 sm:w-12 sm:h-12 rounded-xl flex items-center justify-center transition shrink-0";
 
+ const handleMeetingAction = () => {
+  if (isHost) {
+    endMeeting();
+  } else {
+    leaveMeeting();
+    localStorage.removeItem("meeting_data");
+  }
+};
   return (
     <motion.div
       initial={{ y: 100 }}
@@ -180,7 +188,17 @@ export default function ControlBar({
 
         {/* Leave / End meeting */}
         <button
-          onClick={isHost ? endMeeting : leaveMeeting}
+          onClick={() => {
+  if (isHost) {
+    endMeeting();
+    localStorage.removeItem("meeting_data");
+    console.log("Meeting ended and meeting data cleared from localStorage for host");
+  } else {
+    leaveMeeting();
+    localStorage.removeItem("meeting_data");
+    console.log("Meeting data cleared from localStorage for guest");
+  }
+}}
           className={`w-12 h-12 sm:w-14 sm:h-14 rounded-xl flex items-center justify-center transition shadow-lg shrink-0 ${
             isHost
               ? "bg-red-600 hover:bg-red-700"

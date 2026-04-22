@@ -4,9 +4,9 @@ export async function POST(request) {
   try {
     const { roomId, userId, isHost,name ,image} = await request.json();
     console.log("Received token request:", { roomId, userId, isHost , name,image});
-    if (!roomId || !userId || !name) {
+    if (!roomId  || !name) {
       return new Response(
-        JSON.stringify({ error: "Missing roomId or userId" }),
+        JSON.stringify({ error: "Missing roomId or name" }),
         { status: 400, headers: { "Content-Type": "application/json" } }
       );
     }
@@ -22,7 +22,7 @@ export async function POST(request) {
     }
 
     const at = new AccessToken(apiKey, apiSecret, {
-      identity: userId,
+      identity: userId || `guest_${Math.floor(Math.random() * 10000)}`,
       name : name,
       ttl: 6 * 60 * 60, // 6 hours
       metadata: JSON.stringify({ isHost: isHost , image: image || null }),

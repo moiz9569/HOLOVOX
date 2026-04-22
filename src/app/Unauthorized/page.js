@@ -48,11 +48,11 @@ export default function UnauthorizedPage() {
         </div>
 
         {/* Footer */}
-        <div className="text-center mt-6">
+        {/* <div className="text-center mt-6">
           <p className="text-gray-600 text-sm">
             Agua DAO Platform
           </p>
-        </div>
+        </div> */}
       </div>
     </div>
   );
