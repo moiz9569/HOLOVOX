@@ -16,7 +16,7 @@ cloudinary.v2.config({
 
 export async function POST(request) {
   try {
-    const { name, email, password, role,image } =
+    const { name, email, password, role,image , status } =
       await request.json();
       console.log("Payload for create-account:", {
         name,
@@ -73,7 +73,8 @@ if (image) {
       password: hashPassword,
       role: role || "user",
       verified : true,
-      image: imageUrl
+      image: imageUrl,
+      status: status || "none"
     });
 
     // Remove password field from response manually
@@ -94,7 +95,8 @@ if (image) {
         role: newUser.role,
         name: newUser?.name,
         verified : newUser?.verified,
-        image: newUser?.image || ""
+        image: newUser?.image || "",
+        status: newUser?.status || "none" 
       },
       process.env.JWT_SECRET || "Holovox",
       { expiresIn: "1d" }
@@ -135,6 +137,51 @@ export async function GET(req) {
 
   } catch (error) {
     console.error("Error fetching users:", error);
+    return NextResponse.json(
+      { error: "Internal Server Error" },
+      { status: 500 }
+    );
+  }
+}
+export async function PUT(request) {
+  try {
+    const { userId, status } =
+      await request.json();
+      console.log("Payload for update user status:", {
+        userId,
+        status
+      });
+    if(!userId || !status){
+      return NextResponse.json(
+        { error: "Missing userId or status" },
+        { status: 400 }
+      );
+    }
+
+    // Connect to DB
+    await connectDB();
+    // Check if user already exists
+    const existedUser = await AuthModel.findOne({ _id: userId });
+    if (!existedUser) {
+      return NextResponse.json(
+        { error: "User not found" },
+        { status: 404 }
+      );
+    }
+    const updatedUser = await AuthModel.findByIdAndUpdate(
+      userId,
+      { status },
+      { new: true }
+    ).select("-password").lean();
+   
+
+  
+    return NextResponse.json(
+      { message: "User updated successfully" },
+      { status: 200 }
+    );
+  } catch (error) {
+    console.error("Error updating user:", error);
     return NextResponse.json(
       { error: "Internal Server Error" },
       { status: 500 }

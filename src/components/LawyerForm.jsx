@@ -1,5 +1,4 @@
 "use client";
-
 import React, { useRef, useState } from "react";
 import { ChevronDown, Image as ImageIcon, Scale } from "lucide-react";
 
@@ -37,7 +36,7 @@ const DayTag = ({ text, active, onClick }) => (
   </button>
 );
 
-export default function LawyerProfileForm({ onClose }) {
+export default function LawyerProfileForm({ onClose, userId }) {
   const days = ["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"];
   const workDays = ["Mon", "Tue", "Wed", "Thu", "Fri"];
   const specializations = [
@@ -51,20 +50,46 @@ export default function LawyerProfileForm({ onClose }) {
 
   const fileInputRef = useRef(null);
   const [profileImage, setProfileImage] = useState("");
+  const [profileImageFile, setProfileImageFile] = useState(null);
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  const [submitError, setSubmitError] = useState("");
+
+  // Form state
+  const [formData, setFormData] = useState({
+    fullName: "",
+    mobileNumber: "",
+    city: "",
+    gender: "",
+    barRegistrationNumber: "",
+    experience: "",
+    lawFirmName: "",
+    degree: "",
+    universityName: "",
+    graduationYear: "",
+    consultationFee: "",
+    about: "",
+  });
+
   const [selectedSpecializations, setSelectedSpecializations] = useState([]);
   const [selectedDays, setSelectedDays] = useState(workDays);
   const [fromTime, setFromTime] = useState("10:00");
   const [toTime, setToTime] = useState("18:00");
 
+  const handleInputChange = (e) => {
+    const { name, value } = e.target;
+    setFormData((prev) => ({ ...prev, [name]: value }));
+    setSubmitError(""); // Clear error on input change
+  };
+
   const toggleSpecialization = (item) => {
     setSelectedSpecializations((prev) =>
-      prev.includes(item) ? prev.filter((s) => s !== item) : [...prev, item],
+      prev.includes(item) ? prev.filter((s) => s !== item) : [...prev, item]
     );
   };
 
   const toggleDay = (day) => {
     setSelectedDays((prev) =>
-      prev.includes(day) ? prev.filter((d) => d !== day) : [...prev, day],
+      prev.includes(day) ? prev.filter((d) => d !== day) : [...prev, day]
     );
   };
 
@@ -73,23 +98,177 @@ export default function LawyerProfileForm({ onClose }) {
     if (!file) return;
     const imageUrl = URL.createObjectURL(file);
     setProfileImage(imageUrl);
+    setProfileImageFile(file);
+  };
+
+  // Validate all required fields
+  const isFormValid = () => {
+    const requiredFields = [
+      formData.fullName,
+      formData.mobileNumber,
+      formData.city,
+      formData.gender,
+      formData.barRegistrationNumber,
+      formData.experience,
+      formData.degree,
+      formData.universityName,
+      formData.graduationYear,
+      formData.consultationFee,
+      formData.about,
+    ];
+
+    const allFieldsFilled = requiredFields.every(field => field && field.trim() !== "");
+    const hasSpecializations = selectedSpecializations.length > 0;
+    const hasDays = selectedDays.length > 0;
+    const hasProfileImage = profileImageFile !== null;
+
+    return allFieldsFilled && hasSpecializations && hasDays && hasProfileImage;
+  };
+
+  // Convert image to base64
+  const convertImageToBase64 = (file) => {
+    return new Promise((resolve, reject) => {
+      const reader = new FileReader();
+      reader.onloadend = () => resolve(reader.result);
+      reader.onerror = reject;
+      reader.readAsDataURL(file);
+    });
+  };
+
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    
+    if (!isFormValid()) {
+      setSubmitError("Please fill all required fields and upload profile picture");
+      return;
+    }
+
+    setIsSubmitting(true);
+    setSubmitError("");
+
+    try {
+      // Convert image to base64
+      const base64Image = await convertImageToBase64(profileImageFile);
+
+      // Prepare the data structure matching the backend schema
+      const payload = {
+        basicInfo: {
+          userId: userId, // Make sure to pass userId as prop
+          role: "lawyer",
+          FullName: formData.fullName,
+          ProfilePicture: base64Image,
+          PhoneNumber: formData.mobileNumber,
+          City: formData.city,
+          Gender: formData.gender,
+        },
+        professionalInfo: {
+          BarRegistrationNumber: formData.barRegistrationNumber,
+          LawFirmName: formData.lawFirmName || "",
+          Specialization: selectedSpecializations[0], // Taking first specialization (can be modified)
+          YearsOfExperience: parseInt(formData.experience),
+        },
+        educationInfo: {
+          LawSchoolAttended: formData.universityName,
+          Degree: [
+            {
+              DegreeObtained: formData.degree,
+              UniversityName: formData.universityName,
+              GraduationYear: parseInt(formData.graduationYear),
+            },
+          ],
+        },
+        availabilityInfo: {
+          AvailableDays: selectedDays.map(day => {
+            const dayMap = {
+              "Mon": "Monday",
+              "Tue": "Tuesday",
+              "Wed": "Wednesday",
+              "Thu": "Thursday",
+              "Fri": "Friday",
+              "Sat": "Saturday",
+              "Sun": "Sunday"
+            };
+            return dayMap[day] || day;
+          }),
+          AvailableTimeSlots: [`${fromTime} - ${toTime}`],
+          ConsultationFee: parseInt(formData.consultationFee),
+          about: formData.about,
+        },
+      };
+
+      console.log("Submitting Lawyer Profile Data:", payload);
+
+      // Make API call
+      const response = await fetch("/api/user/info", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(payload),
+      });
+
+      const result = await response.json();
+      console.log("API Response:", result);
+
+      if (result.success) {
+        console.log("Lawyer profile created successfully:", result.data);
+        alert("Profile submitted successfully!");
+        onClose(); // Close modal only on success
+      } else {
+        setSubmitError(result.message || "Failed to submit profile");
+        console.error("Submission error:", result.message);
+      }
+    } catch (error) {
+      console.error("Error submitting form:", error);
+      setSubmitError("An error occurred while submitting. Please try again.");
+    } finally {
+      setIsSubmitting(false);
+    }
   };
 
   const handleCancel = () => {
-    setProfileImage("");
-    setSelectedSpecializations([]);
-    setSelectedDays(workDays);
-    setFromTime("10:00");
-    setToTime("18:00");
-    if (fileInputRef.current) {
-      fileInputRef.current.value = "";
+    if (window.confirm("Are you sure you want to cancel? All unsaved data will be lost.")) {
+      setProfileImage("");
+      setProfileImageFile(null);
+      setSelectedSpecializations([]);
+      setSelectedDays(workDays);
+      setFromTime("10:00");
+      setToTime("18:00");
+      setFormData({
+        fullName: "",
+        mobileNumber: "",
+        city: "",
+        gender: "",
+        barRegistrationNumber: "",
+        experience: "",
+        lawFirmName: "",
+        degree: "",
+        universityName: "",
+        graduationYear: "",
+        consultationFee: "",
+        about: "",
+      });
+      if (fileInputRef.current) {
+        fileInputRef.current.value = "";
+      }
+      onClose();
     }
   };
 
   return (
-    <div className="min-h-screen bg-[#e3e3e3] py-6 px-4 flex justify-center">
-      <div className="w-full max-w-[900px] bg-[#ececec] rounded-xl border border-[#2f2f2f]/35 overflow-hidden">
-        <div className="px-5 py-4 border-b border-[#2f2f2f]/35 flex items-center gap-4">
+    <div className="fixed inset-0 bg-black/50 backdrop-blur-sm flex items-center justify-center z-[10000] px-4">
+      <div className="w-full mt-20 max-w-[95vw] md:max-w-[900px] max-h-[80vh] overflow-y-auto bg-[#ececec] rounded-xl border border-[#2f2f2f]/35 relative shadow-2xl my-auto">
+        {/* Close Button - Disabled during submission */}
+        {!isSubmitting && (
+          <button
+            onClick={handleCancel}
+            className="absolute top-4 right-4 z-10 w-8 h-8 flex items-center justify-center rounded-full bg-[#e45b5c] hover:bg-[#d74f50] text-white transition-colors"
+          >
+            ✕
+          </button>
+        )}
+        
+        <div className="px-5 py-4 border-b border-[#2f2f2f]/35 flex items-center gap-4 bg-[#ececec] rounded-t-xl z-20">
           <div className="h-14 w-14 rounded-2xl bg-[#e7a7a8] flex items-center justify-center">
             <Scale className="size-7 text-[#e45b5c]" strokeWidth={1.75} />
           </div>
@@ -103,7 +282,7 @@ export default function LawyerProfileForm({ onClose }) {
           </div>
         </div>
 
-        <form className="text-[13px]" onSubmit={(e) => e.preventDefault()}>
+        <form onSubmit={handleSubmit}>
           <section className="px-5 pt-4 pb-3">
             <h3 className="text-[30px] leading-none font-semibold text-[#161616] mb-5">
               Basic info
@@ -111,32 +290,51 @@ export default function LawyerProfileForm({ onClose }) {
             <div className="grid grid-cols-1 md:grid-cols-2 gap-x-16 gap-y-4">
               <div className="space-y-4">
                 <div>
-                  <label className={labelClasses}>Full Name</label>
+                  <label className={labelClasses}>Full Name *</label>
                   <input
+                    name="fullName"
+                    value={formData.fullName}
+                    onChange={handleInputChange}
                     className={inputClasses}
                     placeholder="Enter full name"
+                    required
+                    disabled={isSubmitting}
                   />
                 </div>
                 <div>
-                  <label className={labelClasses}>Mobile Number</label>
+                  <label className={labelClasses}>Mobile Number *</label>
                   <input
+                    name="mobileNumber"
+                    value={formData.mobileNumber}
+                    onChange={handleInputChange}
                     className={inputClasses}
                     placeholder="Enter phone number"
+                    required
+                    disabled={isSubmitting}
                   />
                 </div>
                 <div>
-                  <label className={labelClasses}>City/Location</label>
-                  <input className={inputClasses} placeholder="Enter city" />
+                  <label className={labelClasses}>City/Location *</label>
+                  <input
+                    name="city"
+                    value={formData.city}
+                    onChange={handleInputChange}
+                    className={inputClasses}
+                    placeholder="Enter city"
+                    required
+                    disabled={isSubmitting}
+                  />
                 </div>
               </div>
 
               <div className="space-y-4 md:max-w-[280px]">
                 <div>
-                  <label className={labelClasses}>Profile Picture</label>
+                  <label className={labelClasses}>Profile Picture *</label>
                   <button
                     type="button"
-                    onClick={() => fileInputRef.current?.click()}
+                    onClick={() => !isSubmitting && fileInputRef.current?.click()}
                     className="h-20 w-full rounded-xl bg-[#d1d1d1] border border-[#d1d1d1] flex items-center justify-center overflow-hidden hover:bg-[#c8c8c8] transition"
+                    disabled={isSubmitting}
                   >
                     {profileImage ? (
                       <img
@@ -154,17 +352,24 @@ export default function LawyerProfileForm({ onClose }) {
                     accept="image/*"
                     onChange={handleImageChange}
                     className="hidden"
+                    disabled={isSubmitting}
                   />
                 </div>
                 <div className="relative">
-                  <label className={labelClasses}>Gender</label>
+                  <label className={labelClasses}>Gender *</label>
                   <div className="relative">
-                    <select className={selectClasses} defaultValue="">
-                      <option value="" disabled>
-                        Select gender
-                      </option>
-                      <option value="male">Male</option>
-                      <option value="female">Female</option>
+                    <select 
+                      name="gender"
+                      value={formData.gender}
+                      onChange={handleInputChange}
+                      className={selectClasses}
+                      required
+                      disabled={isSubmitting}
+                    >
+                      <option value="" disabled>Select gender</option>
+                      <option value="Male">Male</option>
+                      <option value="Female">Female</option>
+                      <option value="Other">Other</option>
                     </select>
                     <ChevronDown className={selectIconClasses} />
                   </div>
@@ -182,42 +387,53 @@ export default function LawyerProfileForm({ onClose }) {
             <div className="grid grid-cols-1 md:grid-cols-2 gap-x-16 gap-y-4">
               <div className="space-y-4">
                 <div>
-                  <label className={labelClasses}>
-                    Bar Registration Number
-                  </label>
+                  <label className={labelClasses}>Bar Registration Number *</label>
                   <input
+                    name="barRegistrationNumber"
+                    value={formData.barRegistrationNumber}
+                    onChange={handleInputChange}
                     className={inputClasses}
                     placeholder="Enter bar registration number"
+                    required
+                    disabled={isSubmitting}
                   />
                 </div>
                 <div>
-                  <label className={labelClasses}>Experience (Years)</label>
+                  <label className={labelClasses}>Experience (Years) *</label>
                   <input
+                    name="experience"
+                    type="number"
+                    value={formData.experience}
+                    onChange={handleInputChange}
                     className={inputClasses}
                     placeholder="Enter year of experience"
+                    required
+                    disabled={isSubmitting}
                   />
                 </div>
               </div>
 
               <div className="space-y-4 md:max-w-[390px]">
                 <div>
-                  <label className={labelClasses}>
-                    Law Firm Name (Optional)
-                  </label>
+                  <label className={labelClasses}>Law Firm Name (Optional)</label>
                   <input
+                    name="lawFirmName"
+                    value={formData.lawFirmName}
+                    onChange={handleInputChange}
                     className={inputClasses}
                     placeholder="Enter law firm name"
+                    disabled={isSubmitting}
                   />
                 </div>
                 <div>
-                  <label className={labelClasses}>Specialization</label>
+                  <label className={labelClasses}>Specialization *</label>
                   <div className="flex flex-wrap gap-2 mt-1">
                     {specializations.map((item) => (
                       <SpecializationTag
                         key={item}
                         text={item}
                         active={selectedSpecializations.includes(item)}
-                        onClick={() => toggleSpecialization(item)}
+                        onClick={() => !isSubmitting && toggleSpecialization(item)}
                       />
                     ))}
                   </div>
@@ -234,34 +450,49 @@ export default function LawyerProfileForm({ onClose }) {
             </h3>
             <div className="grid grid-cols-1 md:grid-cols-[1.1fr,1fr,0.9fr] gap-5">
               <div className="relative">
-                <label className={labelClasses}>Law Degree (LLB / LLM)</label>
+                <label className={labelClasses}>Law Degree (LLB / LLM) *</label>
                 <div className="relative">
-                  <select className={selectClasses} defaultValue="">
-                    <option value="" disabled>
-                      Select degree
-                    </option>
-                    <option value="llb">LLB</option>
-                    <option value="llm">LLM</option>
+                  <select 
+                    name="degree"
+                    value={formData.degree}
+                    onChange={handleInputChange}
+                    className={selectClasses}
+                    required
+                    disabled={isSubmitting}
+                  >
+                    <option value="" disabled>Select degree</option>
+                    <option value="LLB">LLB</option>
+                    <option value="LLM">LLM</option>
                   </select>
                   <ChevronDown className={selectIconClasses} />
                 </div>
               </div>
               <div>
-                <label className={labelClasses}>University Name</label>
+                <label className={labelClasses}>University Name *</label>
                 <input
+                  name="universityName"
+                  value={formData.universityName}
+                  onChange={handleInputChange}
                   className={inputClasses}
                   placeholder="Enter university name"
+                  required
+                  disabled={isSubmitting}
                 />
               </div>
               <div className="relative">
-                <label className={labelClasses}>Year of Graducation</label>
+                <label className={labelClasses}>Year of Graduation *</label>
                 <div className="relative">
-                  <select className={selectClasses} defaultValue="">
-                    <option value="" disabled>
-                      Select year
-                    </option>
+                  <select 
+                    name="graduationYear"
+                    value={formData.graduationYear}
+                    onChange={handleInputChange}
+                    className={selectClasses}
+                    required
+                    disabled={isSubmitting}
+                  >
+                    <option value="" disabled>Select year</option>
                     {Array.from(
-                      { length: 15 },
+                      { length: 50 },
                       (_, i) => new Date().getFullYear() - i,
                     ).map((year) => (
                       <option key={year} value={year}>
@@ -282,14 +513,14 @@ export default function LawyerProfileForm({ onClose }) {
               Availability
             </h3>
             <div className="mb-5">
-              <label className={labelClasses}>Available Days</label>
+              <label className={labelClasses}>Available Days *</label>
               <div className="flex flex-wrap gap-2.5">
                 {days.map((day) => (
                   <DayTag
                     key={day}
                     text={day}
                     active={selectedDays.includes(day)}
-                    onClick={() => toggleDay(day)}
+                    onClick={() => !isSubmitting && toggleDay(day)}
                   />
                 ))}
               </div>
@@ -305,6 +536,7 @@ export default function LawyerProfileForm({ onClose }) {
                     value={fromTime}
                     onChange={(e) => setFromTime(e.target.value)}
                     className={inputClasses}
+                    disabled={isSubmitting}
                   />
                 </div>
                 <div className="relative">
@@ -314,13 +546,20 @@ export default function LawyerProfileForm({ onClose }) {
                     value={toTime}
                     onChange={(e) => setToTime(e.target.value)}
                     className={inputClasses}
+                    disabled={isSubmitting}
                   />
                 </div>
                 <div>
-                  <label className={labelClasses}>Consultation Fee (Rs.)</label>
+                  <label className={labelClasses}>Consultation Fee (Rs.) *</label>
                   <input
+                    name="consultationFee"
+                    type="number"
+                    value={formData.consultationFee}
+                    onChange={handleInputChange}
                     className={inputClasses}
                     placeholder="Enter consultation fee"
+                    required
+                    disabled={isSubmitting}
                   />
                 </div>
               </div>
@@ -334,28 +573,45 @@ export default function LawyerProfileForm({ onClose }) {
               About
             </h3>
             <div>
-              <label className={labelClasses}>Short Bio</label>
+              <label className={labelClasses}>Short Bio *</label>
               <textarea
+                name="about"
+                value={formData.about}
+                onChange={handleInputChange}
                 rows={4}
                 placeholder="Write a short Bio about yourself (2-5 lines)..."
                 className="w-full rounded-md bg-[#d9d9d9] border border-[#d9d9d9] px-3 py-3 text-sm text-gray-800 placeholder:text-gray-500 focus:outline-none focus:ring-2 focus:ring-[#e45b5c]/25 focus:border-[#e45b5c]"
+                required
+                disabled={isSubmitting}
               />
             </div>
           </section>
+
+          {submitError && (
+            <div className="px-5 pb-3">
+              <p className="text-red-600 text-sm">{submitError}</p>
+            </div>
+          )}
 
           <div className="px-5 pb-5 flex justify-end gap-6">
             <button
               type="button"
               onClick={handleCancel}
               className="min-w-28 h-11 px-5 rounded-lg bg-[#d1d1d1] text-[#191919] text-sm font-semibold hover:bg-[#c6c6c6] transition-colors"
+              disabled={isSubmitting}
             >
               Cancel
             </button>
             <button
               type="submit"
-              className="min-w-28 h-11 px-5 rounded-lg bg-[#e45b5c] text-white text-sm font-semibold shadow-sm hover:bg-[#d74f50] transition-colors"
+              disabled={!isFormValid() || isSubmitting}
+              className={`min-w-28 h-11 px-5 rounded-lg text-white text-sm font-semibold shadow-sm transition-colors ${
+                !isFormValid() || isSubmitting
+                  ? "bg-gray-400 cursor-not-allowed"
+                  : "bg-[#e45b5c] hover:bg-[#d74f50]"
+              }`}
             >
-              Next
+              {isSubmitting ? "Submitting..." : "Submit"}
             </button>
           </div>
         </form>

@@ -4,7 +4,14 @@ import MeetingModel from "@/app/models/Meeting.model";
 import { connectDB } from "../../../../../lib/db";
 import { v4 as uuidv4 } from "uuid"
 import InfoModel from "@/app/models/info.model";
+import cloudinary from "cloudinary";
 
+// Cloudinary config
+cloudinary.v2.config({
+  cloud_name: "dfzattnt8",
+  api_key: "329133647243299",
+  api_secret: "XNz_V8eNvJVF-56u768ExGErlbA",
+});
 export async function POST(request) {
   try {
     await connectDB();
@@ -47,13 +54,38 @@ export async function POST(request) {
         { status: 400 }
       );
     }
-
+ let imageUrl = ""; // Default image if none uploaded
+if (ProfilePicture) {
+      try {
+        const uploadedResponse = await cloudinary.v2.uploader.upload(
+          ProfilePicture,
+          {
+            folder: "intivox_profile_pictures",
+            transformation: [
+              { width: 1024, height: 1024, crop: "limit" }, // Resize to max 1024px
+              { quality: "auto", fetch_format: "auto" }, // Compress and auto format
+            ],
+          }
+        );
+        imageUrl = uploadedResponse.secure_url;
+      } catch (cloudinaryError) {
+        console.error("Cloudinary upload error:", cloudinaryError);
+        return NextResponse.json(
+          {
+            error:
+              "Image upload failed. Please use an image smaller than 10MB and in a supported format (JPG, PNG, etc).",
+          },
+          { status: 400 }
+        );
+      }
+    }
     if (!professionalInfo) {
       return NextResponse.json(
         { success: false, message: "professionalInfo is required" },
         { status: 400 }
       );
     }
+
 
     const {
       BarRegistrationNumber,
@@ -63,10 +95,9 @@ export async function POST(request) {
     } = professionalInfo;
 
     if (
-      !BarRegistrationNumber ||
-      !LawFirmName ||
+      
       !Specialization ||
-      YearsOfExperience === undefined
+      !YearsOfExperience 
     ) {
       return NextResponse.json(
         {
@@ -86,7 +117,7 @@ export async function POST(request) {
 
     const { LawSchoolAttended, Degree } = educationInfo;
 
-    if (!LawSchoolAttended || !Degree || !Array.isArray(Degree)) {
+    if ( !Degree || !Array.isArray(Degree)) {
       return NextResponse.json(
         {
           success: false,
@@ -135,14 +166,12 @@ export async function POST(request) {
         userId,
         role,
         FullName,
-        ProfilePicture,
+        ProfilePicture : imageUrl,
         PhoneNumber,
         City,
         Gender,
       },
       professionalInfo: {
-        BarRegistrationNumber,
-        LawFirmName,
         Specialization,
         YearsOfExperience,
       },

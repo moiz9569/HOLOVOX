@@ -31,6 +31,11 @@ const UserSchema = new mongoose.Schema(
     image:{
       type: String, 
       default: "" // Default to empty string if no image is provided
+    },
+    status:{
+      type: String,
+      enum: ["filled", "unfilled","none"], 
+      default: "none" // Default to empty string if no image is provided
     }
   },
   

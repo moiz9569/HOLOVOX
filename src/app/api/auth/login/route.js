@@ -139,7 +139,8 @@ export async function POST(request) {
         role: user.role,
         name: user.name,
         verified: user.verified,
-        image : user.image || " "
+        image : user.image || " ",
+        status: user.status || "none"
       },
       process.env.JWT_SECRET || "Hashfor",
       { expiresIn: "1d" }

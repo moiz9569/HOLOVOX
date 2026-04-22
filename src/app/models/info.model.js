@@ -40,17 +40,15 @@ const ProfessionalInfoSchema = new mongoose.Schema(
   {
     BarRegistrationNumber : {
       type: String,
-      required: true,
       unique: true
     },
     LawFirmName:{
         type: String,
-        required: true,
     },
     Specialization : {
         type: String,
         required: true,
-        enum: ["Orthopedic","Dentist","Pediatrician","Neurologist","Dermatologist","Cardiologist ","General Physician ","Criminal Law", "Civil Law", "Corporate Law", "Family Law", "Intellectual Property Law", "Labor and Employment Law", "Tax Law", "Environmental Law", "Human Rights Law", "International Law", "Other"],
+        enum: ["Orthopedic","Dentist","Pediatrician","Neurologist","Dermatologist","Cardiologist","General Physician","Criminal Law", "Civil Law", "Corporate Law", "Family Law", "Intellectual Property Law", "Labor and Employment Law", "Tax Law", "Environmental Law", "Human Rights Law", "International Law", "Other"],
         default: "Other"
     },
     YearsOfExperience : {
@@ -91,7 +89,7 @@ const DegreeSchema = new mongoose.Schema({
 const EducationInfoSchema = new mongoose.Schema({
     LawSchoolAttended : {
         type: String,   
-        required: true,
+        default: ""
     },  
     Degree: {
     type: [DegreeSchema],   // 👈 ARRAY OF OBJECTS (correct way)

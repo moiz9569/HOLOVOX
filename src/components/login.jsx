@@ -227,7 +227,7 @@ export default function LoginForm({ isOpen, onClose, openSignup }) {
 
       // Determine redirect path
       const redirectPath =
-        data?.user?.role === "user" ? "/home" : "/admindashboard";
+        data?.user?.role === "user" ? "/home" : "/home";
 
       // Add a small delay to show loading state
       setTimeout(() => {

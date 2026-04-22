@@ -1,8 +1,14 @@
 import React from "react";
 import { MapPin, Star, Video } from "lucide-react";
+import { showSuccessToast } from "../../lib/toast";
 
 const DoctorProfileModal = ({ onClose }) => {
 //   if (!isOpen) return null;
+
+function handleClick() {
+  showSuccessToast("Request sent successfully!");
+  onClose();
+}
 
   return (
     <div className="fixed inset-0 bg-black/40 flex items-center justify-center z-[9999]">
@@ -121,9 +127,9 @@ const DoctorProfileModal = ({ onClose }) => {
           </div>
 
           {/* Button */}
-          <button className="mt-4 bg-red-500 hover:bg-red-600 text-white py-3 rounded-xl flex items-center justify-center gap-2">
+          <button onClick={handleClick} className="mt-4 bg-red-500 hover:bg-red-600 text-white py-3 rounded-xl flex items-center justify-center gap-2">
             <Video size={18} />
-            Start Meeting
+            Request
           </button>
         </div>
 

@@ -13,6 +13,8 @@ import MarketplaceModal from "@/components/MarketplaceModal";
 import DoctorCategoryModal from "@/components/DoctorCategoryModal";
 import CardiologistsModal from "@/components/CardiologistsModal";
 import DoctorProfileModal from "@/components/DoctorProfileModal";
+import LawyerProfileForm from "@/components/LawyerForm";
+import DoctorProfileForm from "@/components/DoctorForm";
 
 const HomeDashboard = () => {
   const router = useRouter();
@@ -25,6 +27,8 @@ const HomeDashboard = () => {
   const [showDoctorModal, setShowDoctorModal] = useState(false);
   const [showCardiologistsModal, setShowCardiologistsModal] = useState(false);
   const [showDoctorProfileModal, setShowDoctorProfileModal] = useState(false);
+  const [showLawyerForm, setShowLawyerForm] = useState(false);
+const [showDoctorForm, setShowDoctorForm] = useState(false);
 
   const [meetingData, setMeetingData] = useState(null);
   const fetchUpcomingMeetings = async () => {
@@ -54,6 +58,7 @@ const HomeDashboard = () => {
     getTokenData()
       .then((user) => {
         console.log("Decoded User:", user);
+
         setDecodedUser(user || {});
         setLoading(false);
       })
@@ -64,6 +69,24 @@ const HomeDashboard = () => {
     fetchUpcomingMeetings();
     // fetchUser();
   }, []);
+
+  useEffect(() => {
+  if (!loading && decodedUser) {
+    if (
+      decodedUser?.status === "unfilled" &&
+      decodedUser?.role === "lawyer"
+    ) {
+      setShowLawyerForm(true);
+    }
+
+    if (
+      decodedUser?.status === "unfilled" &&
+      decodedUser?.role === "doctor"
+    ) {
+      setShowDoctorForm(true);
+    }
+  }
+}, [decodedUser, loading]);
 
   const createMeeting = async () => {
     const id = uuidv4().slice(0, 6);
@@ -173,7 +196,7 @@ const HomeDashboard = () => {
           className="cursor-pointer h-32 xl:h-28 p-6 rounded-2xl bg-[#E51A54] hover:scale-105 transition"
         >
           <Video className="text-white" />
-          <h3 className="font-semibold text-base text-white sm:text-blue-600 md:text-green-600 lg:text-black xl:text-white">New Meeting</h3>
+          <h3 className="font-semibold text-base text-white">New Meeting</h3>
           <p className="text-sm mt-1 opacity-80 text-white">
             Start an instant meeting
           </p>
@@ -357,6 +380,21 @@ const HomeDashboard = () => {
             </div>
           </div>
         )}
+
+        {showLawyerForm && (
+  <LawyerProfileForm 
+  onClose={() => setShowLawyerForm(false)} 
+  userId={decodedUser?.id} // Pass userId to the form
+  />
+
+)}
+
+{showDoctorForm && (
+  <DoctorProfileForm 
+  onClose={() => setShowDoctorForm(false)}
+  userId={decodedUser?.id} // Pass userId to the form
+  />
+)}
 
         {/* <div className="relative"> */}
         {/* Main Card */}
