@@ -665,6 +665,7 @@
 
 import React, { useRef, useState } from "react";
 import { ChevronDown, Image as ImageIcon, Stethoscope } from "lucide-react";
+import { showSuccessToast } from "../../lib/toast";
 
 const inputClasses =
   "w-full h-10 px-3 text-sm rounded-md bg-[#d9d9d9] border border-[#d9d9d9] text-gray-800 placeholder:text-gray-500 focus:outline-none focus:ring-2 focus:ring-[#e45b5c]/25 focus:border-[#e45b5c]";
@@ -939,7 +940,7 @@ export default function DoctorProfileForm({ onClose, userId }) {
             }),
         })
         console.log("Status update response:", await updateStatus.json());
-        alert("Profile submitted successfully!");
+        showSuccessToast("Profile submitted successfully!");
         onClose(); // Close modal only on success
       } else {
         setSubmitError(result.message || "Failed to submit profile");

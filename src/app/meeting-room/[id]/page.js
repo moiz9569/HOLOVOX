@@ -5,6 +5,7 @@ import { LiveKitRoom } from "@livekit/components-react";
 import "@livekit/components-styles/index.css";
 import MeetingUI from "@/components/meeting-room/MeetingUI";
 import { getTokenData } from "@/app/content/data";
+import JoinMeetingModal from "@/components/JoinMeetingModal";
 
 export default function MeetingPage() {
   const { id: roomId } = useParams();
@@ -13,6 +14,7 @@ export default function MeetingPage() {
   const isHost = searchParams.get("role");
   // console.log("role",searchParams.get("role"));
   const [token, setToken] = useState(null);
+  const [openModal, setOpenModal] = useState(false);
   const [decodedUser, setDecodedUser] = useState(null);
   // const [loading, setLoading] = useState(true);
 
@@ -21,6 +23,11 @@ export default function MeetingPage() {
 getTokenData()
       .then((user) => {
         console.log("Decoded User:", user);
+        if(!user){
+          showErrorToast('You are not authorized to join the meeting');
+          setOpenModal(true);
+        }
+        
         setDecodedUser(user || {});
         userId = user?.id ;
         name = user?.name ;
@@ -87,6 +94,12 @@ getTokenData()
       }}
     >
       <MeetingUI isHost={isHost} roomId={roomId} router={router} />
+      {openModal && (
+        <JoinMeetingModal
+          isOpen={openModal}
+          onClose={() => setOpenModal(false)}
+        />
+      )}
     </LiveKitRoom>
   );
 }
