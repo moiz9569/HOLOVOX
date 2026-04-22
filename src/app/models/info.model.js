@@ -48,7 +48,7 @@ const ProfessionalInfoSchema = new mongoose.Schema(
     Specialization : {
         type: String,
         required: true,
-        enum: ["Orthopedic","Dentist","Pediatrician","Neurologist","Dermatologist","Cardiologist","General Physician","Criminal Law", "Civil Law", "Corporate Law", "Family Law", "Intellectual Property Law", "Labor and Employment Law", "Tax Law", "Environmental Law", "Human Rights Law", "International Law", "Other"],
+      enum: ["Orthopedic","Dentist","Pediatrician","Neurologist","Dermatologist","Cardiologist","General Physician","Criminal Law", "Civil Law", "Corporate Law", "Family Law", "Cyber Crime", "Property Law", "Intellectual Property Law", "Labor and Employment Law", "Tax Law", "Environmental Law", "Human Rights Law", "International Law", "Other"],
         default: "Other"
     },
     YearsOfExperience : {
@@ -133,6 +133,7 @@ const InfoSchema = new mongoose.Schema(
 
 // ⚡ Indexing for speed
 InfoSchema.index({ "basicInfo.userId": 1 });
+InfoSchema.index({ "basicInfo.role": 1, "professionalInfo.Specialization": 1, createdAt: -1 });
 
 
 const InfoModel =
