@@ -34,14 +34,16 @@ export default function MeetingUI({ isHost, roomId, router }) {
   };
 
   const meetingState = useMeetingState();
-useEffect(() => {
-  getTokenData().then((res)=>{
-    console.log("Token Data in MeetingUI:", res.id);
-    setUserId(res?.id);
-    setUserName(res?.name);
-    setIsUserLoaded(true);
-  })
-},[])
+
+  useEffect(() => {
+    getTokenData().then((res) => {
+      console.log("Token Data in MeetingUI:", res.id);
+      setUserId(res?.id);
+      setUserName(res?.name);
+      setIsUserLoaded(true);
+    });
+  }, []);
+
   // Subscribe to remote audio tracks
   useEffect(() => {
     if (!meetingState.room) return;
@@ -74,6 +76,40 @@ useEffect(() => {
     };
   }, [meetingState.room]);
 
+  //////////////////////////new/////////////////////////////
+  // Listen for reactions from other participants
+  useEffect(() => {
+    if (!meetingState.room) return;
+
+    const handleDataReceived = (payload, participant) => {
+      try {
+        const data = JSON.parse(new TextDecoder().decode(payload));
+
+        // Check if it's a reaction message
+        if (data.type === "reaction") {
+          console.log(
+            "Reaction received from",
+            participant.name,
+            ":",
+            data.reactionType,
+          );
+
+          // Add reaction from other user
+          meetingState.addReaction(data.reactionType);
+        }
+      } catch (e) {
+        // Not a JSON message, ignore (probably chat)
+      }
+    };
+
+    meetingState.room.on(RoomEvent.DataReceived, handleDataReceived);
+
+    return () => {
+      meetingState.room.off(RoomEvent.DataReceived, handleDataReceived);
+    };
+  }, [meetingState.room]);
+  //////////////////////////new/////////////////////////////
+
   // Global click handler to resume paused audio (bypass autoplay)
   useEffect(() => {
     const handleGlobalClick = () => {
@@ -91,21 +127,27 @@ useEffect(() => {
 
   const { permissions, updatePermissions } = usePermissions(
     isHost,
-    showNotification
+    showNotification,
   );
 
-  const chat = useChat(meetingState.room, permissions, roomId, userId, userName);
+  const chat = useChat(
+    meetingState.room,
+    permissions,
+    roomId,
+    userId,
+    userName,
+  );
 
   const whiteboard = useWhiteboard(
     meetingState.showWhiteboard,
-    meetingState.whiteboardColor
+    meetingState.whiteboardColor,
   );
   const recording = useRecording(roomId, userId);
 
   // Helper functions
   const copyLink = () => {
     navigator.clipboard.writeText(
-      `${window.location.origin}/meeting-room/${roomId}?role=guest`
+      `${window.location.origin}/meeting-room/${roomId}?role=guest`,
     );
     showNotification("Invite link copied to clipboard!", "success");
   };
@@ -113,17 +155,17 @@ useEffect(() => {
   const toggleAudio = async () => {
     if (meetingState.localParticipant.isMicrophoneEnabled) {
       await meetingState.localParticipant.localParticipant.setMicrophoneEnabled(
-        false
+        false,
       );
       meetingState.setIsMuted(true);
     } else {
       await meetingState.localParticipant.localParticipant.setMicrophoneEnabled(
-        true
+        true,
       );
       meetingState.setIsMuted(false);
     }
     showNotification(
-      meetingState.isMuted ? "Microphone unmuted" : "Microphone muted"
+      meetingState.isMuted ? "Microphone unmuted" : "Microphone muted",
     );
   };
 
@@ -131,17 +173,17 @@ useEffect(() => {
     if (permissions.startVideo || isHost) {
       if (meetingState.localParticipant.isCameraEnabled) {
         await meetingState.localParticipant.localParticipant.setCameraEnabled(
-          false
+          false,
         );
         meetingState.setIsVideoOff(true);
       } else {
         await meetingState.localParticipant.localParticipant.setCameraEnabled(
-          true
+          true,
         );
         meetingState.setIsVideoOff(false);
       }
       showNotification(
-        meetingState.isVideoOff ? "Camera turned on" : "Camera turned off"
+        meetingState.isVideoOff ? "Camera turned on" : "Camera turned off",
       );
     } else {
       showNotification("Video is disabled by host", "error");
@@ -153,7 +195,7 @@ useEffect(() => {
       if (meetingState.isScreenSharing) {
         const screenPub =
           meetingState.localParticipant.localParticipant.getTrackPublication(
-            Track.Source.ScreenShare
+            Track.Source.ScreenShare,
           );
         if (screenPub) await screenPub.unpublish();
         meetingState.setIsScreenSharing(false);
@@ -167,7 +209,7 @@ useEffect(() => {
           const track = stream.getVideoTracks()[0];
           await meetingState.localParticipant.localParticipant.publishTrack(
             track,
-            { source: Track.Source.ScreenShare }
+            { source: Track.Source.ScreenShare },
           );
           meetingState.setIsScreenSharing(true);
           showNotification("Started screen sharing");
@@ -208,7 +250,7 @@ useEffect(() => {
     showNotification(
       meetingState.meetingLocked
         ? "Meeting unlocked"
-        : "Meeting locked - No new participants can join"
+        : "Meeting locked - No new participants can join",
     );
   };
 
@@ -217,20 +259,47 @@ useEffect(() => {
     showNotification(
       meetingState.hideProfilePictures
         ? "Profile pictures visible"
-        : "Profile pictures hidden"
+        : "Profile pictures hidden",
     );
   };
 
+  // const addReactionWithNotification = (type) => {
+  //   meetingState.addReaction(type);
+  //   showNotification(`You sent a ${type} reaction`);
+  //   meetingState.setShowReactions(false);
+  // };
+
+  //////////////////////////new/////////////////////////////
   const addReactionWithNotification = (type) => {
+    // Add to local state
     meetingState.addReaction(type);
+
+    // Broadcast to all participants via LiveKit
+    if (meetingState.room && meetingState.room.localParticipant) {
+      const reactionData = {
+        type: "reaction",
+        reactionType: type,
+        senderId: userId,
+        senderName: userName || "Guest",
+      };
+
+      const encoder = new TextEncoder();
+      const payload = encoder.encode(JSON.stringify(reactionData));
+
+      meetingState.room.localParticipant
+        .publishData(payload, { reliable: false })
+        .catch((err) => console.error("Failed to broadcast reaction:", err));
+    }
+
     showNotification(`You sent a ${type} reaction`);
     meetingState.setShowReactions(false);
   };
+  //////////////////////////new/////////////////////////////
 
   const getReactionIcon = (type) => {
     switch (type) {
       case "thumbsup":
-        return <ThumbsUp size={24} className="text-yellow-400" />;
+        return <ThumbsUp size={24} className="text-blue-400" />;
       case "smile":
         return <Smile size={24} className="text-yellow-400" />;
       case "heart":
@@ -238,7 +307,7 @@ useEffect(() => {
       case "laugh":
         return <Laugh size={24} className="text-yellow-400" />;
       case "frown":
-        return <Frown size={24} className="text-yellow-400" />;
+        return <Frown size={24} className="text-red-600" />;
       default:
         return <Smile size={24} className="text-yellow-400" />;
     }
@@ -434,10 +503,6 @@ useEffect(() => {
     </div>
   );
 }
-
-
-
-
 
 // import { useState } from "react";
 // import { useRouter } from "next/navigation";

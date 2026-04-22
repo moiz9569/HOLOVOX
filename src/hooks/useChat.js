@@ -24,6 +24,10 @@ export const useChat = (room, permissions, meetingId, userId, userName) => {
       try {
         const message = JSON.parse(new TextDecoder().decode(payload));
         const senderName = participant.name || participant.identity;
+
+
+        // Ignore reaction messages
+        if (message.type === "reaction") return;
         
         // Check for duplicate (avoid adding same message twice)
         setMessages((prev) => {
