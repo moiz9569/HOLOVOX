@@ -16,29 +16,48 @@ const DoctorProfileModal = ({ onClose, provider }) => {
         showErrorToast("Please login first");
         return;
       }
+
+      // Try different possible ID field names
+      const userId = user.id || user._id || user.userId;
+      console.log("Extracted userId:", user._id);
+      if (!userId) {
+        showErrorToast("User ID not found. Please login again.");
+        return;
+      }
+
+      const receiverId = provider.userId || provider.basicInfo?.userId || provider.id || provider._id;
+      if (!receiverId) {
+        showErrorToast("Provider user ID not available. Please try again later.");
+        return;
+      }
+
       console.log("Current user:", user);
+      console.log("Using senderId:", userId);
       console.log("Current Provider:", provider);
+      console.log("Using receiverId:", receiverId);
+
       const response = await fetch("/api/user/request", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
-          senderId: user.id,
-          receiverId: provider._id || provider.id,
-          role: user?.role || "user",
+          senderId: userId,
+          receiverId,
+          role: user?.role,
         }),
       });
 
       const data = await response.json();
+      console.log("API Response:", data);
 
       if (response.ok) {
         showSuccessToast("Request sent successfully!");
         onClose();
       } else {
-        showErrorToast(data.message || "Failed to send request");
+        showErrorToast(data.error || data.message || "Failed to send request");
       }
     } catch (error) {
       console.error("Error sending request:", error);
-      showErrorToast("Failed to send request");
+      showErrorToast(data.error || data.message || "Failed to send request");
     } finally {
       setLoading(false);
     }

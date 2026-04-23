@@ -1,6 +1,7 @@
 import { NextResponse } from "next/server";
 import cloudinary from "cloudinary";
 import PersonalMessageModel from "@/app/models/RequestMessages.model";
+import RequestModel from "@/app/models/Request";
 import { connectDB } from "../../../../../../lib/db";
 
 
@@ -10,6 +11,19 @@ cloudinary.v2.config({
   api_key: "329133647243299",
   api_secret: "XNz_V8eNvJVF-56u768ExGErlbA",
 });
+
+// Helper function to check if there's an accepted request between two users
+async function hasAcceptedRequest(senderId, receiverId) {
+  const request = await RequestModel.findOne({
+    $or: [
+      { sender: senderId, receiver: receiverId },
+      { sender: receiverId, receiver: senderId }
+    ],
+    status: "accepted"
+  }).lean();
+
+  return !!request;
+}
 
 
 
@@ -22,7 +36,7 @@ export async function POST(req) {
     const sender = formData.get("senderId");
     const receiver = formData.get("receiverId");
 
-    let text = formData.get("text"); // ✅ model ke mutabiq
+    let text = formData.get("text");
     const file = formData.get("file");
 
     // ❗ Validation
@@ -37,6 +51,15 @@ export async function POST(req) {
       return NextResponse.json(
         { error: "Message cannot be empty" },
         { status: 400 }
+      );
+    }
+
+    // Check if there's an accepted request between these users
+    const hasAccepted = await hasAcceptedRequest(sender, receiver);
+    if (!hasAccepted) {
+      return NextResponse.json(
+        { error: "Cannot send messages without an accepted request" },
+        { status: 403 }
       );
     }
 
@@ -104,6 +127,15 @@ export async function GET(req) {
       return NextResponse.json(
         { error: "senderId and receiverId required" },
         { status: 400 }
+      );
+    }
+
+    // Check if there's an accepted request between these users
+    const hasAccepted = await hasAcceptedRequest(senderId, receiverId);
+    if (!hasAccepted) {
+      return NextResponse.json(
+        { error: "Cannot fetch messages without an accepted request" },
+        { status: 403 }
       );
     }
 

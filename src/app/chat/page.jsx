@@ -68,10 +68,21 @@ export default function ChatUI() {
       try {
         const userData = await getTokenData();
         console.log("Fetched user data:", userData);
-        setUser(userData);
+        if (userData) {
+          setUser(userData);
+        } else {
+          console.log("No user data found - user not logged in");
+          showErrorToast("Please login to access chat features");
+          // Optionally redirect to login page
+          // window.location.href = "/login";
+        }
       } catch (error) {
         console.error("Error fetching user:", error);
-        showErrorToast("Failed to load user data");
+        showErrorToast("Failed to load user data. Please login again.");
+        // Optionally redirect to login page
+        // window.location.href = "/login";
+      } finally {
+        setLoading(false);
       }
     };
     fetchUser();
@@ -81,28 +92,34 @@ export default function ChatUI() {
   const fetchRequests = async (userData) => {
     try {
       setLoading(true);
-      if (!userData?.id) {
-        console.warn("User ID not available");
+      console.log("fetchRequests called with userData:", userData);
+
+      if (!userData?.id && !userData?._id && !userData?.userId) {
+        console.warn("User ID not available in any expected field:", userData);
         setRequests([]);
         setAcceptedConnections([]);
         return;
       }
-      
+
+      // Try different possible ID field names
+      const userId = userData.id || userData._id || userData.userId;
+      const userRole = userData.role || "user";
+
       // Fixed URL string: Changed '&&' to '&' so the backend param extraction works
-      const endpoint = `/api/user/request?userId=${userData.id}&role=${userData.role}`;
+      const endpoint = `/api/user/request?userId=${userId}&role=${userRole}`;
       console.log("Fetching requests from:", endpoint);
-      
+
       const response = await fetch(endpoint);
       const data = await response.json();
-      
+
       console.log("Requests response:", data, "Status:", response.status);
-      
+
       if (response.ok && Array.isArray(data)) {
         setRequests(data);
         const accepted = data.filter(req => req.status === "accepted");
         setAcceptedConnections(accepted);
       } else {
-        console.warn("Requests response not ok or not array");
+        console.warn("Requests response not ok or not array:", data);
         setRequests([]);
         setAcceptedConnections([]);
       }
@@ -116,21 +133,31 @@ export default function ChatUI() {
   };
 
   useEffect(() => {
-    if (user && user.id) {
+    if (user && (user.id || user._id || user.userId)) {
       console.log("User loaded:", user);
       fetchRequests(user);
+    } else {
+      console.log("User not fully loaded or missing ID:", user);
     }
   }, [user]);
 
   // Integrated POST API to send connection requests
   const handleSendRequest = async () => {
     if (!newRequestTargetId.trim()) return;
+
+    // Try different possible ID field names
+    const userId = user.id || user._id || user.userId;
+    if (!userId) {
+      showErrorToast("User ID not found. Please login again.");
+      return;
+    }
+
     try {
       const response = await fetch("/api/user/request", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
-          senderId: user.id,
+          senderId: userId,
           receiverId: newRequestTargetId.trim(),
           role: user.role
         }),
@@ -158,13 +185,14 @@ export default function ChatUI() {
       const response = await fetch("/api/user/request", {
         method: "PUT",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ requestId, status }),
+        body: JSON.stringify({ requestId, status, userId: user.id }),
       });
       if (response.ok) {
         showSuccessToast(`Request ${status}`);
         if (user) fetchRequests(user);
       } else {
-        showErrorToast("Failed to update request");
+        const errorData = await response.json();
+        showErrorToast(errorData.error || "Failed to update request");
       }
     } catch (error) {
       console.error("Error updating request:", error);
@@ -179,14 +207,24 @@ export default function ChatUI() {
         `/api/user/request/messages?senderId=${connection.sender}&receiverId=${connection.receiver}`
       );
       const data = await response.json();
-      if (response.ok) {
+      if (response.ok && data.messages) {
         setMessages(prev => ({
           ...prev,
-          [connection._id]: data
+          [connection._id]: data.messages
+        }));
+      } else {
+        console.error("Failed to fetch messages:", data.error);
+        setMessages(prev => ({
+          ...prev,
+          [connection._id]: []
         }));
       }
     } catch (error) {
       console.error("Error fetching messages:", error);
+      setMessages(prev => ({
+        ...prev,
+        [connection._id]: []
+      }));
     } finally {
       setLoadingMessages(false);
     }
@@ -285,7 +323,38 @@ export default function ChatUI() {
 
   return (
     <div className="h-full min-h-0 bg-white md:bg-transparent">
-      <div className="h-full min-h-0 md:rounded-2xl md:shadow-sm md:border border-gray-100 overflow-hidden flex bg-white">
+      {/* Show login prompt if user is not logged in */}
+      {!user && !loading && (
+        <div className="h-full flex items-center justify-center bg-gray-50">
+          <div className="text-center p-8 max-w-md">
+            <MessageSquare size={48} className="mx-auto text-gray-400 mb-4" />
+            <h2 className="text-xl font-semibold text-gray-800 mb-2">Login Required</h2>
+            <p className="text-gray-600 mb-4">
+              Please login to access chat and messaging features.
+            </p>
+            <button
+              onClick={() => window.location.href = "/"}
+              className="bg-blue-500 text-white px-6 py-2 rounded-lg hover:bg-blue-600 transition"
+            >
+              Go to Login
+            </button>
+          </div>
+        </div>
+      )}
+
+      {/* Show loading state */}
+      {loading && (
+        <div className="h-full flex items-center justify-center bg-gray-50">
+          <div className="text-center">
+            <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-500 mx-auto mb-4"></div>
+            <p className="text-gray-600">Loading...</p>
+          </div>
+        </div>
+      )}
+
+      {/* Main chat interface - only show when user is logged in and not loading */}
+      {user && !loading && (
+        <div className="h-full min-h-0 md:rounded-2xl md:shadow-sm md:border border-gray-100 overflow-hidden flex bg-white">
         <div
           className={`w-full md:w-80 lg:w-96 border-r border-gray-100 flex-col bg-white transition-all duration-300 ${
             activeChat ? "hidden md:flex" : "flex"
@@ -367,7 +436,11 @@ export default function ChatUI() {
                             image: otherUser.image
                           });
                           if (!messages[connection._id]) {
-                            fetchMessages(connection);
+                            fetchMessages({
+                              ...connection,
+                              sender: connection.sender._id || connection.sender,
+                              receiver: connection.receiver._id || connection.receiver
+                            });
                           }
                         }}
                         className={`w-full text-left p-3 rounded-xl border transition ${
@@ -422,7 +495,7 @@ export default function ChatUI() {
                 {filteredRequests.length === 0 ? (
                   <div className="py-10 text-center text-sm text-gray-500">
                     <p className="font-medium mb-2">
-                      {loading ? "Loading requests..." : ["doctor", "lawyer"].includes(user?.role) ? "No incoming requests" : "No sent requests"}
+                      {loading ? "Loading requests..." : "No requests found"}
                     </p>
                     {!loading && user && (
                       <p className="text-xs text-gray-400 mt-2">
@@ -434,9 +507,10 @@ export default function ChatUI() {
                 ) : (
                   <div className="space-y-2">
                     {filteredRequests.map((request) => {
-                      const isProvider = ["doctor", "lawyer"].includes(user?.role);
-                      const otherUser = resolveUser(isProvider ? request.sender : request.receiver);
+                      const isSender = request.sender._id === user.id || request.sender === user.id;
+                      const otherUser = resolveUser(isSender ? request.receiver : request.sender);
                       const isPending = request.status === "pending";
+                      const canAcceptReject = !isSender && ["doctor", "lawyer"].includes(user?.role) && isPending;
 
                       if (!otherUser) return null;
 
@@ -457,9 +531,9 @@ export default function ChatUI() {
                             />
                             <div className="flex-1">
                               <p className={`text-sm ${request.status === "pending" ? "text-gray-800 font-semibold" : "text-gray-600"}`}>
-                                {isProvider
-                                  ? `${otherUser.name} requested to connect`
-                                  : `Request to ${otherUser.name}`
+                                {isSender
+                                  ? `Request sent to ${otherUser.name}`
+                                  : `${otherUser.name} requested to connect`
                                 }
                               </p>
                               <div className="flex items-center justify-between mt-1.5">
@@ -472,7 +546,7 @@ export default function ChatUI() {
                                   >
                                     {request.status}
                                   </span>
-                                  {isProvider && isPending && (
+                                  {canAcceptReject && (
                                     <div className="flex gap-1">
                                       <button
                                         onClick={() => handleAcceptReject(request._id, "accepted")}
@@ -693,6 +767,7 @@ export default function ChatUI() {
           )}
         </div>
       </div>
+      )}
     </div>
   );
 }

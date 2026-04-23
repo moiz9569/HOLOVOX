@@ -93,6 +93,8 @@ export async function GET(req) {
 
     const mapped = providers.map((item) => ({
       id: item._id.toString(),
+      userId: item?.basicInfo?.userId?._id?.toString?.() || item?.basicInfo?.userId?.toString?.() || null,
+      basicInfo: item?.basicInfo || {},
       name: item?.basicInfo?.FullName || "Unknown",
       image: item?.basicInfo?.ProfilePicture || "",
       role: item?.basicInfo?.role || role,
