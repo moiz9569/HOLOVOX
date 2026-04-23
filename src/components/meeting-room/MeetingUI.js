@@ -94,7 +94,7 @@ useEffect(() => {
     meetingState.showWhiteboard,
     meetingState.whiteboardColor
   );
-  const recording = useRecording(roomId, userId);
+  const recording = useRecording();
 
   // Helper functions
   const copyLink = () => {
