@@ -926,37 +926,37 @@ const fetchUpcomingMeetings = async (user) => {
   }
 };
 
-  // useEffect(() => {
-  //   getTokenData()
-  //     .then((user) => {
-  //       console.log("Decoded User:", user);
-
-  //       setDecodedUser(user || {});
-  //       setLoading(false);
-  //     })
-  //     .catch((error) => {
-  //       console.error("Error fetching user data:", error);
-  //       setLoading(false);
-  //     });
-  //   fetchUpcomingMeetings();
-  //   // fetchUser();
-  // }, []);
   useEffect(() => {
-  const init = async () => {
-    try {
-      const user = await getTokenData();
+    getTokenData()
+      .then((user) => {
+        console.log("Decoded User:", user);
 
-      setDecodedUser(user || {});
+        setDecodedUser(user || {});
+        setLoading(false);
+      })
+      .catch((error) => {
+        console.error("Error fetching user data:", error);
+        setLoading(false);
+      });
+    fetchUpcomingMeetings();
+    // fetchUser();
+  }, []);
+//   useEffect(() => {
+//   const init = async () => {
+//     try {
+//       const user = await getTokenData();
 
-      // 🔥 call AFTER user is available
-      fetchUpcomingMeetings(user);
-    } catch (err) {
-      console.log(err);
-    }
-  };
+//       setDecodedUser(user || {});
 
-  init();
-}, []);
+//       // 🔥 call AFTER user is available
+//       fetchUpcomingMeetings(user);
+//     } catch (err) {
+//       console.log(err);
+//     }
+//   };
+
+//   init();
+// }, []);
 
   useEffect(() => {
   if (!loading && decodedUser) {
