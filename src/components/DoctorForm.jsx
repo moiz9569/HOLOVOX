@@ -878,7 +878,7 @@ export default function DoctorProfileForm({ onClose, userId }) {
         professionalInfo: {
           BarRegistrationNumber: "", // Not required for doctors
           LawFirmName: "", // Not required for doctors
-          Specialization: selectedSpecializations[0], // Taking first specialization
+          Specialization: selectedSpecializations, // Taking first specialization
           YearsOfExperience: parseInt(formData.experience),
           MedicalLicenseNumber: formData.medicalLicenseNumber,
           Hospital_ClinicName: formData.hospitalClinicName || "",

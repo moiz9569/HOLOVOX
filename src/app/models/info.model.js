@@ -47,10 +47,10 @@ const ProfessionalInfoSchema = new mongoose.Schema(
         type: String,
     },
     Specialization : {
-        type: String,
+        type: [String],
         required: true,
         enum: ["Orthopedic","Dentist","Pediatrician","Neurologist","Dermatologist","Cardiologist","General Physician","Criminal Law", "Civil Law", "Corporate Law", "Family Law", "Property Law", "Labor and Employment Law", "Tax Law", "Environmental Law", "Human Rights Law", "International Law","Cyber Crime", "Other"],
-        default: "Other"
+        default: []
     },
     YearsOfExperience : {
         type: Number,

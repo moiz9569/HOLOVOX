@@ -853,7 +853,7 @@ export default function LawyerProfileForm({ onClose, userId }) {
         professionalInfo: {
           BarRegistrationNumber: formData.barRegistrationNumber,
           LawFirmName: formData.lawFirmName || "",
-          Specialization: selectedSpecializations[0],
+          Specialization: selectedSpecializations,
           YearsOfExperience: parseInt(formData.experience),
         },
         educationInfo: {
