@@ -48,6 +48,7 @@ const AdminSidebar = () => {
     { label: "Home", icon: Home, path: "/home" },
     { label: "Users", icon: Calendar, path: "/ai" },
     { label: "Meetings", icon: Users, path: "/home/meetings" },
+    { label: "Chat", icon: MessageSquare, path: "/home/chat" },
     { label: "Plans", icon: MessageSquare, path: "/home/recording" },
     { label: "Summaries", icon: Activity, path: "/home/summaries" },
     { label: "Notes", icon: GrDocumentNotes, path: "/home/notes" },

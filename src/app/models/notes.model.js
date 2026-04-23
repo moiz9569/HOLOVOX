@@ -14,6 +14,7 @@ const NotesSchema = new mongoose.Schema(
       type: mongoose.Schema.Types.ObjectId,
       ref: "HolovoxUser",
       required: true,
+      index: true,
     },
 
     Notes: {
@@ -31,7 +32,7 @@ const NotesSchema = new mongoose.Schema(
 );
 
 // ⚡ FAST loading (chat history)
-NotesSchema.index({ meetingId: 1, createdAt: -1 });
+NotesSchema.index({ meetingId: 1, userId : 1 ,createdAt: -1 });
 
 const NotesModel =
   mongoose.models.Notes || mongoose.model("Notes", NotesSchema);

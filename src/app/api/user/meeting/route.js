@@ -1,11 +1,12 @@
 import { NextResponse } from "next/server";
-import connectDB from "../../../../../lib/db";
+// import connectDB from "../../../../../lib/db";
 import MeetingModel from "@/app/models/Meeting.model";
-
+import { connectDB } from "../../../../../lib/db";
+import { v4 as uuidv4 } from "uuid"
 export async function POST(request){
 try {
-    const {hostId,name,email,meetingId}= await request.json();
-  console.log("Create Meeting Payload:", {hostId,name,email,meetingId});
+    const {hostId,name,email,meetingId,meetingTitle,date,time,upcoming}= await request.json();
+  console.log("Create Meeting Payload:", {hostId,name,email,meetingId,meetingTitle,time,upcoming});
 if(!hostId || !name || !email || !meetingId){
     return NextResponse.json({error : "Missing required fields"}, {status:400});
 }
@@ -13,6 +14,10 @@ await connectDB();
    const meeting = await MeetingModel.create({
       meetingId,
       hostId,
+      meetingTitle : meetingTitle || "Untitled Meeting",
+      meetingDate: date ? new Date(date) : new Date(),
+      time: time || "00:00",
+      upcoming: upcoming !== undefined ? upcoming : false,
       participants: [
         {
           name,
@@ -80,16 +85,23 @@ export async function PUT(req) {
     const body = await req.json();
 
     const { userId,meetingId, name, email } = body;
+    console.log("Join Meeting Payload:", { userId, meetingId, name, email });
+    if(!meetingId || !name ){
+        return NextResponse.json({
+            success: false,
+            message: "Missing required fields",
+          });
+    }
 
     const meeting = await MeetingModel.findOneAndUpdate(
       { meetingId },
       {
         $push: {
           participants: {
-            userId,
+            userId : userId ,
             name,
-            email,
-            role: "participant",
+            email :  email || " ",
+            role: userId ? "participant" : "guest",
           },
         },
       },

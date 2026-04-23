@@ -45,7 +45,7 @@ export const useMeetingState = () => {
   const localVideoTrack = tracks.find(
     (t) =>
       t.participant.identity === localParticipant.localParticipant?.identity &&
-      t.source === Track.Source.Camera
+      t.source === Track.Source.Camera,
   );
   // working
   // const localStream = useMemo(() => {
@@ -57,11 +57,26 @@ export const useMeetingState = () => {
   const localStream = useMemo(() => {
     return localVideoTrack?.publication?.track?.mediaStream || null;
   }, [localVideoTrack]);
+
+  //////////////////////////new///////////////////////////////
+  // Find the local screen share track
+  const localScreenShareTrack = tracks.find(
+    (t) =>
+      t.participant.identity === localParticipant.localParticipant?.identity &&
+      t.source === Track.Source.ScreenShare,
+  );
+
+  // Create a memoized stream from it
+  const screenShareStream = useMemo(() => {
+    return localScreenShareTrack?.publication?.track?.mediaStream || null;
+  }, [localScreenShareTrack]);
+  //////////////////////////new///////////////////////////////
+
   const remoteTracks = tracks.filter(
     (t) =>
       t.participant.identity !== localParticipant.localParticipant?.identity &&
       (t.source === Track.Source.Camera ||
-        t.source === Track.Source.ScreenShare)
+        t.source === Track.Source.ScreenShare),
   );
   // working code
   // const remoteStreams = useMemo(() => {
@@ -93,20 +108,29 @@ export const useMeetingState = () => {
   // }, [remoteTracks]);
 
   const remotePeers = useMemo(() => {
+    // console.log("Participants:", localParticipant.localParticipant);
+    // console.log("Participants:", participants);
     return participants
       .filter((p) => p.identity !== localParticipant.localParticipant?.identity)
       .map((p) => {
         const videoPub = Array.from(p.videoTrackPublications.values()).find(
-          (pub) => pub.track
+          (pub) => pub.track,
         );
+        const meta = p.metadata ? JSON.parse(p.metadata) : {};
+        // console.log("Host:", meta.isHost);
+
+        // console.log("Participant:", p.name, meta);
+        // console.log("Image URL:", meta.image);
 
         return {
           id: p.identity,
           name: p.name || p.identity,
-          isHost: p.metadata?.includes("isHost"),
+          image: meta.image,
+          isHost: meta.isHost,
           stream: videoPub?.track?.mediaStream || null, // ✅ NO NEW STREAM
           isMuted: p.isMicrophoneEnabled === false,
           isVideoOff: !videoPub?.track,
+          isSpeaking: p.isSpeaking,  // ← ADD THIS
         };
       });
   }, [participants]);
@@ -139,12 +163,58 @@ export const useMeetingState = () => {
   //     ? localStream
   //     : remoteStreams.get(activeStreamId);
   // }, [activeStreamId, localStream, remoteStreams]);
-  const activeStream = useMemo(() => {
-    if (activeStreamId === "local") return localStream;
 
-    const peer = remotePeers.find((p) => p.id === activeStreamId);
-    return peer?.stream || null;
-  }, [activeStreamId, localStream, remotePeers]);
+  // Find any remote participant who is sharing their screen
+
+  ///////////////////////////new///////////////////////////////
+  const remoteScreenSharePeer = useMemo(() => {
+    return participants.find((p) => {
+      if (p.identity === localParticipant.localParticipant?.identity)
+        return false;
+      const screenPub = Array.from(p.videoTrackPublications.values()).find(
+        (pub) => pub.source === Track.Source.ScreenShare && pub.track,
+      );
+      return !!screenPub;
+    });
+  }, [participants, localParticipant]);
+
+  // Get the actual screen share stream from that peer
+  const remoteScreenShareStream = useMemo(() => {
+    if (!remoteScreenSharePeer) return null;
+    const screenPub = Array.from(
+      remoteScreenSharePeer.videoTrackPublications.values(),
+    ).find((pub) => pub.source === Track.Source.ScreenShare && pub.track);
+    return screenPub?.track?.mediaStream || null;
+  }, [remoteScreenSharePeer]);
+  ///////////////////////////new///////////////////////////////
+
+  const activeStream = useMemo(() => {
+    // if (activeStreamId === "local") return localStream;
+
+    // const peer = remotePeers.find((p) => p.id === activeStreamId);
+    // return peer?.stream || null;
+
+    // 1. Local screen sharing has top priority
+  if (isScreenSharing) {
+    return screenShareStream || localStream;
+  }
+  // 2. Remote screen share has second priority (auto-switch)
+  if (remoteScreenShareStream) {
+    return remoteScreenShareStream;
+  }
+  // 3. Otherwise, show the selected camera stream
+  if (activeStreamId === "local") return localStream;
+  const peer = remotePeers.find((p) => p.id === activeStreamId);
+  return peer?.stream || null;
+
+  }, [
+    isScreenSharing,
+    screenShareStream,
+    remoteScreenShareStream,
+    activeStreamId,
+    localStream,
+    remotePeers,
+  ]);
 
   // const remotePeers = participants
   //   .filter((p) => p.identity !== localParticipant.localParticipant?.identity)
@@ -166,7 +236,7 @@ export const useMeetingState = () => {
       clearTimeout(controlsTimeoutRef.current);
       controlsTimeoutRef.current = setTimeout(
         () => setShowControls(false),
-        3000
+        3000,
       );
     };
     window.addEventListener("mousemove", handleMouseMove);
@@ -181,7 +251,7 @@ export const useMeetingState = () => {
     const interval = setInterval(() => {
       const qualities = ["good", "average", "poor"];
       setConnectionQuality(
-        qualities[Math.floor(Math.random() * qualities.length)]
+        qualities[Math.floor(Math.random() * qualities.length)],
       );
     }, 10000);
     return () => clearInterval(interval);
@@ -194,11 +264,13 @@ export const useMeetingState = () => {
       //   Track.Source.Microphone,
       // );
       const mic = localParticipant.localParticipant?.getTrackPublication(
-        Track.Source.Microphone
+        Track.Source.Microphone,
       );
       console.log(
         "Mic track:",
-        mic ? `enabled=${mic.isEnabled}, muted=${mic.isMuted}` : "not published"
+        mic
+          ? `enabled=${mic.isEnabled}, muted=${mic.isMuted}`
+          : "not published",
       );
     }, 5000);
     return () => clearInterval(checkAudio);
@@ -224,7 +296,7 @@ export const useMeetingState = () => {
     setReactions([...reactions, reaction]);
     setTimeout(
       () => setReactions((prev) => prev.filter((r) => r.id !== reaction.id)),
-      3000
+      3000,
     );
     return reaction;
   };
@@ -240,13 +312,15 @@ export const useMeetingState = () => {
   const addNote = () => {
     setNotes([...notes, { id: Date.now(), text: "" }]);
   };
-  
+
   const updateNote = (id, newText) => {
-    setNotes(notes.map(note => note.id === id ? { ...note, text: newText } : note));
+    setNotes(
+      notes.map((note) => (note.id === id ? { ...note, text: newText } : note)),
+    );
   };
-  
+
   const deleteNote = (id) => {
-    setNotes(notes.filter(note => note.id !== id));
+    setNotes(notes.filter((note) => note.id !== id));
   };
 
   return {
@@ -304,6 +378,9 @@ export const useMeetingState = () => {
     participantCount,
     localParticipant,
     room,
+    screenShareStream,
+    remoteScreenSharePeer,
+    remoteScreenShareStream,
 
     // Functions
     toggleFullscreen,

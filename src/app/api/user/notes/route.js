@@ -1,6 +1,7 @@
 import { NextResponse } from "next/server";
-import connectDB from "../../../../../lib/db";
+// import connectDB from "../../../../../lib/db";
 import NotesModel from "@/app/models/notes.model";
+import { connectDB } from "../../../../../lib/db";
 
 
 // ==========================
@@ -46,16 +47,22 @@ export async function GET(req) {
     const { searchParams } = new URL(req.url);
     const userId = searchParams.get("userId");
     const meetingId = searchParams.get("meetingId");
-    if (!userId || !meetingId) {
+    if (!userId ) {
   return NextResponse.json(
     { success: false, message: "userId and meetingId required" },
     { status: 400 }
   );
 }
-    const notes = await NotesModel.find({ meetingId, userId }).sort({
+let notes;
+if(meetingId && userId){
+  notes = await NotesModel.find({ meetingId, userId }).sort({
       createdAt: -1,
     }).lean();
-
+}else{
+  notes = await NotesModel.find({ userId }).sort({
+      createdAt: -1,
+    }).lean();
+}
     return NextResponse.json({ success: true, data: notes });
   } catch (error) {
     return NextResponse.json(
@@ -74,7 +81,7 @@ export async function PUT(req) {
     const body = await req.json();
 
     const { noteId, newText } = body;
-
+    console.log("Update Note Payload:", { noteId, newText });
     const noteDoc = await NotesModel.findById(noteId);
 
     if (!noteDoc) {

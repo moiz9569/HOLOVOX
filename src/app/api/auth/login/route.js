@@ -89,10 +89,11 @@
 
 
 import { NextResponse } from "next/server";
-import connectDB from "../../../../../lib/db";
+// import connectDB from "../../../../../lib/db";
 import AuthModel from "@/app/models/User.model";
 import bcrypt from "bcryptjs";
 import jwt from "jsonwebtoken";
+import { connectDB } from "../../../../../lib/db";
 
 export async function POST(request) {
   try {
@@ -104,7 +105,7 @@ export async function POST(request) {
     await connectDB();
 
     // Check if user exists
-    const user = await AuthModel.findOne({ email: email.toLowerCase() });
+    const user = await AuthModel.findOne({ email: email.toLowerCase() }).lean();
     if (!user) {
       return NextResponse.json(
         { error: "User not found" },
@@ -138,7 +139,8 @@ export async function POST(request) {
         role: user.role,
         name: user.name,
         verified: user.verified,
-        image : user.image || " "
+        image : user.image || " ",
+        status: user.status || "none"
       },
       process.env.JWT_SECRET || "Hashfor",
       { expiresIn: "1d" }

@@ -1,7 +1,8 @@
 import { NextResponse } from "next/server";
-import connectDB from "../../../../../lib/db";
+// import connectDB from "../../../../../lib/db";
 import MessageModel from "@/app/models/meetingMessages.model";
 import cloudinary from "cloudinary";
+import { connectDB } from "../../../../../lib/db";
 
 
 // Cloudinary config
@@ -85,12 +86,12 @@ export async function POST(req) {
     const meetingId = formData.get("meetingId");
     const senderId = formData.get("senderId");
     const senderName = formData.get("senderName");
-    const type = formData.get("type");
+    // const type = formData.get("type");
 
     let content = formData.get("content"); // text
-    const file = formData.get("file"); // actual file
+    // const file = formData.get("file"); // actual file
 
-    if (!meetingId || !senderId || !type) {
+    if (!meetingId || !senderId || !senderName || !content) {
       return NextResponse.json(
         { error: "Missing fields" },
         { status: 400 }
@@ -98,43 +99,42 @@ export async function POST(req) {
     }
 
     // ⚡ must have something
-    if (!content && !file) {
-      return NextResponse.json(
-        { error: "Message cannot be empty" },
-        { status: 400 }
-      );
-    }
+    // if (!content && !file) {
+    //   return NextResponse.json(
+    //     { error: "Message cannot be empty" },
+    //     { status: 400 }
+    //   );
+    // }
 
-    let fileUrl = "";
+    // let fileUrl = "";
 
-    // 📎 file upload
-    if (file) {
-      const buffer = Buffer.from(await file.arrayBuffer());
+    // // 📎 file upload
+    // if (file) {
+    //   const buffer = Buffer.from(await file.arrayBuffer());
 
-      fileUrl = await new Promise((resolve, reject) => {
-        cloudinary.v2.uploader
-          .upload_stream(
-            {
-              folder: "meeting_files",
-              resource_type: "auto",
-              quality: "auto",
-            },
-            (err, result) => {
-              if (err) reject(err);
-              else resolve(result.secure_url);
-            }
-          )
-          .end(buffer);
-      });
+    //   fileUrl = await new Promise((resolve, reject) => {
+    //     cloudinary.v2.uploader
+    //       .upload_stream(
+    //         {
+    //           folder: "meeting_files",
+    //           resource_type: "auto",
+    //           quality: "auto",
+    //         },
+    //         (err, result) => {
+    //           if (err) reject(err);
+    //           else resolve(result.secure_url);
+    //         }
+    //       )
+    //       .end(buffer);
+    //   });
 
-      content = fileUrl; // override
-    }
+    //   content = fileUrl; // override
+    // }
 
     const message = await MessageModel.create({
       meetingId,
       senderId,
       senderName,
-      type,
       content,
     });
 

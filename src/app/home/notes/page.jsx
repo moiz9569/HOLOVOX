@@ -1,5 +1,5 @@
 "use client";
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import {
   FileText,
   Star,
@@ -9,12 +9,94 @@ import {
   Folder,
   Plus,
 } from "lucide-react";
+import { getTokenData } from "@/app/content/data";
 
 const NotesPage = () => {
   const [mode, setMode] = useState("modern"); // modern | classic
   const [activeTab, setActiveTab] = useState("mynotes");
   const [activeSidebar, setActiveSidebar] = useState("all");
+  const [decodedUser, setDecodedUser] = useState([]);
 
+  const[notes,setNotes] = useState(null);
+  const [groupedNotes, setGroupedNotes] = useState({});
+  const groupByMeeting = (notes) => {
+  return notes.reduce((acc, note) => {
+    const id = note.meetingId;
+
+    if (!acc[id]) {
+      acc[id] = [];
+    }
+
+    acc[id].push(note);
+
+    return acc;
+  }, {});
+};
+  //  const fetchNotes = async (userId) => {
+  //   try{
+  //    const res = await fetch(`/api/user/notes?userId=${userId}`,{
+  //       method : "GET",
+  //       headers : {
+  //         "Content-Type" : "application/json",
+  //       },
+  //     })
+
+  //     let data = await res.json();
+     
+  //       console.log("Notes:", data);
+        
+  //     // const upcomingMeetings = data?.meetings?.filter(meeting => meeting.upcoming === true);
+  //     // setMeetingData(upcomingMeetings);
+  //     // console.log("Filtered Upcoming Meetings:", upcomingMeetings);
+  //   }catch(error){
+  //     console.log("Error fetching upcoming meetings:", error);
+  //   }
+            
+  //         }
+
+  const fetchNotes = async (userId) => {
+  try {
+    const res = await fetch(
+      `/api/user/notes?userId=${userId}`,
+      {
+        method: "GET",
+        headers: {
+          "Content-Type": "application/json",
+        },
+      }
+    );
+
+    const data = await res.json();
+
+    console.log("Notes:", data);
+
+    const grouped = groupByMeeting(data.data);
+    console.log("Grouped Notes:", grouped);
+    setGroupedNotes(grouped);
+
+  } catch (error) {
+    console.log("Error fetching notes:", error);
+  }
+};
+
+
+  useEffect(() => {
+    let userId;
+      getTokenData()
+        .then((user) => {
+          console.log("Decoded User:", user);
+          setDecodedUser(user || {});
+          userId = user?.id; // Extract userId from decoded user data
+          console.log("Extracted userId:", userId);
+          // setLoading(false);
+                  fetchNotes(userId);
+        })
+        .catch((error) => {
+          console.error("Error fetching user data:", error);
+          // setLoading(false);
+        });
+
+    }, []);
   const notesData = [
     {
       title: "Meeting Notes - UI Review",
@@ -162,7 +244,7 @@ const NotesPage = () => {
           </div>
 
           {/* Notes List */}
-          <div className="flex-1 bg-white border border-white/10 rounded-2xl p-6">
+          {/* <div className="flex-1 bg-white border border-white/10 rounded-2xl p-6">
             <h2 className="text-lg text-gray-800 font-semibold mb-4">
               {activeSidebar.toUpperCase()}
             </h2>
@@ -195,7 +277,8 @@ const NotesPage = () => {
                 ))}
               </div>
             )}
-          </div>
+          </div> */}
+          
         </div>
       )}
     </div>

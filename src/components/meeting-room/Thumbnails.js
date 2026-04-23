@@ -2,6 +2,7 @@ import { motion } from "framer-motion";
 import {
   Crown,
   UserIcon,
+  Mic,
   MicOff,
   VideoOff,
   Edit,
@@ -50,22 +51,22 @@ export default function Thumbnails({
             playsInline
             className="w-full h-full object-cover"
             style={{ transform: "scaleX(-1)" }}
-// working
+            // working
             //             ref={(el) => {
-//               if (el && localStream && el.srcObject !== localStream) {
-//   el.srcObject = localStream;
-// }
-//               localVideoRef.current = el;
-//             }}
-ref={(el) => {
-  if (!el) return;
+            //               if (el && localStream && el.srcObject !== localStream) {
+            //   el.srcObject = localStream;
+            // }
+            //               localVideoRef.current = el;
+            //             }}
+            ref={(el) => {
+              if (!el) return;
 
-  if (localStream && el.srcObject !== localStream) {
-    el.srcObject = localStream;
-  }
+              if (localStream && el.srcObject !== localStream) {
+                el.srcObject = localStream;
+              }
 
-  localVideoRef.current = el;
-}}
+              localVideoRef.current = el;
+            }}
           />
           <div className="absolute inset-0 bg-linear-to-t from-black/60 via-transparent to-transparent" />
           <div className="absolute bottom-1 left-1 right-1 flex items-center justify-between">
@@ -92,38 +93,45 @@ ref={(el) => {
             className={`relative flex-shrink-0 w-40 h-24 rounded-xl overflow-hidden border-2 transition-all cursor-pointer group ${
               activeStreamId === peer.id
                 ? "border-cyan-500 shadow-lg shadow-cyan-500/20"
-                : "border-white/10 hover:border-white/30"
+                : peer.isSpeaking
+                  ? "border-red-500 shadow-lg shadow-red-500/20"
+                  : "border-white/10 hover:border-white/30"
             }`}
           >
             <video
               autoPlay
               playsInline
               className="w-full h-full object-cover"
-//               ref={(el) => {
-//                 // if (el && peer.stream) el.srcObject = peer.stream;
-//                if (el) {
-//  if (el && peer.stream) {
-//   el.srcObject = peer.stream;
-// }
-// }
-//               }}
-// ref={(el) => {
-//   if (el && peer.stream && el.srcObject !== peer.stream) {
-//     el.srcObject = peer.stream;
-//   }
-// }}
-ref={(el) => {
-  if (!el) return;
+              //               ref={(el) => {
+              //                 // if (el && peer.stream) el.srcObject = peer.stream;
+              //                if (el) {
+              //  if (el && peer.stream) {
+              //   el.srcObject = peer.stream;
+              // }
+              // }
+              //               }}
+              // ref={(el) => {
+              //   if (el && peer.stream && el.srcObject !== peer.stream) {
+              //     el.srcObject = peer.stream;
+              //   }
+              // }}
+              ref={(el) => {
+                if (!el) return;
 
-  if (peer.stream && el.srcObject !== peer.stream) {
-    el.srcObject = peer.stream;
-  }
-}}
+                if (peer.stream && el.srcObject !== peer.stream) {
+                  el.srcObject = peer.stream;
+                }
+              }}
             />
             <div className="absolute inset-0 bg-linear-to-t from-black/60 via-transparent to-transparent" />
+            {peer.isSpeaking && (
+              <div className="absolute top-1 right-1 bg-red-500 rounded-full p-0.5">
+                <Mic size={10} className="text-white" />
+              </div>
+            )}
             <div className="absolute bottom-1 left-1 right-1 flex items-center justify-between">
               <div className="flex items-center gap-1 text-[10px] bg-black/60 px-2 py-1 rounded-full">
-                {peer.isHost ? (
+                {peer.isHost === true || peer.isHost === "host" ? (
                   <Crown size={10} className="text-amber-400" />
                 ) : (
                   !hideProfilePictures && <UserIcon size={10} />
