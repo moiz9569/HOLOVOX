@@ -10,6 +10,7 @@ export default function TopNavbar({
   toggleFullscreen,
   isSidebarOpen = false,
   onToggleSidebar,
+  meetingDuration,
 }) {
   return (
     <motion.div
@@ -55,7 +56,7 @@ export default function TopNavbar({
         </button>
 
         <div className="hidden sm:block px-3 py-1.5 bg-white/5 rounded-lg">
-          <span className="text-xs text-white font-mono">00:15:23</span>
+          <span className="text-xs text-white font-mono">{meetingDuration}</span>
         </div>
         <button
           onClick={toggleFullscreen}

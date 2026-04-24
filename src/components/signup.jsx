@@ -446,7 +446,7 @@ export default function SignUpForm({ isOpen, onClose, openLogin, openOTP }) {
                   </div>
 
                   {/* Role */}
-                  <h1 className="font-exo-2 text-black">
+                  {/* <h1 className="font-exo-2 text-black">
                     Select Your Role
                   </h1>
                   <div className="relative">
@@ -459,7 +459,7 @@ export default function SignUpForm({ isOpen, onClose, openLogin, openOTP }) {
                       <option value="doctor">Doctor</option>
                       <option value="lawyer">Lawyer</option>
                     </select>
-                  </div>
+                  </div> */}
 
                   {/* SIGN UP BUTTON */}
                   <motion.button

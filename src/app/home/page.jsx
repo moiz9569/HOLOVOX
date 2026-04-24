@@ -806,6 +806,8 @@ import ProviderListModal from "@/components/ProviderListModal";
 import DoctorProfileModal from "@/components/DoctorProfileModal";
 import LawyerProfileForm from "@/components/LawyerForm";
 import DoctorProfileForm from "@/components/DoctorForm";
+import RoleUpgradeModal from "@/components/RoleUpgradeModal";
+import RoleSelectionModal from "@/components/RoleSelectionModal";
 
 const DOCTOR_CATEGORIES = [
   "General Physician",
@@ -834,7 +836,10 @@ const HomeDashboard = () => {
   const [showFeatures, setShowFeatures] = useState(false);
   const [showOptions, setShowOptions] = useState(false);
   const [showMarketplace, setShowMarketplace] = useState(false);
+  const [showRoleSelectionModal, setShowRoleSelectionModal] = useState(false);
   const [showCategoryModal, setShowCategoryModal] = useState(false);
+  const [showRoleUpgradeModal, setShowRoleUpgradeModal] = useState(false);
+  const [roleUpgradeModalLoading, setRoleUpgradeModalLoading] = useState(false);
   const [showProvidersModal, setShowProvidersModal] = useState(false);
   const [showDoctorProfileModal, setShowDoctorProfileModal] = useState(false);
   const [showLawyerForm, setShowLawyerForm] = useState(false);
@@ -1107,12 +1112,66 @@ const fetchUpcomingMeetings = async (user) => {
         onContinue={(type) => {
           setShowMarketplace(false);
 
-          if (type === "doctor" || type === "lawyer") {
+          // If user is already a doctor/lawyer, go directly to category selection
+          if (decodedUser?.role === "doctor" || decodedUser?.role === "lawyer") {
+            setSelectedMarketplaceType(type);
+            setSelectedCategory("");
+            setShowCategoryModal(true);
+          } else {
+            // For regular users, this shouldn't happen anymore since we removed direct role selection
+            // But keeping as fallback
             setSelectedMarketplaceType(type);
             setSelectedCategory("");
             setShowCategoryModal(true);
           }
         }}
+        onBecomeProvider={() => {
+          setShowMarketplace(false);
+          setShowRoleSelectionModal(true);
+        }}
+        isProvider={decodedUser?.role === "doctor" || decodedUser?.role === "lawyer"}
+      />
+    )}
+
+    {showRoleSelectionModal && (
+      <RoleSelectionModal
+        isOpen={showRoleSelectionModal}
+        onClose={() => setShowRoleSelectionModal(false)}
+        onSelectRole={(role) => {
+          setShowRoleSelectionModal(false);
+          setSelectedMarketplaceType(role);
+          setShowRoleUpgradeModal(true);
+        }}
+      />
+    )}
+
+    {showRoleUpgradeModal && (
+      <RoleUpgradeModal
+        isOpen={showRoleUpgradeModal}
+        roleType={selectedMarketplaceType}
+        onClose={() => {
+          setShowRoleUpgradeModal(false);
+          setSelectedMarketplaceType("");
+        }}
+        onContinueAsBrowser={() => {
+          setShowRoleUpgradeModal(false);
+          setSelectedCategory("");
+          setShowCategoryModal(true);
+        }}
+        onContinueAsProvider={() => {
+          setRoleUpgradeModalLoading(true);
+          setShowRoleUpgradeModal(false);
+          
+          if (selectedMarketplaceType === "doctor") {
+            setShowDoctorForm(true);
+          } else if (selectedMarketplaceType === "lawyer") {
+            setShowLawyerForm(true);
+          }
+          
+          setRoleUpgradeModalLoading(false);
+        }}
+        isLoading={roleUpgradeModalLoading}
+        userId={decodedUser?.id}
       />
     )}
 
