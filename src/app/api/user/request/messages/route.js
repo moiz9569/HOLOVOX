@@ -3,6 +3,7 @@ import cloudinary from "cloudinary";
 import PersonalMessageModel from "@/app/models/RequestMessages.model";
 import RequestModel from "@/app/models/Request";
 import { connectDB } from "../../../../../../lib/db";
+import { log } from "three";
 
 
 // Cloudinary config
@@ -38,7 +39,7 @@ export async function POST(req) {
 
     let text = formData.get("text");
     const file = formData.get("file");
-
+    console.log("file:", file);
     // ❗ Validation
     if (!sender || !receiver) {
       return NextResponse.json(
@@ -65,11 +66,23 @@ export async function POST(req) {
 
     let fileUrl = "";
     let fileType = "";
+    let fileName = "";
+    let filePublicId = "";
+    let fileResourceType = "";
+    let fileFormat = "";
 
     // 📎 Upload File to Cloudinary
     if (file) {
       const bytes = await file.arrayBuffer();
       const buffer = Buffer.from(bytes);
+      fileName = file.name || "document";
+
+      // Determine if it's an image, video, or document
+      const mimeType = file.type || "";
+      let detectedType = "document"; // default
+      
+      if (mimeType.startsWith("image/")) detectedType = "image";
+      else if (mimeType.startsWith("video/")) detectedType = "video";
 
       const uploadResult = await new Promise((resolve, reject) => {
         cloudinary.v2.uploader
@@ -77,6 +90,8 @@ export async function POST(req) {
             {
               folder: "chat_files",
               resource_type: "auto",
+              original_filename: fileName,
+              access_mode: "public", // Make files publicly accessible
             },
             (err, result) => {
               if (err) reject(err);
@@ -87,20 +102,38 @@ export async function POST(req) {
       });
 
       fileUrl = uploadResult.secure_url;
-      fileType = uploadResult.resource_type;
+      const fileResourceType = uploadResult.resource_type || (detectedType === "image" ? "image" : detectedType === "video" ? "video" : "raw");
+      const filePublicId = uploadResult.public_id;
+      const fileFormat = uploadResult.format || "";
+      const normalizedFileName = fileName.includes('.') ? fileName : `${fileName}${fileFormat ? `.${fileFormat}` : ""}`;
+      fileName = normalizedFileName;
 
+      // Use our detected type or fallback to cloudinary's resource_type
+      fileType = detectedType || uploadResult.resource_type || "document";
+
+      console.log("File uploaded:", { fileUrl, fileType, fileName, filePublicId, fileResourceType, fileFormat });
       // agar sirf file hai (text nahi)
       if (!text) text = "";
     }
 
     // 💾 Save in DB
-    const message = await PersonalMessageModel.create({
+    const messageData = {
       sender,
       receiver,
       text,
       fileUrl,
       fileType,
-    });
+      fileName,
+      filePublicId,
+      fileResourceType,
+      fileFormat,
+    };
+
+    console.log("Saving message to DB:", messageData);
+
+    const message = await PersonalMessageModel.create(messageData);
+    
+    console.log("Message saved:", { _id: message._id, fileUrl: message.fileUrl, fileType: message.fileType, fileName: message.fileName });
 
     return NextResponse.json({ message }, { status: 201 });
 

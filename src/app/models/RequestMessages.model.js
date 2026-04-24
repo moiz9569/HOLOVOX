@@ -13,6 +13,10 @@ const messageSchema = new mongoose.Schema({
 
   fileUrl: String,   // image ya file
   fileType: String,  // image / pdf / doc
+  fileName: String,  // original filename
+  filePublicId: String,
+  fileResourceType: String,
+  fileFormat: String,
 
   seen: {
     type: Boolean,

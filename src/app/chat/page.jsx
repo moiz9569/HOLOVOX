@@ -18,6 +18,7 @@ import {
   Users,
   Check,
   X as XIcon,
+  Download,
 } from "lucide-react";
 import { getTokenData } from "@/app/content/data";
 import { showSuccessToast, showErrorToast } from "../../../lib/toast";
@@ -58,6 +59,7 @@ export default function ChatUI() {
   const [messages, setMessages] = useState({});
   const [loadingMessages, setLoadingMessages] = useState(false);
   const [newRequestTargetId, setNewRequestTargetId] = useState(""); // For sending new POST requests
+  const [sendingMessage, setSendingMessage] = useState(false); // Loading state for sending messages
   
   const messagesEndRef = useRef(null);
   const fileInputRef = useRef(null);
@@ -230,8 +232,35 @@ export default function ChatUI() {
     }
   };
 
+  const handleFileDownload = async (messageId, fileName) => {
+    try {
+      const response = await fetch(`/api/user/request/messages/download?messageId=${messageId}`);
+      if (!response.ok) {
+        throw new Error('Failed to fetch file');
+      }
+      
+      const blob = await response.blob();
+      const url = window.URL.createObjectURL(blob);
+      
+      const link = document.createElement('a');
+      link.href = url;
+      link.download = fileName || 'document';
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
+      
+      // Clean up the object URL
+      window.URL.revokeObjectURL(url);
+    } catch (error) {
+      console.error('Download failed:', error);
+      showErrorToast('Failed to download file');
+    }
+  };
+
   const handleSendMessage = async () => {
-    if (!activeChat || (!draftMessage.trim() && !pendingAttachment)) return;
+    if (!activeChat || (!draftMessage.trim() && !pendingAttachment) || sendingMessage) return;
+    
+    setSendingMessage(true);
     try {
       const formData = new FormData();
       formData.append("senderId", user.id);
@@ -258,6 +287,8 @@ export default function ChatUI() {
     } catch (error) {
       console.error("Error sending message:", error);
       showErrorToast("Failed to send message");
+    } finally {
+      setSendingMessage(false);
     }
   };
 
@@ -554,12 +585,13 @@ export default function ChatUI() {
                                       >
                                         <Check size={12} />
                                       </button>
-                                      <button
+                                      {/* Rejected Button is commited for now */}
+                                      {/* <button
                                         onClick={() => handleAcceptReject(request._id, "rejected")}
                                         className="p-1 bg-red-500 text-white rounded-full hover:bg-red-600 transition"
                                       >
                                         <XIcon size={12} />
-                                      </button>
+                                      </button> */}
                                     </div>
                                   )}
                                 </div>
@@ -621,6 +653,29 @@ export default function ChatUI() {
                   currentMessages.map((msg, idx) => {
                     const isMe = msg.sender.toString() === user.id;
                     const showAvatar = idx === 0 || currentMessages[idx - 1]?.sender !== msg.sender;
+                    
+                    // Extract filename from message or URL
+                    const getFileName = (msg) => {
+                      // Use stored filename if available
+                      if (msg.fileName) return msg.fileName;
+                      
+                      // Fallback to URL extraction
+                      if (!msg.fileUrl) return "document";
+                      try {
+                        const urlObj = new URL(msg.fileUrl);
+                        const path = urlObj.pathname;
+                        const name = path.split('/').pop();
+                        if (name && !name.includes('upload/') && name !== 'image' && name !== 'video') {
+                          return decodeURIComponent(name);
+                        }
+                        return "document";
+                      } catch {
+                        return "document";
+                      }
+                    };
+                    
+                    const fileName = getFileName(msg);
+                    
                     return (
                       <div key={msg._id} className={`flex ${isMe ? "justify-end" : "justify-start"} group`}>
                         <div className={`flex flex-col ${isMe ? "items-end" : "items-start"} max-w-[88%] sm:max-w-[75%]`}>
@@ -644,21 +699,30 @@ export default function ChatUI() {
                                     alt="attachment"
                                     className="max-w-[240px] sm:max-w-xs rounded-xl object-cover border border-black/5"
                                   />
+                                ) : msg.fileType === "video" ? (
+                                  <video
+                                    src={msg.fileUrl}
+                                    controls
+                                    className="max-w-[240px] sm:max-w-xs rounded-xl border border-black/5"
+                                  />
                                 ) : (
-                                  <a
-                                    href={msg.fileUrl}
-                                    target="_blank"
-                                    rel="noopener noreferrer"
-                                    className="flex items-center gap-2 p-2 bg-gray-50 rounded-lg hover:bg-gray-100 transition"
+                                  <button
+                                    onClick={() => handleFileDownload(msg._id, fileName)}
+                                    className={`flex items-center gap-2 p-3 rounded-lg font-medium text-sm transition-all cursor-pointer ${
+                                      isMe
+                                        ? "bg-red-600 hover:bg-red-700 text-white"
+                                        : "bg-blue-50 hover:bg-blue-100 text-blue-600 border border-blue-200"
+                                    }`}
                                   >
-                                    <FileText size={16} />
-                                    <span className="text-xs truncate">{msg.fileUrl.split('/').pop()}</span>
-                                  </a>
+                                    <FileText size={18} className="flex-shrink-0" />
+                                    <span className="truncate">{fileName}</span>
+                                    <Download size={14} className="flex-shrink-0 ml-auto" />
+                                  </button>
                                 )}
                               </div>
                             )}
                             {msg.text && (
-                              <p className={`px-3 py-1.5 ${msg.fileUrl ? "mt-1" : ""}`}>{msg.text}</p>
+                              <p className={`px-3 py-1.5 ${msg.fileUrl ? "" : ""}`}>{msg.text}</p>
                             )}
                           </div>
                           <span
@@ -716,7 +780,8 @@ export default function ChatUI() {
                       />
                       <button
                         onClick={handleAttachmentClick}
-                        className="p-2 text-gray-400 hover:text-[#E51A54] transition"
+                        disabled={sendingMessage}
+                        className="p-2 text-gray-400 hover:text-[#E51A54] transition disabled:opacity-50 disabled:cursor-not-allowed"
                         title="Attach file"
                       >
                         <Paperclip size={20} />
@@ -734,15 +799,18 @@ export default function ChatUI() {
                           handleSendMessage();
                         }
                       }}
+                      disabled={sendingMessage}
                     />
-                    <button className="p-2 text-gray-400 hover:text-[#E51A54] transition mb-0.5">
-                      <Smile size={20} />
-                    </button>
                     <button
                       onClick={handleSendMessage}
-                      className="p-2.5 rounded-xl transition-all shadow-md mb-0.5 bg-[#E51A54] text-white hover:bg-[#D4184C] active:scale-95 shadow-red-200"
+                      disabled={sendingMessage}
+                      className="p-2.5 rounded-xl transition-all shadow-md mb-0.5 bg-[#E51A54] text-white hover:bg-[#D4184C] active:scale-95 shadow-red-200 disabled:opacity-50 disabled:cursor-not-allowed"
                     >
-                      <Send size={18} className="ml-0.5" />
+                      {sendingMessage ? (
+                        <div className="animate-spin rounded-full h-4 w-4 border-2 border-white border-t-transparent"></div>
+                      ) : (
+                        <Send size={18} className="ml-0.5" />
+                      )}
                     </button>
                   </div>
                 </div>
