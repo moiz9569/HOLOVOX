@@ -1,5 +1,6 @@
 import { motion, AnimatePresence } from "framer-motion";
 import {
+  ClipboardList,
   Mic,
   MicOff,
   Video,
@@ -19,6 +20,9 @@ import {
 } from "lucide-react";
 
 export default function ControlBar({
+  isSummarizing,
+  startSummary,
+  stopSummary,
   showControls,
   isMuted,
   toggleAudio,
@@ -52,14 +56,14 @@ export default function ControlBar({
   const iconButtonBase =
     "w-10 h-10 sm:w-12 sm:h-12 rounded-xl flex items-center justify-center transition shrink-0";
 
- const handleMeetingAction = () => {
-  if (isHost) {
-    endMeeting();
-  } else {
-    leaveMeeting();
-    localStorage.removeItem("meeting_data");
-  }
-};
+  const handleMeetingAction = () => {
+    if (isHost) {
+      endMeeting();
+    } else {
+      leaveMeeting();
+      localStorage.removeItem("meeting_data");
+    }
+  };
   return (
     <motion.div
       initial={{ y: 100 }}
@@ -189,16 +193,18 @@ export default function ControlBar({
         {/* Leave / End meeting */}
         <button
           onClick={() => {
-  if (isHost) {
-    endMeeting();
-    localStorage.removeItem("meeting_data");
-    console.log("Meeting ended and meeting data cleared from localStorage for host");
-  } else {
-    leaveMeeting();
-    localStorage.removeItem("meeting_data");
-    console.log("Meeting data cleared from localStorage for guest");
-  }
-}}
+            if (isHost) {
+              endMeeting();
+              localStorage.removeItem("meeting_data");
+              console.log(
+                "Meeting ended and meeting data cleared from localStorage for host",
+              );
+            } else {
+              leaveMeeting();
+              localStorage.removeItem("meeting_data");
+              console.log("Meeting data cleared from localStorage for guest");
+            }
+          }}
           className={`w-12 h-12 sm:w-14 sm:h-14 rounded-xl flex items-center justify-center transition shadow-lg shrink-0 ${
             isHost
               ? "bg-red-600 hover:bg-red-700"
@@ -235,6 +241,23 @@ export default function ControlBar({
             <span className="absolute -top-1 -right-1 w-5 h-5 bg-cyan-500 rounded-full text-xs flex items-center justify-center">
               {messages.length}
             </span>
+          )}
+        </button>
+
+        {/* Summary button */}
+        <button
+          onClick={isSummarizing ? stopSummary : startSummary}
+          className={`${iconButtonBase} relative ${
+            isSummarizing
+              ? "bg-red-600 hover:bg-red-700"
+              : "bg-white/10 hover:bg-white/20"
+          }`}
+          title="Generate Meeting Notes"
+        >
+          {isSummarizing ? (
+            <span className="w-5 h-5 border-2 border-white border-t-transparent rounded-full animate-spin" />
+          ) : (
+            <ClipboardList size={20} />
           )}
         </button>
       </div>

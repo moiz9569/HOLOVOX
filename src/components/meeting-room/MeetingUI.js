@@ -20,6 +20,7 @@ import WhiteboardComponent from "./Whiteboard";
 import SettingsModal from "./Modals/SettingsModal";
 import SecurityModal from "./Modals/SecurityModal";
 import { getTokenData } from "@/app/content/data";
+import { useMeetingSummary } from "@/hooks/useMeetingSummary";
 
 export default function MeetingUI({ isHost, roomId, router }) {
   const audioElementsRef = useRef([]);
@@ -27,6 +28,7 @@ export default function MeetingUI({ isHost, roomId, router }) {
   const [userId, setUserId] = useState(null);
   const [userName, setUserName] = useState(null);
   const [isUserLoaded, setIsUserLoaded] = useState(false);
+
 
 const [totalSeconds, setTotalSeconds] = useState(0);
 //Timer to track meeting duration, increments every second
@@ -349,6 +351,9 @@ const [totalSeconds, setTotalSeconds] = useState(0);
     meetingState.setShowNotes(false);
   };
 
+  const meetingSummary = useMeetingSummary(meetingState.room, showNotification);
+  const [showSummary, setShowSummary] = useState(false);
+
   return (
     <div className="h-screen w-full flex overflow-hidden bg-slate-700 text-white">
       <Notification notification={notification} />
@@ -456,6 +461,9 @@ const [totalSeconds, setTotalSeconds] = useState(0);
           showChat={meetingState.showChat}
           setShowChat={meetingState.setShowChat}
           messages={chat.messages}
+          startSummary={meetingSummary.startRecording}
+          stopSummary={meetingSummary.stopRecording}
+          isSummarizing={meetingSummary.isRecording}
         />
       </div>
 
@@ -490,6 +498,10 @@ const [totalSeconds, setTotalSeconds] = useState(0);
         deleteNote={meetingState.deleteNote}
         deleteMessage={(msgId) => chat.deleteMessage(msgId, showNotification)}
         setMessages={chat.setMessages}
+        summary={meetingSummary.summary}
+        setSummary={meetingSummary.setSummary}
+        showSummary={showSummary}
+        setShowSummary={setShowSummary}
       />
 
       <SettingsModal

@@ -455,6 +455,7 @@ import { getTokenData } from "@/app/content/data";
 import { motion, AnimatePresence } from "framer-motion";
 import {
   X,
+  ClipboardList, 
   Crown,
   UserIcon,
   MicOff,
@@ -475,6 +476,10 @@ import { useEffect, useState } from "react";
 import { useFileSharing } from "@/hooks/useFileSharing";
 
 export default function Sidebar({
+  summary,
+  setSummary,
+  showSummary,
+  setShowSummary,
   room,
   setMessages,
   deleteMessage,
@@ -826,11 +831,12 @@ export default function Sidebar({
     setShowChat(false);
     setShowNotes(false);
     setShowFiles(false);
+    setShowSummary(false);
   };
 
   return (
     <AnimatePresence>
-      {(showParticipants || showChat || showNotes || showFiles) && (
+      {(showParticipants || showChat || showNotes || showFiles || showSummary) && (
         <>
           <motion.button
             type="button"
@@ -899,6 +905,7 @@ export default function Sidebar({
                     <FileText size={16} />
                   </button>
 
+                  {/* files/pdf */}
                   {/* <button
                   onClick={() => {
                     setShowFiles(true);
@@ -912,6 +919,25 @@ export default function Sidebar({
                 >
                   <Paperclip size={16} />
                 </button> */}
+
+                  {/* summary */}
+                  <button
+                    onClick={() => {
+                      setShowParticipants(false);
+                      setShowChat(false);
+                      setShowNotes(false);
+                      setShowFiles(false);
+                      setShowSummary(true); // ← Show summary tab
+                    }}
+                    className={`px-4 py-2 rounded-lg text-sm font-medium transition ${
+                      showSummary
+                        ? "bg-gray-400 text-gray-800"
+                        : "bg-white/5 hover:bg-white/10"
+                    }`}
+                  >
+                    <ClipboardList size={16} />{" "}
+                    {/* or FileText, ScrollText, etc */}
+                  </button>
                 </div>
 
                 <button
@@ -1474,6 +1500,28 @@ export default function Sidebar({
                       </div>
                     ))}
                   </div>
+                </div>
+              )}
+
+              {showSummary && (
+                <div className="space-y-4">
+                  <div className="flex items-center justify-between">
+                    <p className="text-xs text-white/40">Meeting Summary</p>
+                  </div>
+
+                  {summary ? (
+                    <div className="bg-white/10 rounded-lg p-4 text-xs leading-relaxed whitespace-pre-wrap max-h-[60vh] overflow-y-auto">
+                      {summary}
+                    </div>
+                  ) : (
+                    <div className="text-center py-8">
+                      <FileText className="w-12 h-12 text-white/20 mx-auto mb-3" />
+                      <p className="text-sm text-white/40">No summary yet</p>
+                      <p className="text-xs text-white/20 mt-1">
+                        Record the meeting to generate notes
+                      </p>
+                    </div>
+                  )}
                 </div>
               )}
             </div>
