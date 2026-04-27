@@ -237,8 +237,8 @@
 // export default Header;
 
 "use client";
-import React, { useState, useEffect } from "react";
-import { Menu, Video, Mail, Loader2 } from "lucide-react";
+import React, { useState, useEffect, useRef } from "react";
+import { Menu, Video, Mail, Loader2, User, KeyRound, ChevronDown, SquarePen } from "lucide-react";
 import { motion } from "framer-motion";
 import { v4 as uuidv4 } from "uuid";
 import { useRouter } from "next/navigation";
@@ -360,6 +360,7 @@ const MeetingModal = ({ onClose }) => {
 
 const Header = ({ toggleSidebar }) => {
   const router = useRouter();
+  const userMenuRef = useRef(null);
   const [showUserMenu, setShowUserMenu] = useState(false);
   const [showModal, setShowModal] = useState(false);
   const [loading, setLoading] = useState(false);
@@ -384,10 +385,27 @@ const Header = ({ toggleSidebar }) => {
     fetchUser();
   }, []);
 
+  useEffect(() => {
+    const handleOutsideClick = (event) => {
+      if (userMenuRef.current && !userMenuRef.current.contains(event.target)) {
+        setShowUserMenu(false);
+      }
+    };
+
+    document.addEventListener("mousedown", handleOutsideClick);
+    return () => document.removeEventListener("mousedown", handleOutsideClick);
+  }, []);
+
   // ✅ Dummy user data (later replace with backend)
   const userData = {
-    name: "Talha Ahmed",
+    name: decodedUser?.name || "User",
     avatar: decodedUser?.image,
+    role: decodedUser?.role || "user",
+  };
+
+  const handleViewProfile = () => {
+    setShowUserMenu(false);
+    router.push("/home/profile");
   };
 
   const createMeeting = async () => {
@@ -428,8 +446,8 @@ const Header = ({ toggleSidebar }) => {
   };
 
   return (
-    <header className="sticky top-0 h-16 z-40 bg-white border-b border-[#E51A54]">
-      <div className="flex items-center justify-between h-full px-6">
+    <header className="sticky top-0 h-14 sm:h-16 z-40 bg-white/95 backdrop-blur border-b border-[#E51A54]/30 shadow-[0_2px_16px_rgba(229,26,84,0.08)]">
+      <div className="flex items-center justify-between h-full px-3 sm:px-6">
         {/* LEFT */}
         <div className="flex items-center gap-4">
           <button
@@ -455,12 +473,12 @@ const Header = ({ toggleSidebar }) => {
         </div>
 
         {/* RIGHT */}
-        <div className="flex items-center gap-3">
+        <div className="flex items-center gap-2 sm:gap-3">
           {/* Create */}
           <button
             onClick={createMeeting}
             disabled={createLoading}
-            className={`cursor-pointer flex items-center gap-2 px-4 h-10 rounded-lg text-sm transition ${
+            className={`cursor-pointer flex items-center justify-center gap-2 px-3 sm:px-4 h-9 sm:h-10 rounded-lg text-xs sm:text-sm transition ${
               createLoading
                 ? "bg-[#E51A54] text-white border border-[#E51A54]"
                 : "border border-[#E51A54] text-[#E51A54] hover:bg-[#E51A54] hover:text-white"
@@ -475,12 +493,12 @@ const Header = ({ toggleSidebar }) => {
                 >
                   <Video className="w-4 h-4" />
                 </motion.div>
-                Creating...
+                <span className="hidden sm:inline">Creating...</span>
               </>
             ) : (
               <>
                 <Video className="w-4 h-4" />
-                Create
+                <span className="hidden sm:inline">Create</span>
               </>
             )}
           </button>
@@ -488,26 +506,72 @@ const Header = ({ toggleSidebar }) => {
           {/* Join */}
           <button
             onClick={() => setShowModal(true)}
-            className="cursor-pointer flex items-center gap-2 px-4 h-10 bg-[#E51A54] text-white rounded-lg text-sm"
+            className="cursor-pointer flex items-center justify-center gap-2 px-3 sm:px-4 h-9 sm:h-10 bg-[#E51A54] hover:bg-[#c91548] text-white rounded-lg text-xs sm:text-sm transition"
           >
             <Video className="w-4 h-4" />
-            Join
+            <span className="hidden sm:inline">Join</span>
           </button>
 
           {/* USER */}
-          <div className="relative">
+          <div className="relative" ref={userMenuRef}>
             <div className="flex items-center gap-3">
               <button
                 onClick={() => setShowUserMenu(!showUserMenu)}
-                className="flex cursor-pointer rounded-2xl items-center gap-2"
+                className="flex cursor-pointer rounded-2xl items-center gap-2 pl-1 pr-1.5 py-1 hover:bg-[#E51A54]/10 transition"
               >
                 <img
-                  src={userData.avatar}
+                  src={userData.avatar || "https://via.placeholder.com/120x120?text=User"}
                   alt={userData.name}
                   className="w-10 h-10 rounded-full object-cover border border-[#E51A54]"
                 />
+                <ChevronDown className="w-4 h-4 text-gray-500" />
               </button>
             </div>
+
+            {showUserMenu && (
+              <div className="absolute right-0 mt-2 w-56 bg-white border border-gray-200 rounded-xl shadow-xl overflow-hidden z-50">
+                <div className="px-4 py-3 bg-gradient-to-r from-[#E51A54]/10 to-[#E51A54]/5 border-b border-gray-200">
+                  <p className="text-sm font-semibold text-gray-800 truncate">{userData.name}</p>
+                  <p className="text-xs text-gray-500 capitalize">{userData.role}</p>
+                </div>
+
+                {(decodedUser?.role === "doctor" || decodedUser?.role === "lawyer") ? (
+                  <button
+                    onClick={handleViewProfile}
+                    className="w-full px-4 py-3 text-sm text-left hover:bg-gray-100 flex items-center gap-2 text-gray-700"
+                  >
+                    <User className="w-4 h-4" />
+                    View Profile
+                  </button>
+                ) : null}
+
+                <button
+                  disabled
+                  className="w-full px-4 py-3 text-sm text-left bg-gray-50 text-gray-400 flex items-center justify-between cursor-not-allowed"
+                >
+                  <span className="flex items-center gap-2">
+                    <SquarePen className="w-4 h-4" />
+                    Edit Profile
+                  </span>
+                  <span className="text-[10px] bg-gray-200 text-gray-500 px-2 py-0.5 rounded-full">
+                    Soon
+                  </span>
+                </button>
+
+                <button
+                  disabled
+                  className="w-full px-4 py-3 text-sm text-left bg-gray-50 text-gray-400 flex items-center justify-between cursor-not-allowed"
+                >
+                  <span className="flex items-center gap-2">
+                    <KeyRound className="w-4 h-4" />
+                    Change Password
+                  </span>
+                  <span className="text-[10px] bg-gray-200 text-gray-500 px-2 py-0.5 rounded-full">
+                    Soon
+                  </span>
+                </button>
+              </div>
+            )}
           </div>
         </div>
       </div>

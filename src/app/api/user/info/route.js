@@ -207,32 +207,37 @@ export async function GET(req) {
     const { searchParams } = new URL(req.url);
     const userId = searchParams.get("userId");
 
-    // =========================
-    // 🔥 IF EMAIL PROVIDED
-    // =========================
-    if (userId) {
-      const meeting = await MeetingModel.findOne({
-        "basicInfo.userId": userId,
-      }).lean(); // ⚡ FAST
-
-      if (!meeting) {
-        return NextResponse.json(
-          {
-            success: false,
-            message: "Meeting not found",
-          },
-          { status: 404 }
-        );
-      }
-
+    if (!userId) {
       return NextResponse.json(
         {
-          success: true,
-          meeting,
+          success: false,
+          message: "userId is required",
         },
-        { status: 200 }
+        { status: 400 }
       );
     }
+
+    const profile = await InfoModel.findOne({
+      "basicInfo.userId": userId,
+    }).lean();
+
+    if (!profile) {
+      return NextResponse.json(
+        {
+          success: false,
+          message: "Profile not found",
+        },
+        { status: 404 }
+      );
+    }
+
+    return NextResponse.json(
+      {
+        success: true,
+        data: profile,
+      },
+      { status: 200 }
+    );
   } catch (error) {
     console.log("GET API ERROR:", error);
 
