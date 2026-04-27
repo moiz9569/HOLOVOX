@@ -1,7 +1,6 @@
 "use client";
 import { motion } from "framer-motion";
 import { Stethoscope, Scale, X } from "lucide-react";
-import { useState } from "react";
 
 export default function RoleUpgradeModal({
   isOpen,
@@ -10,51 +9,9 @@ export default function RoleUpgradeModal({
   onContinueAsBrowser,
   onContinueAsProvider,
   isLoading,
-  userId,
 }) {
-  const [updatingRole, setUpdatingRole] = useState(false);
-
-  const handleBecomeProvider = async () => {
-    if (!userId) {
-      console.error("No userId provided");
-      return;
-    }
-
-    setUpdatingRole(true);
-    try {
-      // Update user role
-      const response = await fetch("/api/auth/Signup", {
-        method: "PUT",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({
-          userId,
-          role: roleType,
-        }),
-      });
-
-      const result = await response.json();
-
-      if (result.token) {
-        // Store new token
-        localStorage.setItem("token", result.token);
-        console.log("Role updated successfully, new token generated");
-        
-        // Call the original onContinueAsProvider callback
-        onContinueAsProvider();
-      } else {
-        console.error("Failed to update role:", result.error);
-        // Still call onContinueAsProvider to show the form, but log the error
-        onContinueAsProvider();
-      }
-    } catch (error) {
-      console.error("Error updating role:", error);
-      // Still call onContinueAsProvider to show the form, but log the error
-      onContinueAsProvider();
-    } finally {
-      setUpdatingRole(false);
-    }
+  const handleBecomeProvider = () => {
+    onContinueAsProvider();
   };
 
   const roleData = {
@@ -116,7 +73,7 @@ export default function RoleUpgradeModal({
           {/* Info Box */}
           <div className="bg-gray-50 rounded-xl p-4 mb-8">
             <p className="text-xs text-gray-600">
-              <span className="font-semibold">Note:</span> You can always switch between browsing and providing services. Your profile will be verified before going live.
+              <span className="font-semibold">Note:</span> Your role will be finalized after you complete the provider profile form. You can still choose to browse providers instead.
             </p>
           </div>
 
@@ -124,17 +81,17 @@ export default function RoleUpgradeModal({
           <div className="space-y-3">
             <button
               onClick={handleBecomeProvider}
-              disabled={isLoading || updatingRole}
+              disabled={isLoading}
               className={`w-full py-3 rounded-xl font-semibold transition flex items-center justify-center gap-2 ${
-                isLoading || updatingRole
+                isLoading
                   ? "bg-gray-300 text-gray-500 cursor-not-allowed"
                   : `bg-gradient-to-r ${data.color} text-white hover:shadow-lg cursor-pointer`
               }`}
             >
-              {isLoading || updatingRole ? (
+              {isLoading ? (
                 <>
                   <div className="w-4 h-4 border-2 border-white/30 border-t-white rounded-full animate-spin" />
-                  {updatingRole ? "Updating Role..." : "Setting up..."}
+                  Setting up...
                 </>
               ) : (
                 <>
