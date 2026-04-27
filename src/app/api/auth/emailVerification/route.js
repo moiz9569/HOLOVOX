@@ -4,16 +4,10 @@ import { NextResponse } from "next/server";
 import nodemailer from "nodemailer";
 import { connectDB } from "../../../../../lib/db";
 
-// Create transporter with environment variables for credentials
-if (!process.env.SMTP_USER || !process.env.SMTP_PASS) {
-  throw new Error(
-    "SMTP_USER and SMTP_PASS must be set in environment variables for email verification."
-  );
-}
-
+// Create transporter (use real credentials in production)
 const transporter = nodemailer.createTransport({
-  host: process.env.SMTP_HOST || "smtp.gmail.com",
-  port: Number(process.env.SMTP_PORT || 587),
+  host: "smtp.gmail.com",
+  port: 587,
   secure: false,
   auth: {
     user: "merajali45425@gmail.com",
