@@ -877,7 +877,13 @@ const HomeDashboard = () => {
         category,
       });
 
-      const res = await fetch(`/api/providers/search?${params.toString()}`);
+      // Get token from localStorage to send with request
+      const token = localStorage.getItem("token");
+      const headers = token ? { Authorization: `Bearer ${token}` } : {};
+
+      const res = await fetch(`/api/providers/search?${params.toString()}`, {
+        headers,
+      });
       const data = await res.json();
 
       if (requestId !== providersRequestIdRef.current) {
@@ -1365,7 +1371,8 @@ const fetchUpcomingMeetings = async (user) => {
         {showLawyerForm && (
   <LawyerProfileForm 
   onClose={() => setShowLawyerForm(false)} 
-  userId={decodedUser?.id} // Pass userId to the form
+  userId={decodedUser?.id}
+  onProfileComplete={() => window.location.reload()}
   />
 
 )}
@@ -1373,7 +1380,8 @@ const fetchUpcomingMeetings = async (user) => {
 {showDoctorForm && (
   <DoctorProfileForm 
   onClose={() => setShowDoctorForm(false)}
-  userId={decodedUser?.id} // Pass userId to the form
+  userId={decodedUser?.id}
+  onProfileComplete={() => window.location.reload()}
   />
 )}
 

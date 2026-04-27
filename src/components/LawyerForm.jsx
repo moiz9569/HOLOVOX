@@ -923,6 +923,13 @@ export default function LawyerProfileForm({ onClose, userId }) {
         alert("Profile submitted successfully!");
         showSuccessToast("Profile submitted successfully!");
         onClose();
+        
+        // Refresh the page to reflect the updated role and user data
+        if (onProfileComplete) {
+          onProfileComplete();
+        } else {
+          window.location.reload();
+        }
       } else {
         setSubmitError(result.message || "Failed to submit profile");
         console.error("Submission error:", result.message);

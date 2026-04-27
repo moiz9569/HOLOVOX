@@ -950,6 +950,13 @@ export default function DoctorProfileForm({ onClose, userId }) {
         
         showSuccessToast("Profile submitted successfully!");
         onClose(); // Close modal only on success
+        
+        // Refresh the page to reflect the updated role and user data
+        if (onProfileComplete) {
+          onProfileComplete();
+        } else {
+          window.location.reload();
+        }
       } else {
         setSubmitError(result.message || "Failed to submit profile");
         console.error("Submission error:", result.message);

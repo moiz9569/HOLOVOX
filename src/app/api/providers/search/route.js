@@ -1,10 +1,28 @@
 import { NextResponse } from "next/server";
 import InfoModel from "@/app/models/info.model";
 import { connectDB } from "../../../../../lib/db";
+import jwt from "jsonwebtoken";
 
 const DEFAULT_LIMIT = 12;
 
 const normalize = (value = "") => value.trim().toLowerCase();
+
+// Extract user ID from JWT token in Authorization header
+const getCurrentUserId = (req) => {
+  try {
+    const authHeader = req.headers.get("authorization");
+    if (!authHeader || !authHeader.startsWith("Bearer ")) {
+      return null;
+    }
+
+    const token = authHeader.substring(7);
+    const decoded = jwt.verify(token, process.env.JWT_SECRET || "Holovox");
+    return decoded.id;
+  } catch (error) {
+    console.log("Token extraction error:", error.message);
+    return null;
+  }
+};
 
 const getAllowedCategories = (role) => {
   if (role === "doctor") {
@@ -79,6 +97,12 @@ export async function GET(req) {
       "basicInfo.role": role,
       "professionalInfo.Specialization": selectedCategory,
     };
+
+    // Exclude current user from results to prevent self-requests
+    const currentUserId = getCurrentUserId(req);
+    if (currentUserId) {
+      query["basicInfo.userId"] = { $ne: currentUserId };
+    }
 
     const skip = (page - 1) * limit;
 
