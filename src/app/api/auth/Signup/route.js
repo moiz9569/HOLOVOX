@@ -16,7 +16,7 @@ cloudinary.v2.config({
 
 export async function POST(request) {
   try {
-    const { name, email, password, role,image , status } =
+    const { name, email, password, image, status, role } =
       await request.json();
       console.log("Payload for create-account:", {
         name,
@@ -145,15 +145,15 @@ export async function GET(req) {
 }
 export async function PUT(request) {
   try {
-    const { userId, status } =
+    const { userId,role } =
       await request.json();
       console.log("Payload for update user status:", {
         userId,
-        status
+        role
       });
-    if(!userId || !status){
+    if(!userId || !role){
       return NextResponse.json(
-        { error: "Missing userId or status" },
+        { error: "Missing userId or role" },
         { status: 400 }
       );
     }
@@ -170,14 +170,27 @@ export async function PUT(request) {
     }
     const updatedUser = await AuthModel.findByIdAndUpdate(
       userId,
-      { status },
+      { role },
       { new: true }
     ).select("-password").lean();
    
-
+ // Generate JWT token
+    const token = jwt.sign(
+      {
+        id: updatedUser._id,
+        email: updatedUser.email,
+        role: updatedUser.role,
+        name: updatedUser?.name,
+        verified : updatedUser?.verified,
+        image: updatedUser?.image || "",
+        status: updatedUser?.status || "none" 
+      },
+      process.env.JWT_SECRET || "Holovox",
+      { expiresIn: "1d" }
+    );
   
     return NextResponse.json(
-      { message: "User updated successfully" },
+      { message: "User updated successfully", token },
       { status: 200 }
     );
   } catch (error) {

@@ -908,10 +908,18 @@ export default function LawyerProfileForm({ onClose, userId }) {
             },
             body: JSON.stringify({
                 userId,
-                status: "filled"
+                role: "lawyer"
             }),
         })
-         console.log("Status update response:", await updateStatus.json());
+         const updateResult = await updateStatus.json();
+         console.log("Role update response:", updateResult);
+         
+         if (updateResult.token) {
+           // Store new token (this will invalidate old token)
+           localStorage.setItem("token", updateResult.token);
+           console.log("New token generated and stored");
+         }
+         
         alert("Profile submitted successfully!");
         showSuccessToast("Profile submitted successfully!");
         onClose();

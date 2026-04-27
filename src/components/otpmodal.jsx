@@ -510,6 +510,7 @@ export default function OtpModal({
       });
 
       const verifyData = await verifyRes.json();
+    console.log("OTP verification response:", verifyData);
       if(userData?.role === "doctor" || userData?.role === "lawyer"){
         userData.status = "unfilled";
       }

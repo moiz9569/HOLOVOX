@@ -5,9 +5,10 @@ import {
   Stethoscope,
   Scale,
   MoreHorizontal,
+  UserPlus,
 } from "lucide-react";
 
-export default function MarketplaceModal({ onClose, onContinue }) {
+export default function MarketplaceModal({ onClose, onContinue, onBecomeProvider, isProvider = false }) {
   const [selectedCategory, setSelectedCategory] = useState(null);
 
   const categories = [
@@ -64,6 +65,29 @@ export default function MarketplaceModal({ onClose, onContinue }) {
             Choose a category to find the right expert for you..
           </p>
         </div>
+
+        {/* Become Provider Button - Only show for non-providers */}
+        {!isProvider && (
+          <>
+            <button
+              onClick={() => {
+                onClose();
+                onBecomeProvider?.();
+              }}
+              className="w-full mb-6 py-3 px-4 bg-gradient-to-r from-blue-500 to-purple-600 text-white rounded-xl font-semibold hover:shadow-lg transition flex items-center justify-center gap-2"
+            >
+              <UserPlus size={18} />
+              Want to become a Doctor/Lawyer?
+            </button>
+
+            {/* Divider */}
+            <div className="flex items-center mb-6">
+              <div className="flex-1 h-px bg-gray-300"></div>
+              <span className="px-3 text-sm text-gray-500">or browse</span>
+              <div className="flex-1 h-px bg-gray-300"></div>
+            </div>
+          </>
+        )}
 
         {/* Grid */}
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 sm:gap-5 mb-6">

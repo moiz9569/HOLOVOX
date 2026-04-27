@@ -936,10 +936,18 @@ export default function DoctorProfileForm({ onClose, userId }) {
             },
             body: JSON.stringify({
                 userId,
-                status: "filled"
+                role: "doctor"
             }),
         })
-        console.log("Status update response:", await updateStatus.json());
+        const updateResult = await updateStatus.json();
+        console.log("Role update response:", updateResult);
+        
+        if (updateResult.token) {
+          // Store new token (this will invalidate old token)
+          localStorage.setItem("token", updateResult.token);
+          console.log("New token generated and stored");
+        }
+        
         showSuccessToast("Profile submitted successfully!");
         onClose(); // Close modal only on success
       } else {

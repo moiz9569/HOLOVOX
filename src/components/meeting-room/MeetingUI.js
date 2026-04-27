@@ -28,6 +28,24 @@ export default function MeetingUI({ isHost, roomId, router }) {
   const [userName, setUserName] = useState(null);
   const [isUserLoaded, setIsUserLoaded] = useState(false);
 
+const [totalSeconds, setTotalSeconds] = useState(0);
+//Timer to track meeting duration, increments every second
+  useEffect(() => {
+    const intervalId = setInterval(() => {
+      setTotalSeconds(prev => prev + 1);
+    }, 1000);
+
+    return () => clearInterval(intervalId);
+  }, []);
+
+  // Calculate time units
+  const hours = Math.floor(totalSeconds / 3600);
+  const minutes = Math.floor((totalSeconds % 3600) / 60);
+  const seconds = totalSeconds % 60;
+
+  // Enforce zero-padding to prevent UI jitter
+  const formattedTime = `${String(hours).padStart(2, '0')}:${String(minutes).padStart(2, '0')}:${String(seconds).padStart(2, '0')}`;
+
   const showNotification = (message, type = "info") => {
     setNotification({ message, type });
     setTimeout(() => setNotification(null), 3000);
@@ -361,6 +379,7 @@ export default function MeetingUI({ isHost, roomId, router }) {
           toggleFullscreen={meetingState.toggleFullscreen}
           isSidebarOpen={isSidebarOpen}
           onToggleSidebar={toggleSidebarPanel}
+          meetingDuration={formattedTime}
         />
 
         <VideoArea
