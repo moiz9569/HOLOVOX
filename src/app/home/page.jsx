@@ -877,6 +877,13 @@ const HomeDashboard = () => {
         category,
       });
 
+      const currentUserId =
+        decodedUser?.id || decodedUser?._id || decodedUser?.userId || "";
+
+      if (currentUserId) {
+        params.set("excludeUserId", currentUserId);
+      }
+
       // Get token from localStorage to send with request
       const token = localStorage.getItem("token");
       const headers = token ? { Authorization: `Bearer ${token}` } : {};
@@ -894,7 +901,25 @@ const HomeDashboard = () => {
         throw new Error(data.message || "Failed to load providers");
       }
 
-      setProviders(data.data || []);
+      const normalizedCurrentUserId = currentUserId
+        ? currentUserId.toString()
+        : "";
+
+      const filteredProviders = (data.data || []).filter((provider) => {
+        const providerUserId =
+          provider?.userId ||
+          provider?.basicInfo?.userId?._id ||
+          provider?.basicInfo?.userId ||
+          "";
+
+        if (!normalizedCurrentUserId || !providerUserId) {
+          return true;
+        }
+
+        return providerUserId.toString() !== normalizedCurrentUserId;
+      });
+
+      setProviders(filteredProviders);
     } catch (error) {
       if (requestId !== providersRequestIdRef.current) {
         return;

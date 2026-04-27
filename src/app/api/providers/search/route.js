@@ -7,21 +7,36 @@ const DEFAULT_LIMIT = 12;
 
 const normalize = (value = "") => value.trim().toLowerCase();
 
+const isMongoObjectId = (value = "") => /^[a-fA-F0-9]{24}$/.test(value);
+
+const getSecretCandidates = () => {
+  const configuredSecret = process.env.JWT_SECRET?.trim();
+  return [configuredSecret, "Hashfor", "Holovox"].filter(Boolean);
+};
+
 // Extract user ID from JWT token in Authorization header
 const getCurrentUserId = (req) => {
-  try {
-    const authHeader = req.headers.get("authorization");
-    if (!authHeader || !authHeader.startsWith("Bearer ")) {
-      return null;
-    }
-
-    const token = authHeader.substring(7);
-    const decoded = jwt.verify(token, process.env.JWT_SECRET || "Holovox");
-    return decoded.id;
-  } catch (error) {
-    console.log("Token extraction error:", error.message);
+  const authHeader = req.headers.get("authorization");
+  if (!authHeader || !authHeader.startsWith("Bearer ")) {
     return null;
   }
+
+  const token = authHeader.substring(7);
+  const secrets = getSecretCandidates();
+
+  for (const secret of secrets) {
+    try {
+      const decoded = jwt.verify(token, secret);
+      const userId = decoded?.id || decoded?._id || decoded?.userId;
+      if (userId) {
+        return userId.toString();
+      }
+    } catch {
+      // Try next known secret for backward compatibility.
+    }
+  }
+
+  return null;
 };
 
 const getAllowedCategories = (role) => {
@@ -57,6 +72,7 @@ export async function GET(req) {
     const { searchParams } = new URL(req.url);
     const role = normalize(searchParams.get("role"));
     const categoryInput = (searchParams.get("category") || "").trim();
+    const excludeUserId = (searchParams.get("excludeUserId") || "").trim();
     const page = Math.max(parseInt(searchParams.get("page") || "1", 10), 1);
     const limit = Math.min(
       Math.max(parseInt(searchParams.get("limit") || `${DEFAULT_LIMIT}`, 10), 1),
@@ -99,9 +115,21 @@ export async function GET(req) {
     };
 
     // Exclude current user from results to prevent self-requests
+    const userIdsToExclude = [];
     const currentUserId = getCurrentUserId(req);
-    if (currentUserId) {
-      query["basicInfo.userId"] = { $ne: currentUserId };
+    if (currentUserId && isMongoObjectId(currentUserId)) {
+      userIdsToExclude.push(currentUserId);
+    }
+
+    if (excludeUserId && isMongoObjectId(excludeUserId)) {
+      userIdsToExclude.push(excludeUserId);
+    }
+
+    const uniqueExcludedUserIds = [...new Set(userIdsToExclude)];
+    if (uniqueExcludedUserIds.length === 1) {
+      query["basicInfo.userId"] = { $ne: uniqueExcludedUserIds[0] };
+    } else if (uniqueExcludedUserIds.length > 1) {
+      query["basicInfo.userId"] = { $nin: uniqueExcludedUserIds };
     }
 
     const skip = (page - 1) * limit;
