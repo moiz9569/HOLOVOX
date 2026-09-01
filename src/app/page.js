@@ -1,4 +1,4 @@
-// ✅ SEO Metadata
+
 // ✅ SEO Metadata
 export const metadata = {
   title: "Holovox-Jade - Professional Website",
