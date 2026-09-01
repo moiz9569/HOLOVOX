@@ -47,16 +47,6 @@ export const jsonLd = {
   "description": "Explore Holovox-Jade for professional services and information."
 };
 
-// ✅ Schema.org structured data (JSON-LD)
-// Schema Type: No schema found
-export const jsonLd = {
-  "@context": "https://schema.org",
-  "@type": "No schema found",
-  "url": "https://holovox-jade.vercel.app/",
-  "name": "Holovox-Jade - Professional Website",
-  "description": "Explore Holovox-Jade for professional services and information."
-};
-
 
 
 import { Navbar } from "@/components/Navbar";
