@@ -1,3 +1,62 @@
+// ✅ SEO Metadata
+// ✅ SEO Metadata
+export const metadata = {
+  title: "Holovox-Jade - Professional Website",
+  description: "Explore Holovox-Jade for professional services and information.",
+  keywords: [
+    "professional",
+    "services",
+    "website",
+    "company",
+    "business"
+  ],
+  alternates: {
+    canonical: "false"
+  },
+  robots: "index, follow",
+  openGraph: {
+    title: "Holovox-Jade - Professional Website",
+    description: "Explore Holovox-Jade for professional services and information.",
+    url: "https://holovox-jade.vercel.app/",
+    siteName: "Holovox-Jade",
+    images: [
+      {
+        url: "https://holovox-jade.vercel.app/opengraph-image.jpg",
+        width: 1200,
+        height: 630,
+        alt: "Holovox-Jade - Professional Website"
+      }
+    ],
+    type: "website"
+  },
+  twitter: {
+    card: "summary_large_image",
+    title: "Holovox-Jade - Professional Website",
+    description: "Explore Holovox-Jade for professional services and information.",
+    images: ["https://holovox-jade.vercel.app/twitter-image.jpg"]
+  }
+};
+
+// ✅ Schema.org structured data (JSON-LD)
+// Schema Type: No schema found
+export const jsonLd = {
+  "@context": "https://schema.org",
+  "@type": "No schema found",
+  "url": "https://holovox-jade.vercel.app/",
+  "name": "Holovox-Jade - Professional Website",
+  "description": "Explore Holovox-Jade for professional services and information."
+};
+
+// ✅ Schema.org structured data (JSON-LD)
+// Schema Type: No schema found
+export const jsonLd = {
+  "@context": "https://schema.org",
+  "@type": "No schema found",
+  "url": "https://holovox-jade.vercel.app/",
+  "name": "Holovox-Jade - Professional Website",
+  "description": "Explore Holovox-Jade for professional services and information."
+};
+
 
 
 import { Navbar } from "@/components/Navbar";
