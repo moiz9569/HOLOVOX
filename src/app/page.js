@@ -31,6 +31,8 @@ export const onPageMetadata = {
 // ONPAGE-AUTO-FIX-END
 
 
+
+
 import { Navbar } from "@/components/Navbar";
 import { Hero } from "@/components/Hero";
 import { Features } from "@/components/Features";
