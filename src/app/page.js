@@ -84,3 +84,14 @@ const Index = () => {
 };
 
 export default Index;
+
+// TECHNICAL-CANONICAL-START
+// 🔵 TECHNICAL: canonical, robots/noindex, hreflang
+export const technicalMetadata = {
+  alternates: {
+    canonical: "https://holovox-jade.vercel.app/",
+  },
+  robots: "index, follow",
+};
+// TECHNICAL-CANONICAL-END
+
